@@ -371,9 +371,8 @@
         </div>`;
 
       $('#postSubmit').classList.remove('hidden');
-
-      // Optional: clear cart after showing instructions
-      // cart.items = []; cart.save(); updateCartUI();
+      
+      cart.items = []; cart.save(); updateCartUI();
 
       // Generate simple PDF invoice using jsPDF (CDN)
       const addScript = (src) => new Promise(r=>{ const s=document.createElement('script'); s.src=src; s.onload=r; document.body.appendChild(s); });
