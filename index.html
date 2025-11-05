@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The White Butterflies — Shop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            butterfly: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            },
+            cream: {
+              50: '#fff9ed',
+              100: '#fef3d9',
+              200: '#fce7b3',
+              300: '#fbdb8d',
+              400: '#f9cf67',
+              500: '#f8c341',
+              600: '#c69c34',
+              700: '#947527',
+              800: '#634e1a',
+              900: '#31270d',
+            },
+          },
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'ui-serif', 'Georgia', 'serif'],
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(0,0,0,0.08)'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    .fade-in { opacity: 0; transform: translateY(8px); animation: fadeIn 700ms ease forwards; }
+    .fade-in.delay-1 { animation-delay: .1s }
+    .fade-in.delay-2 { animation-delay: .2s }
+    .fade-in.delay-3 { animation-delay: .3s }
+    @keyframes fadeIn { to { opacity: 1; transform: none } }
+  </style>
+</head>
+<body class="bg-cream-50 text-butterfly-900 font-sans">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur bg-cream-50/80 border-b border-cream-200">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="#" class="font-serif tracking-[0.25em] text-xl">THE WHITE BUTTERFLIES</a>
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#story" class="hover:opacity-70">Story</a>
+        <a href="#collection" class="hover:opacity-70">Collection</a>
+        <a href="#faq" class="hover:opacity-70">FAQ</a>
+        <a href="#contact" class="hover:opacity-70">Contact</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button id="openCart" class="relative px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white">
+          Cart <span id="cartCount" class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 py-24 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h1 class="font-serif text-5xl md:text-6xl leading-tight mb-6 fade-in">Perfume for the moments you can’t explain—only feel.</h1>
+        <p class="text-butterfly-600 mb-8 fade-in delay-1">Compositions of hedione-bright florals, cashmere woods, and ambered skin notes. Small batches. Built to unfold, not shout.</p>
+        <div class="flex gap-4 fade-in delay-2">
+          <a href="#collection" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">Shop the Collection</a>
+          <a href="#story" class="px-6 py-3 rounded-full border border-butterfly-900/20 hover:bg-white">Our Philosophy</a>
+        </div>
+      </div>
+      <div class="relative aspect-[4/5] rounded-2xl bg-[url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center shadow-soft fade-in delay-3"></div>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section id="story" class="py-20">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="font-serif text-3xl mb-4">The heart remembers in scent before it remembers in words.</h2>
+      <p class="text-butterfly-600 max-w-3xl mx-auto">We compose quietly: intimacy first, then lift. Each formula is a chapter—balanced, intentional—made to linger like a good goodbye. Wear it for yourself; let the world overhear.</p>
+    </div>
+  </section>
+
+  <!-- Collection -->
+  <section id="collection" class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex items-end justify-between mb-10">
+        <h2 class="font-serif text-4xl">Collection</h2>
+        <p class="text-butterfly-500">Orders placed directly on site. No external processors.</p>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Product card 1 -->
+        <article class="group rounded-2xl overflow-hidden shadow-soft bg-cream-50">
+          <div class="h-72 bg-[url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center"></div>
+          <div class="p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-serif text-2xl">Nostalgia No. 7</h3>
+              <span class="text-sm text-butterfly-500">Extrait · 30 ml</span>
+            </div>
+            <p class="text-butterfly-600 mb-4">Cashmere woods, vanillin veil, hedione-bright jasmine. Warm, skin-close, then a soft drift.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-lg">€<span>120</span></span>
+              <button class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="nostalgia-30" data-name="Nostalgia No. 7 — Extrait 30 ml" data-price="120" data-size="30 ml">Add to Cart</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product card 2 -->
+        <article class="group rounded-2xl overflow-hidden shadow-soft bg-cream-50">
+          <div class="h-72 bg-[url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center"></div>
+          <div class="p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-serif text-2xl">Nocturne</h3>
+              <span class="text-sm text-butterfly-500">EDP · 50 ml</span>
+            </div>
+            <p class="text-butterfly-600 mb-4">Moonlit florals with amber whispers. A still room at midnight.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-lg">€<span>95</span></span>
+              <button class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="nocturne-50" data-name="Nocturne — EDP 50 ml" data-price="95" data-size="50 ml">Add to Cart</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product card 3 -->
+        <article class="group rounded-2xl overflow-hidden shadow-soft bg-cream-50">
+          <div class="h-72 bg-[url('https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center"></div>
+          <div class="p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-serif text-2xl">Discovery Set</h3>
+              <span class="text-sm text-butterfly-500">3 × 2 ml</span>
+            </div>
+            <p class="text-butterfly-600 mb-4">Sample the story. Three vials, one quiet afternoon.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-lg">€<span>25</span></span>
+              <button class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="discovery-3x2" data-name="Discovery Set — 3×2 ml" data-price="25" data-size="Discovery">Add to Cart</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Trust row -->
+      <div class="mt-10 grid md:grid-cols-3 gap-6 text-sm text-butterfly-600">
+        <div class="p-4 rounded-xl bg-cream-100">Orders captured instantly to our system.</div>
+        <div class="p-4 rounded-xl bg-cream-100">No external processors. Data‑minimal by design.</div>
+        <div class="p-4 rounded-xl bg-cream-100">Dispatch window: 3–5 business days.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CART DRAWER -->
+  <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white shadow-2xl translate-x-full transition-transform duration-300 z-[60]">
+    <div class="flex items-center justify-between p-4 border-b">
+      <h3 class="font-serif text-2xl">Your Bag</h3>
+      <button id="closeCart" class="text-butterfly-600 hover:text-butterfly-900">Close</button>
+    </div>
+    <div id="cartItems" class="p-4 divide-y max-h-[60vh] overflow-auto"></div>
+    <div class="p-4 border-t space-y-3">
+      <div class="flex items-center justify-between"><span>Subtotal</span><span id="cartSubtotal">€0.00</span></div>
+      <div class="flex items-center justify-between text-sm text-butterfly-500"><span>Shipping</span><span id="cartShipping">Calculated at checkout</span></div>
+      <div class="flex items-center justify-between font-medium text-lg"><span>Total</span><span id="cartTotal">€0.00</span></div>
+      <a href="#checkout" id="toCheckout" class="block text-center px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">Proceed to Checkout</a>
+    </div>
+  </aside>
+
+  <!-- CHECKOUT SECTION -->
+  <section id="checkout" class="py-20 hidden">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="font-serif text-3xl mb-6">Checkout</h2>
+      <p class="text-butterfly-600 mb-6">Place your order below. You’ll see an on-page confirmation when it’s captured.</p>
+
+      <!-- Order Summary -->
+      <div id="summary" class="mb-8 p-4 bg-cream-50 rounded-xl border"></div>
+
+      <!-- Customer Form -->
+      <form id="orderForm" class="grid md:grid-cols-2 gap-4">
+        <input required name="fullName" placeholder="Full name" class="px-4 py-3 border rounded">
+        <input required type="email" name="email" placeholder="Email" class="px-4 py-3 border rounded">
+        <input required name="address" placeholder="Address" class="px-4 py-3 border rounded md:col-span-2">
+        <input required name="city" placeholder="City" class="px-4 py-3 border rounded">
+        <input required name="postcode" placeholder="Postcode" class="px-4 py-3 border rounded">
+        <input required name="country" placeholder="Country" class="px-4 py-3 border rounded">
+        <textarea name="notes" placeholder="Notes (optional)" class="px-4 py-3 border rounded md:col-span-2"></textarea>
+        <button class="mt-2 md:col-span-2 px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90" type="submit">Place Order</button>
+        <p class="text-sm text-butterfly-500 md:col-span-2">By placing an order you agree to our Terms and Privacy Policy.</p>
+      </form>
+
+      <!-- Post-submit instructions -->
+      <div id="postSubmit" class="hidden mt-8 p-4 rounded-xl bg-cream-100"></div>
+      <!-- Fallback form to bypass fetch/CORS -->
+      <form id="fallbackForm" class="hidden"
+      method="POST"
+      action="https://script.google.com/macros/s/AKfycbw0xKTd-5Xqu8iAViWtpyJ7FCk0ZF93G-m7eneFJKvR-NqU7ppmgzG84W8gsO0xWoiA9Q/exec"
+      target="fallbackFrame">
+      <input type="hidden" name="payload" id="fallbackPayload">
+      </form>
+      <iframe name="fallbackFrame" style="display:none"></iframe>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-20">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="font-serif text-3xl mb-8">FAQ</h2>
+      <div class="divide-y divide-cream-200">
+        <details class="py-4" open>
+          <summary class="cursor-pointer font-medium">Where do you ship?</summary>
+          <p class="mt-2 text-butterfly-600">We currently ship across the EU. For other regions, join the waitlist at checkout and we’ll email you when available.</p>
+        </details>
+        <details class="py-4">
+          <summary class="cursor-pointer font-medium">What strength are your perfumes?</summary>
+          <p class="mt-2 text-butterfly-600">EDP (18–22%) and Extrait (30–40%), composed for intimacy first, then diffusion.</p>
+        </details>
+        <details class="py-4">
+          <summary class="cursor-pointer font-medium">Returns & exchanges</summary>
+          <p class="mt-2 text-butterfly-600">For hygiene and safety, perfumes are final sale. Try our Discovery Set to find your match.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact / Newsletter -->
+  <section id="contact" class="py-20 bg-butterfly-900 text-white">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="font-serif text-3xl mb-4">Join our scent letters</h2>
+      <p class="text-butterfly-300 mb-8">Early drops, private notes, and sample restocks.</p>
+      <form class="max-w-md mx-auto grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input required type="email" name="email" placeholder="you@example.com" class="px-4 py-3 rounded-full text-butterfly-900"/>
+        <button class="px-6 py-3 rounded-full bg-white text-butterfly-900 hover:opacity-90" type="submit">Subscribe</button>
+      </form>
+      <p class="text-butterfly-400 mt-4 text-xs">Powered by Formspree (free). Replace YOUR_FORM_ID above.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 text-center text-sm text-butterfly-500">
+    <p>© <span id="year"></span> The White Butterflies — Haute Parfumerie</p>
+    <p class="mt-2"><a class="underline hover:no-underline" href="#">Privacy</a> · <a class="underline hover:no-underline" href="#">Terms</a></p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ---- Simple Cart ----
+    const CART_KEY = 'twb_cart_v1';
+    const SHIPPING_FLAT = 6.95; // € — tweak as needed
+    const VAT_RATE = 0.21; // (unused if prices are VAT‑inclusive)
+
+    const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+    const $ = (sel, ctx=document) => ctx.querySelector(sel);
+
+    const cart = {
+      items: [],
+      load(){ this.items = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); },
+      save(){ localStorage.setItem(CART_KEY, JSON.stringify(this.items)); updateCartUI(); },
+      add(prod){
+        const found = this.items.find(x => x.id === prod.id);
+        if(found) found.qty += 1; else this.items.push({...prod, qty:1});
+        this.save();
+      },
+      remove(id){ this.items = this.items.filter(x => x.id!==id); this.save(); },
+      setQty(id, qty){ const it = this.items.find(x=>x.id===id); if(it){ it.qty = Math.max(1, qty|0); this.save(); }},
+      totals(){
+        const subtotal = this.items.reduce((s, x)=> s + x.price * x.qty, 0);
+        const vat = 0; // assume prices are VAT-inclusive; change if needed
+        const shipping = this.items.length ? SHIPPING_FLAT : 0;
+        const total = subtotal + shipping + vat;
+        return { subtotal, shipping, vat, total };
+      }
+    };
+
+    function formatEUR(n){ return '€' + n.toFixed(2); }
+
+    function updateCartUI(){
+      $('#cartCount').textContent = cart.items.reduce((s,x)=>s+x.qty,0);
+      const list = $('#cartItems');
+      list.innerHTML = cart.items.length ? '' : '<p class="text-butterfly-500 p-4">Your bag is empty.</p>';
+      cart.items.forEach(it => {
+        const row = document.createElement('div');
+        row.className = 'py-3 flex items-center justify-between gap-3';
+        row.innerHTML = `
+          <div>
+            <p class="font-medium">${it.name}</p>
+            <p class="text-sm text-butterfly-500">${it.size}</p>
+            <div class="mt-1 flex items-center gap-2 text-sm">
+              <button class="px-2 border" data-act="dec">-</button>
+              <span>${it.qty}</span>
+              <button class="px-2 border" data-act="inc">+</button>
+            </div>
+          </div>
+          <div class="text-right">
+            <p>${formatEUR(it.price * it.qty)}</p>
+            <button class="text-xs text-red-600 mt-1" data-act="rm">Remove</button>
+          </div>`;
+        row.addEventListener('click', (e)=>{
+          if(e.target.dataset.act==='inc') cart.setQty(it.id, it.qty+1);
+          if(e.target.dataset.act==='dec') cart.setQty(it.id, it.qty-1);
+          if(e.target.dataset.act==='rm') cart.remove(it.id);
+        });
+        list.appendChild(row);
+      });
+      const t = cart.totals();
+      $('#cartSubtotal').textContent = formatEUR(t.subtotal);
+      $('#cartTotal').textContent = formatEUR(t.total);
+    }
+
+    // Add to cart buttons
+    $$('.add-to-cart').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        cart.add({ id: btn.dataset.id, name: btn.dataset.name, price: parseFloat(btn.dataset.price), size: btn.dataset.size });
+        $('#openCart').click();
+      });
+    });
+
+    // Drawer controls
+    $('#openCart').addEventListener('click', ()=> $('#cartDrawer').style.transform = 'translateX(0)');
+    $('#closeCart').addEventListener('click', ()=> $('#cartDrawer').style.transform = 'translateX(100%)');
+
+    // Go to checkout
+    $('#toCheckout').addEventListener('click', (e)=>{
+      if(!cart.items.length){ e.preventDefault(); return; }
+      e.preventDefault();
+      $('#cartDrawer').style.transform = 'translateX(100%)';
+      const t = cart.totals();
+      const sum = [`<h3 class='font-medium mb-2'>Order Summary</h3>`,
+        '<ul class="space-y-1">',
+        ...cart.items.map(i=>`<li>${i.qty} × ${i.name} — ${formatEUR(i.price*i.qty)}</li>`),
+        '</ul>',
+        `<p class='mt-3'>Shipping (flat): ${formatEUR(t.shipping)}</p>`,
+        `<p class='font-medium text-lg mt-1'>Total: ${formatEUR(t.total)}</p>`
+      ].join('');
+      $('#summary').innerHTML = sum;
+      $('#checkout').classList.remove('hidden');
+      location.hash = '#checkout';
+    });
+
+    // Handle order form submit — posts to your webhook
+    $('#orderForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const t = cart.totals();
+      const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
+
+      // Show confirmation UI
+      $('#postSubmit').innerHTML = `
+        <h3 class="font-serif text-2xl mb-2">Thanks, ${data.fullName}.</h3>
+        <p class="text-butterfly-700">Your order <strong>${orderId}</strong> was received.</p>
+        <p class="text-butterfly-600">You can download a copy of your order details below.</p>
+        <div class="mt-4 flex gap-3 flex-wrap">
+          <button class="px-4 py-2 rounded-full border" id="downloadInvoice">Download Invoice (PDF)</button>
+        </div>`;
+      $('#postSubmit').classList.remove('hidden');
+
+      // ---- Server-side log (Google Apps Script webhook, CORS-safe) ----
+        const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzvJ_8nXWhP6vbGO8wMD5orGs0A4hcx8oHc5HWr0CPGU5xoqTLhXvr2mFd8cwtfneEzmA/exec';
+        const payload = { orderId, items: cart.items, totals: t, customer: data, timestamp: new Date().toISOString() };
+
+        // Fire-and-forget (opaque) to avoid CORS preflight
+        fetch(WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+        // Fallback: HTML form POST (works even if fetch/CORS is blocked)
+        try {
+          document.getElementById('fallbackPayload').value = JSON.stringify(payload);
+          document.getElementById('fallbackForm').submit();
+        } catch (_) {}
+
+      // Generate simple PDF invoice using jsPDF (CDN)
+      const addScript = (src) => new Promise(r=>{ const s=document.createElement('script'); s.src=src; s.onload=r; document.body.appendChild(s); });
+      addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(()=>{
+        document.getElementById('downloadInvoice').addEventListener('click', ()=>{
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          let y = 14;
+          doc.setFontSize(14); doc.text('Order Confirmation', 14, y); y+=8;
+          doc.setFontSize(11);
+          doc.text(`Order ID: ${orderId}`,14,y); y+=6;
+          doc.text(`Bill to: ${data.fullName}`,14,y); y+=6;
+          doc.text(`${data.address}`,14,y); y+=6;
+          doc.text(`${data.city} ${data.postcode}`,14,y); y+=6;
+          doc.text(`${data.country}`,14,y); y+=8;
+          doc.text('Items:',14,y); y+=6;
+          cart.items.forEach(i=>{ doc.text(`${i.qty} × ${i.name} — €${(i.price*i.qty).toFixed(2)}`, 14, y); y+=6; });
+          y+=2; doc.text(`Subtotal: ${formatEUR(t.subtotal)}`,14,y); y+=6;
+          doc.text(`Shipping: ${formatEUR(t.shipping)}`,14,y); y+=6;
+          doc.text(`Total: ${formatEUR(t.total)}`,14,y); y+=8;
+          doc.save(`Order_${orderId}.pdf`);
+        });
+      });
+
+      // Optional: clear cart after submit
+      // cart.items = []; cart.save(); updateCartUI();
+    });
+
+    cart.load();
+    updateCartUI();
+  </script>
+</body>
+</html>
