@@ -49,6 +49,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- Lemon Squeezy embed script (enables overlay checkout) -->
+  <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
   <style>
     .fade-in { opacity: 0; transform: translateY(8px); animation: fadeIn 700ms ease forwards; }
     .fade-in.delay-1 { animation-delay: .1s }
@@ -59,6 +61,7 @@
 </head>
 <body class="bg-cream-50 text-butterfly-900 font-sans">
   <!-- Header -->
+    <!-- Header -->
   <header class="sticky top-0 z-50 backdrop-blur bg-cream-50/80 border-b border-cream-200">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
       <a href="#" class="font-serif tracking-[0.25em] text-xl">THE WHITE BUTTERFLIES</a>
@@ -99,7 +102,7 @@
     </div>
   </section>
 
-  <!-- Collection -->
+    <!-- Collection -->
   <section id="collection" class="py-20 bg-white">
     <div class="max-w-6xl mx-auto px-4">
       <div class="flex items-end justify-between mb-10">
@@ -164,7 +167,7 @@
       <!-- Trust row -->
       <div class="mt-10 grid md:grid-cols-3 gap-6 text-sm text-butterfly-600">
         <div class="p-4 rounded-xl bg-cream-100">Orders captured instantly to our system.</div>
-        <div class="p-4 rounded-xl bg-cream-100">No external processors. Data‑minimal by design.</div>
+        <div class="p-4 rounded-xl bg-cream-100">We never store card data. No external processors.</div>
         <div class="p-4 rounded-xl bg-cream-100">Dispatch window: 3–5 business days.</div>
       </div>
     </div>
@@ -189,7 +192,7 @@
   <section id="checkout" class="py-20 hidden">
     <div class="max-w-3xl mx-auto px-4">
       <h2 class="font-serif text-3xl mb-6">Checkout</h2>
-      <p class="text-butterfly-600 mb-6">Place your order below. You’ll see an on-page confirmation when it’s captured.</p>
+      <p class="text-butterfly-600 mb-6">Place your order below. You’ll see an on‑page confirmation when it’s captured.</p>
 
       <!-- Order Summary -->
       <div id="summary" class="mb-8 p-4 bg-cream-50 rounded-xl border"></div>
@@ -209,15 +212,6 @@
 
       <!-- Post-submit instructions -->
       <div id="postSubmit" class="hidden mt-8 p-4 rounded-xl bg-cream-100"></div>
-      <!-- Fallback form to bypass fetch/CORS -->
-      <form id="fallbackForm" class="hidden"
-      method="POST"
-      action="https://script.google.com/macros/s/AKfycbw0xKTd-5Xqu8iAViWtpyJ7FCk0ZF93G-m7eneFJKvR-NqU7ppmgzG84W8gsO0xWoiA9Q/exec"
-      target="fallbackFrame">
-      <input type="hidden" name="payload" id="fallbackPayload">
-      </form>
-      <iframe name="fallbackFrame" style="display:none"></iframe>
-
     </div>
   </section>
 
@@ -264,10 +258,10 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // ---- Simple Cart ----
+    // ---- Simple Cart (no third-party) ----
     const CART_KEY = 'twb_cart_v1';
     const SHIPPING_FLAT = 6.95; // € — tweak as needed
-    const VAT_RATE = 0.21; // (unused if prices are VAT‑inclusive)
+    const VAT_RATE = 0.21; // 21% NL example — change per your pricing model
 
     const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
     const $ = (sel, ctx=document) => ctx.querySelector(sel);
@@ -357,44 +351,34 @@
       location.hash = '#checkout';
     });
 
-    // Handle order form submit — posts to your webhook
+    // Handle order form submit — composes email with order details
     $('#orderForm').addEventListener('submit', (e)=>{
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target).entries());
       const t = cart.totals();
       const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
+      const lines = cart.items.map(i=>`${i.qty} × ${i.name} — ${formatEUR(i.price*i.qty)}`).join('%0D%0A');
+      const body = `Order ID: ${orderId}%0D%0A%0D%0AItems:%0D%0A${lines}%0D%0A%0D%0ASubtotal: ${formatEUR(t.subtotal)}%0D%0AShipping: ${formatEUR(t.shipping)}%0D%0ATotal: ${formatEUR(t.total)}%0D%0A%0D%0AShipping to:%0D%0A${data.fullName}%0D%0A${data.address}%0D%0A${data.city} ${data.postcode}%0D%0A${data.country}%0D%0A%0D%0ANotes: ${data.notes||'-'}%0D%0A%0D%0APlease reply to confirm availability.`;
 
-      // Show confirmation UI
+      // EDIT THESE
+      
       $('#postSubmit').innerHTML = `
         <h3 class="font-serif text-2xl mb-2">Thanks, ${data.fullName}.</h3>
         <p class="text-butterfly-700">Your order <strong>${orderId}</strong> was received.</p>
         <p class="text-butterfly-600">You can download a copy of your order details below.</p>
         <div class="mt-4 flex gap-3 flex-wrap">
-          <button class="px-4 py-2 rounded-full border" id="downloadInvoice">Download Invoice (PDF)</button>
+          <button class="px-4 py-2 rounded-full border" id="downloadInvoice">Download Order PDF</button>
         </div>`;
+
       $('#postSubmit').classList.remove('hidden');
 
-      // ---- Server-side log (Google Apps Script webhook, CORS-safe) ----
-        const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzvJ_8nXWhP6vbGO8wMD5orGs0A4hcx8oHc5HWr0CPGU5xoqTLhXvr2mFd8cwtfneEzmA/exec';
-        const payload = { orderId, items: cart.items, totals: t, customer: data, timestamp: new Date().toISOString() };
-
-        // Fire-and-forget (opaque) to avoid CORS preflight
-        fetch(WEBHOOK_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        }).catch(() => {});
-        // Fallback: HTML form POST (works even if fetch/CORS is blocked)
-        try {
-          document.getElementById('fallbackPayload').value = JSON.stringify(payload);
-          document.getElementById('fallbackForm').submit();
-        } catch (_) {}
+      // Optional: clear cart after showing instructions
+      // cart.items = []; cart.save(); updateCartUI();
 
       // Generate simple PDF invoice using jsPDF (CDN)
       const addScript = (src) => new Promise(r=>{ const s=document.createElement('script'); s.src=src; s.onload=r; document.body.appendChild(s); });
       addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(()=>{
-        document.getElementById('downloadInvoice').addEventListener('click', ()=>{
+        $('#downloadInvoice').addEventListener('click', ()=>{
           const { jsPDF } = window.jspdf;
           const doc = new jsPDF();
           let y = 14;
@@ -410,12 +394,14 @@
           y+=2; doc.text(`Subtotal: ${formatEUR(t.subtotal)}`,14,y); y+=6;
           doc.text(`Shipping: ${formatEUR(t.shipping)}`,14,y); y+=6;
           doc.text(`Total: ${formatEUR(t.total)}`,14,y); y+=8;
-          doc.save(`Order_${orderId}.pdf`);
+          doc.save(`Invoice_${orderId}.pdf`);
         });
       });
 
-      // Optional: clear cart after submit
-      // cart.items = []; cart.save(); updateCartUI();
+      // ---- Server-side log (Google Apps Script webhook, CORS-safe) ----
+      const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxQ1S7eQTeDK51UueRsFlqnzRkfbSV0awIOaDFtLsg40t7gjYZJuIjEnfiHWKkAPIY5Mw/exec'; // replace after you deploy
+      const payload = { orderId, items: cart.items, totals: t, customer: data, timestamp: new Date().toISOString() };
+      fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }).then(()=>{}).catch(()=>{});
     });
 
     cart.load();
