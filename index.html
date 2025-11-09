@@ -426,19 +426,25 @@ $('#contactForm').addEventListener('submit', (e) => {
 
   const CONTACT_WEBHOOK = 'https://script.google.com/macros/s/AKfycbw7nUb9MbmkKWj0i49SYxYDdDlFHONT8_4h3bN1BXsA5INJiR8jGZ0lJObjMVFevzybJw/exec'; // same as your orders webhook
 
-  fetch(CONTACT_WEBHOOK, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(contactPayload)
-  })
-  .then(() => {
-    $('#contactStatus').textContent = 'Message sent successfully!';
-    e.target.reset();
+fetch(CONTACT_WEBHOOK, {
+  method: 'POST',
+  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+  body: JSON.stringify(contactPayload)
+})
+  .then(r => r.text())
+  .then(res => {
+    if (res.includes('ok')) { // ✅ checks for successful return
+      $('#contactStatus').textContent = 'Message sent successfully!';
+      e.target.reset();
+    } else {
+      $('#contactStatus').textContent = 'There was a problem sending your message.';
+    }
   })
   .catch(() => {
     $('#contactStatus').textContent = 'There was a problem sending your message.';
   });
 });
+
 
   </script>
 </body>
