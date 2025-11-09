@@ -231,6 +231,25 @@
     </div>
   </section>
 
+  <!-- CONTACT FORM -->
+<section id="contact" class="py-20 bg-cream-100">
+  <div class="max-w-3xl mx-auto px-4 text-center">
+    <h2 class="font-serif text-3xl mb-6">Get in Touch</h2>
+    <p class="text-butterfly-600 mb-8">Ask us anything about your order, our scents, or collaborations.</p>
+    <form id="contactForm" class="grid gap-4 text-left">
+      <input required name="fullName" placeholder="Full name" class="px-4 py-3 border rounded">
+      <input required type="email" name="email" placeholder="Email" class="px-4 py-3 border rounded">
+      <input required name="phone" placeholder="WhatsApp number" class="px-4 py-3 border rounded">
+      <textarea required name="message" placeholder="Your message" class="px-4 py-3 border rounded h-32"></textarea>
+      <button type="submit" class="mt-2 px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+        Send Message
+      </button>
+      <p id="contactStatus" class="text-sm text-butterfly-500 mt-2"></p>
+    </form>
+  </div>
+</section>
+
+
   <!-- Footer -->
   <footer class="py-10 text-center text-sm text-butterfly-500">
     <p>© <span id="year"></span> The White Butterflies</p>
@@ -389,6 +408,38 @@
 
     cart.load();
     updateCartUI();
+
+
+    
+    // ---- CONTACT FORM HANDLER ----
+$('#contactForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  const contactPayload = {
+    type: 'contact',
+    name: data.fullName,
+    email: data.email,
+    phone: data.phone,
+    message: data.message,
+    timestamp: new Date().toISOString(),
+  };
+
+  const CONTACT_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzp-hJtPyVktOBHs2-gLEZywXFDOClpZ2g04sSJ4xPnLknihNLCqxAI32oDqOivrcaN/exec'; // same as your orders webhook
+
+  fetch(CONTACT_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(contactPayload)
+  })
+  .then(() => {
+    $('#contactStatus').textContent = 'Message sent successfully!';
+    e.target.reset();
+  })
+  .catch(() => {
+    $('#contactStatus').textContent = 'There was a problem sending your message.';
+  });
+});
+
   </script>
 </body>
 </html>
