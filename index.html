@@ -399,7 +399,7 @@
       });
 
       // ---- Server-side log (Google Apps Script webhook, CORS-safe) ----
-      const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzp-hJtPyVktOBHs2-gLEZywXFDOClpZ2g04sSJ4xPnLknihNLCqxAI32oDqOivrcaN/exec'; // replace after you deploy
+      const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbw7nUb9MbmkKWj0i49SYxYDdDlFHONT8_4h3bN1BXsA5INJiR8jGZ0lJObjMVFevzybJw/exec'; // replace after you deploy
       const payload = { orderId, items: cart.items, totals: t, customer: data, timestamp: new Date().toISOString() };
       fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }).then(()=>{}).catch(()=>{});
 
