@@ -428,95 +428,99 @@ html { scroll-behavior: smooth; }
       
 
       // Generate simple PDF invoice using jsPDF (CDN)
-      const addScript = (src) => new Promise(r=>{ const s=document.createElement('script'); s.src=src; s.onload=r; document.body.appendChild(s); });
-      $('#downloadInvoice').addEventListener('click', ()=>{
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-
-  // COLORS
-  const cream = '#fff9ed';
-  const textColor = '#1e293b'; // butterfly-800
-  const gold = '#c69c34'; // cream-600
-
-  // BACKGROUND
-  doc.setFillColor(cream);
-  doc.rect(0, 0, 595, 842, 'F'); // full A4 background
-
-  // LOGO / HEADER
-  doc.setFont('Times', 'normal');
-  doc.setFontSize(20);
-  doc.setTextColor(textColor);
-  doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S', 65, 70);
-
-  // GOLD LINE
-  doc.setDrawColor(gold);
-  doc.setLineWidth(0.5);
-  doc.line(60, 85, 535, 85);
-
-  // INVOICE TITLE
-  doc.setFontSize(14);
-  doc.setTextColor(textColor);
-  doc.text('Order Confirmation', 65, 115);
-
-  // ORDER INFO
-  doc.setFontSize(11);
-  let y = 140;
-  doc.text(`Order ID: ${orderId}`, 65, y); y += 16;
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, 65, y); y += 30;
-
-  // CUSTOMER DETAILS
-  doc.setFontSize(12);
-  doc.text('Billing Information', 65, y); y += 14;
-  doc.setDrawColor(gold);
-  doc.line(65, y, 250, y); y += 14;
-  doc.setFontSize(11);
-  doc.text(`${data.fullName}`, 65, y); y += 14;
-  doc.text(`${data.address}`, 65, y); y += 14;
-  doc.text(`${data.city}, ${data.postcode}`, 65, y); y += 14;
-  doc.text(`${data.country}`, 65, y); y += 30;
-
-  // ITEMS SECTION
-  doc.setFontSize(12);
-  doc.text('Items', 65, y);
-  doc.line(65, y + 2, 250, y + 2);
-  y += 20;
-
-  cart.items.forEach(i => {
-    doc.setFontSize(11);
-    doc.text(`${i.qty} × ${i.name}`, 65, y);
-    doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
-    y += 16;
-  });
-
-  // TOTALS
-  y += 10;
-  doc.setDrawColor(gold);
-  doc.line(65, y, 535, y);
-  y += 20;
-  doc.setFontSize(12);
-  doc.text(`Subtotal: €${t.subtotal.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
-  doc.text(`Shipping: €${t.shipping.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
-  doc.text(`Total: €${t.total.toFixed(2)}`, 400, y, { align: 'right' });
-
-  // THANK YOU MESSAGE
-  y += 50;
-  doc.setDrawColor(gold);
-  doc.line(60, y - 10, 535, y - 10);
-  doc.setFontSize(12);
-  doc.text('Thank you for your purchase.', 65, y);
-  y += 20;
-  doc.setFontSize(11);
-  doc.text('We hope this fragrance brings you quiet joy and warmth.', 65, y);
-
-  // CONTACT INFO + FOOTER
-  y += 60;
-  doc.setFontSize(10);
-  doc.setTextColor('#475569'); // butterfly-600
-  doc.text('www.thewhitebutterflies.com', 65, y);
-  doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
-
-  doc.save(`Invoice_${orderId}.pdf`);
+// Load jsPDF first, then set up the listener
+const addScript = (src) => new Promise(r => {
+  const s = document.createElement('script');
+  s.src = src;
+  s.onload = r;
+  document.body.appendChild(s);
 });
+
+addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(() => {
+  console.log('jsPDF loaded');
+
+  // ✅ Set up the click event *after* jsPDF is available
+  document.getElementById('downloadInvoice').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      alert('jsPDF not loaded yet, please wait a moment and try again.');
+      return;
+    }
+
+    // 🧾 your branded invoice code here (everything from your message)
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+    const cream = '#fff9ed';
+    const textColor = '#1e293b';
+    const gold = '#c69c34';
+
+    doc.setFillColor(cream);
+    doc.rect(0, 0, 595, 842, 'F');
+
+    doc.setFont('Times', 'normal');
+    doc.setFontSize(20);
+    doc.setTextColor(textColor);
+    doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S', 65, 70);
+
+    doc.setDrawColor(gold);
+    doc.setLineWidth(0.5);
+    doc.line(60, 85, 535, 85);
+
+    doc.setFontSize(14);
+    doc.text('Order Confirmation', 65, 115);
+
+    doc.setFontSize(11);
+    let y = 140;
+    doc.text(`Order ID: ${orderId}`, 65, y); y += 16;
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 65, y); y += 30;
+
+    doc.setFontSize(12);
+    doc.text('Billing Information', 65, y); y += 14;
+    doc.line(65, y, 250, y); y += 14;
+    doc.setFontSize(11);
+    doc.text(`${data.fullName}`, 65, y); y += 14;
+    doc.text(`${data.address}`, 65, y); y += 14;
+    doc.text(`${data.city}, ${data.postcode}`, 65, y); y += 14;
+    doc.text(`${data.country}`, 65, y); y += 30;
+
+    doc.setFontSize(12);
+    doc.text('Items', 65, y);
+    doc.line(65, y + 2, 250, y + 2);
+    y += 20;
+
+    cart.items.forEach(i => {
+      doc.setFontSize(11);
+      doc.text(`${i.qty} × ${i.name}`, 65, y);
+      doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
+      y += 16;
+    });
+
+    y += 10;
+    doc.line(65, y, 535, y);
+    y += 20;
+    doc.setFontSize(12);
+    doc.text(`Subtotal: €${t.subtotal.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+    doc.text(`Shipping: €${t.shipping.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+    doc.text(`Total: €${t.total.toFixed(2)}`, 400, y, { align: 'right' });
+
+    y += 50;
+    doc.line(60, y - 10, 535, y - 10);
+    doc.setFontSize(12);
+    doc.text('Thank you for your purchase.', 65, y);
+    y += 20;
+    doc.setFontSize(11);
+    doc.text('We hope this fragrance brings you quiet joy and warmth.', 65, y);
+
+    y += 60;
+    doc.setFontSize(10);
+    doc.setTextColor('#475569');
+    doc.text('www.thewhitebutterflies.com', 65, y);
+    doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
+
+    doc.save(`Invoice_${orderId}.pdf`);
+  });
+});
+
 
       // addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(()=>{
       //   $('#downloadInvoice').addEventListener('click', ()=>{
