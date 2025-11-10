@@ -407,6 +407,9 @@ html { scroll-behavior: smooth; }
     // Handle order form submit — composes email with order details
     $('#orderForm').addEventListener('submit', (e)=>{
       e.preventDefault();
+      if (!cart.items.length) {
+        alert('Your cart is empty. Please add an item before placing an order.');
+      return;
       const data = Object.fromEntries(new FormData(e.target).entries());
       const t = cart.totals();
       const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
