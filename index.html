@@ -411,7 +411,39 @@
 
 
     
-    // ---- CONTACT FORM HANDLER ----
+//     // ---- CONTACT FORM HANDLER ----
+// $('#contactForm').addEventListener('submit', (e) => {
+//   e.preventDefault();
+//   const data = Object.fromEntries(new FormData(e.target).entries());
+//   const contactPayload = {
+//     type: 'contact',
+//     name: data.fullName,
+//     email: data.email,
+//     phone: data.phone,
+//     message: data.message,
+//     timestamp: new Date().toISOString(),
+//   };
+
+//   const CONTACT_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec'; // same as your orders webhook
+
+// fetch(CONTACT_WEBHOOK, {
+//   method: 'POST',
+//   headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+//   body: JSON.stringify(contactPayload)
+// })
+//   .then(r => r.text())
+//   .then(res => {
+//     if (res.includes('ok')) { // ✅ checks for successful return
+//       $('#contactStatus').textContent = 'Message sent successfully!';
+//       e.target.reset();
+//     } else {
+//       $('#contactStatus').textContent = 'There was a problem sending your message.';
+//     }
+//   })
+//   .catch(() => {
+//     $('#contactStatus').textContent = 'There was a problem sending your message.';
+//   });
+// });
 $('#contactForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
@@ -424,23 +456,20 @@ $('#contactForm').addEventListener('submit', (e) => {
     timestamp: new Date().toISOString(),
   };
 
-  const CONTACT_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec'; // same as your orders webhook
+  document.getElementById('contactPayload').value = JSON.stringify(contactPayload);
+  document.getElementById('contactFallback').submit();
 
-fetch(CONTACT_WEBHOOK, {
-  method: 'POST',
-  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-  body: JSON.stringify(contactPayload)
-})
-  .then(() => {
-    $('#contactStatus').textContent = 'Message sent successfully!';
-    e.target.reset();
-  })
-  .catch(() => {
-    $('#contactStatus').textContent = 'Message sent successfully!'; // fallback same message
-  });
-
-
+  $('#contactStatus').textContent = 'Message sent successfully!';
+  e.target.reset();
+});
 
   </script>
+<!-- Hidden fallback POST for contact (CORS-proof) -->
+<form id="contactFallback" method="POST"
+      action="https://script.google.com/macros/s/AKfycbw7nUb9MbmkKWj0i49SYxYDdDlFHONT8_4h3bN1BXsA5INJiR8jGZ0lJObjMVFevzybJw/exec"
+      target="contactFrame" class="hidden">
+  <input type="hidden" name="payload" id="contactPayload">
+</form>
+<iframe name="contactFrame" style="display:none"></iframe>
 </body>
 </html>
