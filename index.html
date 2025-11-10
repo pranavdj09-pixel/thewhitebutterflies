@@ -491,6 +491,20 @@ $('#contactForm').addEventListener('submit', (e) => {
   e.target.reset();
 });
 
+// Observe any element with the "fade-in" class
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target); // Animate only once
+      }
+    });
+  }, { threshold: 0.15 }); // triggers when 15% of the element is visible
+
+  document.querySelectorAll('.fade-in').forEach(el => {
+    observer.observe(el);
+  });
+    
   </script>
 <!-- Hidden fallback POST for contact (CORS-proof) -->
 <form id="contactFallback" method="POST"
@@ -499,5 +513,6 @@ $('#contactForm').addEventListener('submit', (e) => {
   <input type="hidden" name="payload" id="contactPayload">
 </form>
 <iframe name="contactFrame" style="display:none"></iframe>
+  
 </body>
 </html>
