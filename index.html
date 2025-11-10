@@ -84,8 +84,8 @@
 
   <!-- Hero -->
 <section class="relative overflow-hidden">
-  <div class="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-[1fr_1.3fr] gap-4 items-center">
-    <div>
+  <div class="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 items-center">
+    <div class="relative z-10">
       <h1 class="font-serif text-5xl md:text-6xl leading-tight mb-6 fade-in">
         Perfume for the moments you can’t explain—only feel.
       </h1>
@@ -101,11 +101,14 @@
         </a>
       </div>
     </div>
+
+    <!-- Overlapping hero image -->
     <div
-      class="relative h-[550px] md:h-[650px] bg-[url('./Website%20Main%20Pic.png')] bg-contain bg-right bg-no-repeat fade-in delay-3 transform scale-175 md:scale-150 origin-center">
+      class="absolute right-0 top-1/2 -translate-y-1/2 w-[800px] md:w-[950px] h-[700px] bg-[url('./Website%20Main%20Pic.png')] bg-contain bg-no-repeat fade-in delay-3 pointer-events-none">
     </div>
   </div>
 </section>
+
 
 
 
