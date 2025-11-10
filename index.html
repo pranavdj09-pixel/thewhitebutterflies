@@ -424,7 +424,7 @@ html { scroll-behavior: smooth; }
         </div>`;
 
       $('#postSubmit').classList.remove('hidden');
-      
+      const savedItems = [...cart.items]; // snapshot before clearing the cart
       
 
       // Generate simple PDF invoice using jsPDF (CDN)
@@ -488,7 +488,7 @@ addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
     doc.line(65, y + 2, 250, y + 2);
     y += 20;
 
-    cart.items.forEach(i => {
+    (savedItems || cart.items).forEach(i => {
       doc.setFontSize(11);
       doc.text(`${i.qty} × ${i.name}`, 65, y);
       doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
