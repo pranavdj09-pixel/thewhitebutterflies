@@ -52,15 +52,38 @@
   <!-- Lemon Squeezy embed script (enables overlay checkout) -->
   <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
   <style>
-    .fade-in { opacity: 0; transform: translateY(8px); animation: fadeIn 700ms ease forwards; }
-    .fade-in.visible {opacity: 1;transform: translateY(0); }
-    .fade-in.delay-1 { animation-delay: .1s }
-    .fade-in.delay-2 { animation-delay: .2s }
-    .fade-in.delay-3 { animation-delay: .3s }
-    @keyframes fadeIn { to { opacity: 1; transform: none } }
-    html {
-    scroll-behavior: smooth;
-    }
+    /* Start hidden/off-position */
+.fade-in {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Trigger the animation only when .visible is added */
+.fade-in.visible {
+  animation: fadeIn 700ms ease forwards;
+}
+
+/* Optional delays still work */
+.fade-in.delay-1 { animation-delay: .1s; }
+.fade-in.delay-2 { animation-delay: .2s; }
+.fade-in.delay-3 { animation-delay: .3s; }
+
+@keyframes fadeIn {
+  to { opacity: 1; transform: none; }
+}
+
+/* keep if you like */
+html { scroll-behavior: smooth; }
+
+/* accessibility nice-to-have */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .fade-in.visible {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
   </style>
 </head>
 <body class="bg-cream-50 text-butterfly-900 font-sans">
