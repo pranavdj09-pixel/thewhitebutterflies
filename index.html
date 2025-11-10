@@ -429,26 +429,115 @@ html { scroll-behavior: smooth; }
 
       // Generate simple PDF invoice using jsPDF (CDN)
       const addScript = (src) => new Promise(r=>{ const s=document.createElement('script'); s.src=src; s.onload=r; document.body.appendChild(s); });
-      addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(()=>{
-        $('#downloadInvoice').addEventListener('click', ()=>{
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF();
-          let y = 14;
-          doc.setFontSize(14); doc.text('Order Confirmation', 14, y); y+=8;
-          doc.setFontSize(11);
-          doc.text(`Order ID: ${orderId}`,14,y); y+=6;
-          doc.text(`Bill to: ${data.fullName}`,14,y); y+=6;
-          doc.text(`${data.address}`,14,y); y+=6;
-          doc.text(`${data.city} ${data.postcode}`,14,y); y+=6;
-          doc.text(`${data.country}`,14,y); y+=8;
-          doc.text('Items:',14,y); y+=6;
-          cart.items.forEach(i=>{ doc.text(`${i.qty} × ${i.name} — €${(i.price*i.qty).toFixed(2)}`, 14, y); y+=6; });
-          y+=2; doc.text(`Subtotal: ${formatEUR(t.subtotal)}`,14,y); y+=6;
-          doc.text(`Shipping: ${formatEUR(t.shipping)}`,14,y); y+=6;
-          doc.text(`Total: ${formatEUR(t.total)}`,14,y); y+=8;
-          doc.save(`Invoice_${orderId}.pdf`);
-        });
-      });
+      $('#downloadInvoice').addEventListener('click', ()=>{
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+  // COLORS
+  const cream = '#fff9ed';
+  const textColor = '#1e293b'; // butterfly-800
+  const gold = '#c69c34'; // cream-600
+
+  // BACKGROUND
+  doc.setFillColor(cream);
+  doc.rect(0, 0, 595, 842, 'F'); // full A4 background
+
+  // LOGO / HEADER
+  doc.setFont('Times', 'normal');
+  doc.setFontSize(20);
+  doc.setTextColor(textColor);
+  doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S', 65, 70);
+
+  // GOLD LINE
+  doc.setDrawColor(gold);
+  doc.setLineWidth(0.5);
+  doc.line(60, 85, 535, 85);
+
+  // INVOICE TITLE
+  doc.setFontSize(14);
+  doc.setTextColor(textColor);
+  doc.text('Order Confirmation', 65, 115);
+
+  // ORDER INFO
+  doc.setFontSize(11);
+  let y = 140;
+  doc.text(`Order ID: ${orderId}`, 65, y); y += 16;
+  doc.text(`Date: ${new Date().toLocaleDateString()}`, 65, y); y += 30;
+
+  // CUSTOMER DETAILS
+  doc.setFontSize(12);
+  doc.text('Billing Information', 65, y); y += 14;
+  doc.setDrawColor(gold);
+  doc.line(65, y, 250, y); y += 14;
+  doc.setFontSize(11);
+  doc.text(`${data.fullName}`, 65, y); y += 14;
+  doc.text(`${data.address}`, 65, y); y += 14;
+  doc.text(`${data.city}, ${data.postcode}`, 65, y); y += 14;
+  doc.text(`${data.country}`, 65, y); y += 30;
+
+  // ITEMS SECTION
+  doc.setFontSize(12);
+  doc.text('Items', 65, y);
+  doc.line(65, y + 2, 250, y + 2);
+  y += 20;
+
+  cart.items.forEach(i => {
+    doc.setFontSize(11);
+    doc.text(`${i.qty} × ${i.name}`, 65, y);
+    doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
+    y += 16;
+  });
+
+  // TOTALS
+  y += 10;
+  doc.setDrawColor(gold);
+  doc.line(65, y, 535, y);
+  y += 20;
+  doc.setFontSize(12);
+  doc.text(`Subtotal: €${t.subtotal.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+  doc.text(`Shipping: €${t.shipping.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+  doc.text(`Total: €${t.total.toFixed(2)}`, 400, y, { align: 'right' });
+
+  // THANK YOU MESSAGE
+  y += 50;
+  doc.setDrawColor(gold);
+  doc.line(60, y - 10, 535, y - 10);
+  doc.setFontSize(12);
+  doc.text('Thank you for your purchase.', 65, y);
+  y += 20;
+  doc.setFontSize(11);
+  doc.text('We hope this fragrance brings you quiet joy and warmth.', 65, y);
+
+  // CONTACT INFO + FOOTER
+  y += 60;
+  doc.setFontSize(10);
+  doc.setTextColor('#475569'); // butterfly-600
+  doc.text('www.thewhitebutterflies.com', 65, y);
+  doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
+
+  doc.save(`Invoice_${orderId}.pdf`);
+});
+
+      // addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(()=>{
+      //   $('#downloadInvoice').addEventListener('click', ()=>{
+      //     const { jsPDF } = window.jspdf;
+      //     const doc = new jsPDF();
+      //     let y = 14;
+      //     doc.setFontSize(14); doc.text('Order Confirmation', 14, y); y+=8;
+      //     doc.setFontSize(11);
+      //     doc.text(`Order ID: ${orderId}`,14,y); y+=6;
+      //     doc.text(`Bill to: ${data.fullName}`,14,y); y+=6;
+      //     doc.text(`${data.address}`,14,y); y+=6;
+      //     doc.text(`${data.city} ${data.postcode}`,14,y); y+=6;
+      //     doc.text(`${data.country}`,14,y); y+=8;
+      //     doc.text('Items:',14,y); y+=6;
+      //     cart.items.forEach(i=>{ doc.text(`${i.qty} × ${i.name} — €${(i.price*i.qty).toFixed(2)}`, 14, y); y+=6; });
+      //     y+=2; doc.text(`Subtotal: ${formatEUR(t.subtotal)}`,14,y); y+=6;
+      //     doc.text(`Shipping: ${formatEUR(t.shipping)}`,14,y); y+=6;
+      //     doc.text(`Total: ${formatEUR(t.total)}`,14,y); y+=8;
+      //     doc.save(`Invoice_${orderId}.pdf`);
+      //   });
+      // });
 
       // ---- Server-side log (Google Apps Script webhook, CORS-safe) ----
       const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec'; // replace after you deploy
@@ -461,41 +550,6 @@ html { scroll-behavior: smooth; }
     cart.load();
     updateCartUI();
 
-
-    
-//     // ---- CONTACT FORM HANDLER ----
-// $('#contactForm').addEventListener('submit', (e) => {
-//   e.preventDefault();
-//   const data = Object.fromEntries(new FormData(e.target).entries());
-//   const contactPayload = {
-//     type: 'contact',
-//     name: data.fullName,
-//     email: data.email,
-//     phone: data.phone,
-//     message: data.message,
-//     timestamp: new Date().toISOString(),
-//   };
-
-//   const CONTACT_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec'; // same as your orders webhook
-
-// fetch(CONTACT_WEBHOOK, {
-//   method: 'POST',
-//   headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-//   body: JSON.stringify(contactPayload)
-// })
-//   .then(r => r.text())
-//   .then(res => {
-//     if (res.includes('ok')) { // ✅ checks for successful return
-//       $('#contactStatus').textContent = 'Message sent successfully!';
-//       e.target.reset();
-//     } else {
-//       $('#contactStatus').textContent = 'There was a problem sending your message.';
-//     }
-//   })
-//   .catch(() => {
-//     $('#contactStatus').textContent = 'There was a problem sending your message.';
-//   });
-// });
 $('#contactForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
