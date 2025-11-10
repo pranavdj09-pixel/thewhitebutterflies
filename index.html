@@ -181,7 +181,7 @@ html { scroll-behavior: smooth; }
             <div class="flex items-center justify-between">
               <span class="text-lg">€<span>43</span></span>
               <button class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
-                data-id="nostalgia-30" data-name="Nostalgia No. 7 — Extrait 30 ml" data-price="120" data-size="30 ml">Add to Cart</button>
+                data-id="nostalgia-30" data-name="Nostalgia No. 7 — Extrait 30 ml" data-price="43" data-size="30 ml">Add to Cart</button>
             </div>
           </div>
         </article>
@@ -203,7 +203,7 @@ html { scroll-behavior: smooth; }
               <br>
               <span class="text-sm text-butterfly-500 ml-1">(when you select 1+1 offer)</span>
               <button class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
-                data-id="discovery-3x2" data-name="Discovery Set — 3×2 ml" data-price="25" data-size="Discovery">Add to Cart</button>
+                data-id="discovery-3x2" data-name="Discovery Roll-On Vial- Extrait 5 ml" data-price="3.5" data-size="Discovery">Add to Cart</button>
             </div>
           </div>
         </article>
@@ -313,8 +313,8 @@ html { scroll-behavior: smooth; }
 
     // ---- Simple Cart (no third-party) ----
     const CART_KEY = 'twb_cart_v1';
-    const SHIPPING_FLAT = 6.95; // € — tweak as needed
-    const VAT_RATE = 0.21; // 21% NL example — change per your pricing model
+    const SHIPPING_FLAT = 12.95; // € — tweak as needed
+    const VAT_RATE = 0.0; // 21% NL example — change per your pricing model
 
     const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
     const $ = (sel, ctx=document) => ctx.querySelector(sel);
