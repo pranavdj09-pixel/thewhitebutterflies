@@ -89,6 +89,20 @@ html { scroll-behavior: smooth; }
 #nostalgia-details.hidden {
   opacity: 0;
 }
+
+.nostalgia-panel {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* when opened */
+.nostalgia-panel.open {
+  max-height: 200px; /* adjust if you add more text */
+  opacity: 1;
+}
+    
   </style>
 </head>
 <body class="bg-cream-50 text-butterfly-900 font-sans">
@@ -186,7 +200,7 @@ html { scroll-behavior: smooth; }
     <p class="text-butterfly-600 mb-4">Intense Cashmere woods, vanillin veil, bright jasmine. Warm, skin-close, then a soft drift.</p>
 
     <!-- Hidden details -->
-    <div id="nostalgia-details" class="hidden text-butterfly-600 space-y-1 mb-4">
+    <div id="nostalgia-details" class="nostalgia-panel text-butterfly-600 space-y-1 mb-4">
       <p>Top: Jasmine Air</p>
       <p>Heart: Cashmere Woods</p>
       <p>Base: Vanilla, Dry Cedar</p>
@@ -333,13 +347,14 @@ html { scroll-behavior: smooth; }
 
   <script>
   // Toggle "Read more" section
-    const toggleBtn = document.getElementById('nostalgia-toggle');
-    const details = document.getElementById('nostalgia-details');
+  const toggleBtn = document.getElementById('nostalgia-toggle');
+  const details = document.getElementById('nostalgia-details');
   
-    toggleBtn.addEventListener('click', () => {
-      const isHidden = details.classList.toggle('hidden');
-      toggleBtn.textContent = isHidden ? 'Read more' : 'Read less';
-    });
+  toggleBtn.addEventListener('click', () => {
+    const isOpen = details.classList.toggle('open');
+    toggleBtn.textContent = isOpen ? 'Read less' : 'Read more';
+  });
+
     
     document.getElementById('year').textContent = new Date().getFullYear();
 
