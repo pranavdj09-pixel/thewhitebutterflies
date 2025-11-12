@@ -94,14 +94,21 @@ html { scroll-behavior: smooth; }
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.35s ease,
+    padding 0.35s ease;
 }
 
-/* when opened */
 .nostalgia-panel.open {
-  max-height: 200px; /* adjust if you add more text */
+  max-height: 300px; /* plenty of room for text */
   opacity: 1;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
+
     
   </style>
 </head>
