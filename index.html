@@ -168,29 +168,39 @@ html { scroll-behavior: smooth; }
       <div class="grid md:grid-cols-2 gap-8">
         <!-- Product card 1 -->
         <article class="group rounded-2xl overflow-hidden shadow-soft bg-cream-50">
-         <div class="h-72 bg-contain bg-no-repeat bg-center"
-       style="background-image: url('./Nostalgia.png');">
-          </div>
+  <div class="h-72 bg-contain bg-no-repeat bg-center"
+    style="background-image: url('./Nostalgia.png');">
+  </div>
 
-          <div class="p-5">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="font-serif text-2xl">Nostalgia No. 7 </h3><h2><b>(50 % Student Discount)</b></h3>
-              <span class="text-sm text-butterfly-500">Extrait (50 % Parfum) · 30 ml</span>
-            </div>
-            <p class="text-butterfly-600 mb-4"> Intense Cashmere woods, vanillin veil, bright jasmine. Warm, skin-close, then a soft drift.</p>
-            <p class="text-butterfly-600 mb-4"> Top: Jasmine Air</p>
-            <p class="text-butterfly-600 mb-4"> Heart: Cashmere Woods</p>
-            <p class="text-butterfly-600 mb-4"> Base: Vanilla, Dry Cedar</p>
-            <div class="flex items-center justify-between">
-              <span class="text-lg font-medium line-through text-butterfly-500">€43</span>
-              <span class="text-lg font-medium text-butterfly-900 ml-1">€21.49</span>
-              <br>
-              <span class="text-sm text-butterfly-500 ml-1">(for students)</span>
-              <button class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
-                data-id="nostalgia-30" data-name="Nostalgia No. 7 — Extrait 30 ml" data-price="43" data-size="30 ml">Add to Cart</button>
-            </div>
-          </div>
-        </article>
+  <div class="p-5">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="font-serif text-2xl">Nostalgia No. 7</h3>
+      <span class="text-sm text-butterfly-500">Extrait (50% Parfum) · 30 ml</span>
+    </div>
+    <p class="text-butterfly-600 mb-4">Intense Cashmere woods, vanillin veil, bright jasmine. Warm, skin-close, then a soft drift.</p>
+
+    <!-- Hidden details -->
+    <div id="nostalgia-details" class="hidden text-butterfly-600 space-y-1 mb-4">
+      <p>Top: Jasmine Air</p>
+      <p>Heart: Cashmere Woods</p>
+      <p>Base: Vanilla, Dry Cedar</p>
+    </div>
+
+    <!-- Read more link -->
+    <button id="nostalgia-toggle" class="text-butterfly-600 underline text-sm hover:text-butterfly-900 mb-4">
+      Read more
+    </button>
+
+    <div class="flex items-center justify-between">
+      <span class="text-lg font-medium line-through text-butterfly-500">€43</span>
+      <span class="text-lg font-medium text-butterfly-900 ml-1">€21.49</span>
+      <br>
+      <span class="text-sm text-butterfly-500 ml-1">(for students)</span>
+      <button class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+        data-id="nostalgia-30" data-name="Nostalgia No. 7 — Extrait 30 ml" data-price="21.49" data-size="30 ml">Add to Cart</button>
+    </div>
+  </div>
+</article>
 
         <!-- Product card 3 -->
         <article class="group rounded-2xl overflow-hidden shadow-soft bg-cream-50">
@@ -315,6 +325,15 @@ html { scroll-behavior: smooth; }
   </footer>
 
   <script>
+  // Toggle "Read more" section
+    const toggleBtn = document.getElementById('nostalgia-toggle');
+    const details = document.getElementById('nostalgia-details');
+  
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = details.classList.toggle('hidden');
+      toggleBtn.textContent = isHidden ? 'Read more' : 'Read less';
+    });
+    
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // ---- Simple Cart (no third-party) ----
