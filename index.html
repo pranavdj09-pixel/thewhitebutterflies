@@ -107,7 +107,6 @@ html { scroll-behavior: smooth; }
   </header>
 
 <!-- Hero -->
-<!-- Hero -->
 <section class="relative overflow-hidden">
   <div class="max-w-6xl mx-auto px-4 py-20 grid grid-cols-12 items-center gap-6">
     
@@ -129,14 +128,15 @@ html { scroll-behavior: smooth; }
       </div>
     </div>
 
-    <!-- Image (bigger, animated in sync) -->
-    <div class="col-span-12 md:col-span-7 flex justify-end fade-in delay-4">
-      <img
-        src="./Website%20Main%20Pic.png"
-        alt="Nostalgia No.7 illustration"
-        class="block w-full max-w-none md:scale-125 lg:scale-150 origin-right translate-x-2 md:translate-x-4 pointer-events-none select-none"
-      />
-    </div>
+    <!-- Image (only visible on md and up) -->
+<div class="col-span-12 md:col-span-7 flex justify-end fade-in delay-4 hidden md:flex">
+  <img
+    src="./Website%20Main%20Pic.png"
+    alt="Nostalgia No.7 illustration"
+    class="block w-full max-w-none md:scale-125 lg:scale-150 origin-right translate-x-2 md:translate-x-4 pointer-events-none select-none"
+  />
+</div>
+
 
   </div>
 </section>
