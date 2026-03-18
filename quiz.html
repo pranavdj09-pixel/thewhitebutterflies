@@ -251,8 +251,7 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    document.getElementById('quizForm').addEventListener('submit', function(e) {
+document.getElementById('quizForm').addEventListener('submit', function(e) {
   e.preventDefault();
 
   const feeling = document.querySelector('input[name="feeling"]:checked')?.value;
@@ -265,12 +264,34 @@
   const resultText = document.getElementById('resultText');
   const resultLink = document.getElementById('resultLink');
 
-  let result = {
-    title: 'Nostalgia No. 7',
-    text: 'You seem drawn to warmth, softness, and emotional depth. Nostalgia No. 7 is the closest fit: intimate woods, a vanilla veil, and a skin-close trail that feels personal rather than loud.',
-    link: 'index.html#collection'
-  };
+  // --- Build dynamic note profile ---
+  let notes = [];
 
+  // Feeling
+  if (feeling === 'warm') notes.push('ambroxan warmth', 'soft patchouli', 'clean musks');
+  if (feeling === 'fresh') notes.push('bergamot', 'lemon zest', 'lavender', 'clary sage');
+  if (feeling === 'bold') notes.push('dark chocolate', 'jasmine', 'rose', 'oud');
+
+  // Setting
+  if (setting === 'evening') notes.push('cashmere woods', 'clean florals');
+  if (setting === 'daylight') notes.push('citrus lift', 'ambroxan radiance', 'watery rose');
+  if (setting === 'night') notes.push('spice', 'leather', 'deep oud');
+
+  // Energy
+  if (energy === 'day') notes.push('fresh florals', 'skin musks');
+  if (energy === 'night') notes.push('spiced amber', 'leather facets');
+  if (energy === 'both') notes.push('lily of the valley', 'velvety vanilla');
+
+  // Season
+  if (season === 'spring') notes.push('airy florals', 'soft musks');
+  if (season === 'summer') notes.push('light citrus', 'fruity brightness', 'coconut nuance');
+  if (season === 'autumn') notes.push('vanilla', 'woody amber', 'nostalgic warmth');
+  if (season === 'winter') notes.push('dark amber', 'animalic depth', 'oud');
+
+  // Remove duplicates
+  notes = [...new Set(notes)];
+
+  // --- Scoring (same logic as before) ---
   const nostalgiaScore =
     (feeling === 'warm' ? 2 : 0) +
     (setting === 'evening' ? 1 : 0) +
@@ -291,22 +312,45 @@
     (energy === 'night' ? 1 : 0) +
     (season === 'winter' ? 1 : 0);
 
+  let result = {};
+
+  // --- Final result ---
   if (nostalgiaScore >= freshScore && nostalgiaScore >= boldScore) {
     result = {
       title: 'Nostalgia No. 7',
-      text: 'You seem drawn to warmth, softness, and emotional depth. Nostalgia No. 7 is the closest fit: intimate woods, a vanilla veil, and a skin-close trail that feels personal rather than loud.',
+      text: `You lean toward warmth, softness, and emotional depth.
+
+There’s something in your choices that prefers closeness over projection — a scent that sits near the skin before slowly revealing itself.
+
+Your profile points toward notes like ${notes.slice(0,5).join(', ')}.
+
+This is the kind of scent people don’t notice immediately — but remember long after.`,
       link: 'index.html#collection'
     };
-  } else if (freshScore >= nostalgiaScore && freshScore >= boldScore) {
+  } 
+  else if (freshScore >= nostalgiaScore && freshScore >= boldScore) {
     result = {
-      title: 'A Fresher Signature Direction',
-      text: 'You seem better suited to something brighter, cleaner, and more effortless. Your ideal signature would likely lean airy, luminous, and quietly uplifting rather than dense or heavy.',
+      title: 'A Luminous Signature',
+      text: `You gravitate toward clarity, light, and effortless presence.
+
+There’s a sense of openness in your choices — something clean, breathable, and quietly put together.
+
+Your profile suggests notes like ${notes.slice(0,5).join(', ')}.
+
+Not heavy. Not overwhelming. Just precise, fresh, and naturally you.`,
       link: 'index.html#contact'
     };
-  } else {
+  } 
+  else {
     result = {
-      title: 'A Darker Signature Direction',
-      text: 'You seem to want something more magnetic and assertive. Your signature likely sits closer to depth, contrast, evening presence, and a more pronounced sensual trail.',
+      title: 'A Deeper Signature',
+      text: `You lean toward contrast, depth, and something a little more magnetic.
+
+There’s intention in your choices — not just to be pleasant, but to be felt.
+
+Your profile points toward notes like ${notes.slice(0,5).join(', ')}.
+
+This is the kind of scent that enters a room with you — and lingers after.`,
       link: 'index.html#contact'
     };
   }
@@ -318,6 +362,7 @@
   resultBox.classList.remove('hidden');
   resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
+    
   </script>
 </body>
 </html>
