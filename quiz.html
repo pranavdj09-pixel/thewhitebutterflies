@@ -81,7 +81,7 @@
   <section class="pb-20">
     <div class="max-w-3xl mx-auto px-4">
       <div class="bg-white rounded-2xl shadow-soft p-6 md:p-8">
-        <form id="quizForm" class="space-y-8">
+        <!-- <form id="quizForm" class="space-y-8">
 
           <div>
             <label class="block font-medium mb-3">1. What feeling do you want your scent to leave behind?</label>
@@ -142,7 +142,91 @@
               Show My Result
             </button>
           </div>
-        </form>
+        </form> -->
+        <form id="quizForm" class="space-y-8">
+
+  <div>
+    <label class="block font-medium mb-3">1. What feeling do you want your scent to leave behind?</label>
+    <div class="grid gap-3">
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="feeling" value="warm" class="mr-2" required>
+        Warm, intimate, comforting
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="feeling" value="fresh" class="mr-2">
+        Fresh, clean, effortless
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="feeling" value="bold" class="mr-2">
+        Magnetic, bold, noticeable
+      </label>
+    </div>
+  </div>
+
+  <div>
+    <label class="block font-medium mb-3">2. Which setting feels most like you?</label>
+    <div class="grid gap-3">
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="setting" value="evening" class="mr-2" required>
+        Soft evening light, quiet conversation
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="setting" value="daylight" class="mr-2">
+        Open windows, daylight, clean air
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="setting" value="night" class="mr-2">
+        Night out, dark clothes, a little mystery
+      </label>
+    </div>
+  </div>
+
+  <div>
+    <label class="block font-medium mb-3">3. Are you more of a day person or a night person?</label>
+    <div class="grid gap-3">
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="energy" value="day" class="mr-2" required>
+        Day person — light, clarity, fresh starts
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="energy" value="night" class="mr-2">
+        Night person — depth, calm, slow intensity
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="energy" value="both" class="mr-2">
+        Somewhere in between
+      </label>
+    </div>
+  </div>
+
+  <div>
+    <label class="block font-medium mb-3">4. Which season feels most like you?</label>
+    <div class="grid gap-3">
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="season" value="spring" class="mr-2" required>
+        Spring — airy, alive, soft brightness
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="season" value="summer" class="mr-2">
+        Summer — radiant, easy, sun-warmed
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="season" value="autumn" class="mr-2">
+        Autumn — warm, nostalgic, textured
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="season" value="winter" class="mr-2">
+        Winter — quiet, elegant, deep
+      </label>
+    </div>
+  </div>
+
+  <div class="pt-2">
+    <button type="submit" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+      Show My Result
+    </button>
+  </div>
+</form>
 
         <div id="quizResult" class="hidden mt-10 p-6 rounded-2xl bg-cream-50 border border-cream-200">
           <p class="text-sm uppercase tracking-[0.2em] text-butterfly-500 mb-2">Your result</p>
@@ -169,61 +253,71 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     document.getElementById('quizForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const feeling = document.querySelector('input[name="feeling"]:checked')?.value;
-      const setting = document.querySelector('input[name="setting"]:checked')?.value;
-      const materials = document.querySelector('input[name="materials"]:checked')?.value;
+  const feeling = document.querySelector('input[name="feeling"]:checked')?.value;
+  const setting = document.querySelector('input[name="setting"]:checked')?.value;
+  const energy = document.querySelector('input[name="energy"]:checked')?.value;
+  const season = document.querySelector('input[name="season"]:checked')?.value;
 
-      const resultBox = document.getElementById('quizResult');
-      const resultTitle = document.getElementById('resultTitle');
-      const resultText = document.getElementById('resultText');
-      const resultLink = document.getElementById('resultLink');
+  const resultBox = document.getElementById('quizResult');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultText = document.getElementById('resultText');
+  const resultLink = document.getElementById('resultLink');
 
-      let result = {
-        title: 'Nostalgia No. 7',
-        text: 'You lean toward warmth, softness, and intimacy. A scent like Nostalgia No. 7 fits naturally: cashmere woods, vanilla warmth, and a quiet aura that stays close before drifting outward.',
-        link: 'index.html#collection'
-      };
+  let result = {
+    title: 'Nostalgia No. 7',
+    text: 'You seem drawn to warmth, softness, and emotional depth. Nostalgia No. 7 is the closest fit: intimate woods, a vanilla veil, and a skin-close trail that feels personal rather than loud.',
+    link: 'index.html#collection'
+  };
 
-      if (
-        (feeling === 'warm' && materials === 'woods') ||
-        (setting === 'evening' && materials === 'woods')
-      ) {
-        result = {
-          title: 'Nostalgia No. 7',
-          text: 'You seem drawn to warmth, softness, and emotional depth. Nostalgia No. 7 is the closest fit: intimate woods, vanilla veil, and a skin-close trail that feels personal rather than loud.',
-          link: 'index.html#collection'
-        };
-      } else if (
-        feeling === 'fresh' ||
-        setting === 'daylight' ||
-        materials === 'citrus'
-      ) {
-        result = {
-          title: 'A Fresh Signature Direction',
-          text: 'You seem better suited to something brighter, cleaner, and more effortless. Your ideal signature would likely lean citrus, airy floral, or transparent woods rather than heavy sweetness.',
-          link: 'index.html#contact'
-        };
-      } else if (
-        feeling === 'bold' ||
-        setting === 'night' ||
-        materials === 'spice'
-      ) {
-        result = {
-          title: 'A Darker Signature Direction',
-          text: 'You seem to want something more magnetic and assertive. Your signature likely sits closer to spice, amber, darker woods, or a more pronounced sensual trail.',
-          link: 'index.html#contact'
-        };
-      }
+  const nostalgiaScore =
+    (feeling === 'warm' ? 2 : 0) +
+    (setting === 'evening' ? 1 : 0) +
+    (energy === 'night' ? 1 : 0) +
+    (season === 'autumn' ? 2 : 0) +
+    (season === 'winter' ? 1 : 0);
 
-      resultTitle.textContent = result.title;
-      resultText.textContent = result.text;
-      resultLink.href = result.link;
+  const freshScore =
+    (feeling === 'fresh' ? 2 : 0) +
+    (setting === 'daylight' ? 1 : 0) +
+    (energy === 'day' ? 1 : 0) +
+    (season === 'spring' ? 2 : 0) +
+    (season === 'summer' ? 1 : 0);
 
-      resultBox.classList.remove('hidden');
-      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  const boldScore =
+    (feeling === 'bold' ? 2 : 0) +
+    (setting === 'night' ? 2 : 0) +
+    (energy === 'night' ? 1 : 0) +
+    (season === 'winter' ? 1 : 0);
+
+  if (nostalgiaScore >= freshScore && nostalgiaScore >= boldScore) {
+    result = {
+      title: 'Nostalgia No. 7',
+      text: 'You seem drawn to warmth, softness, and emotional depth. Nostalgia No. 7 is the closest fit: intimate woods, a vanilla veil, and a skin-close trail that feels personal rather than loud.',
+      link: 'index.html#collection'
+    };
+  } else if (freshScore >= nostalgiaScore && freshScore >= boldScore) {
+    result = {
+      title: 'A Fresher Signature Direction',
+      text: 'You seem better suited to something brighter, cleaner, and more effortless. Your ideal signature would likely lean airy, luminous, and quietly uplifting rather than dense or heavy.',
+      link: 'index.html#contact'
+    };
+  } else {
+    result = {
+      title: 'A Darker Signature Direction',
+      text: 'You seem to want something more magnetic and assertive. Your signature likely sits closer to depth, contrast, evening presence, and a more pronounced sensual trail.',
+      link: 'index.html#contact'
+    };
+  }
+
+  resultTitle.textContent = result.title;
+  resultText.textContent = result.text;
+  resultLink.href = result.link;
+
+  resultBox.classList.remove('hidden');
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
   </script>
 </body>
 </html>
