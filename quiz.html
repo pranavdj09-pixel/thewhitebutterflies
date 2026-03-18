@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signature Scent Quiz — The White Butterflies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            butterfly: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            },
+            cream: {
+              50: '#fff9ed',
+              100: '#fef3d9',
+              200: '#fce7b3',
+              300: '#fbdb8d',
+              400: '#f9cf67',
+              500: '#f8c341',
+              600: '#c69c34',
+              700: '#947527',
+              800: '#634e1a',
+              900: '#31270d',
+            },
+          },
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'ui-serif', 'Georgia', 'serif'],
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(0,0,0,0.08)'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-cream-50 text-butterfly-900 font-sans">
+
+  <header class="sticky top-0 z-50 backdrop-blur bg-cream-50/80 border-b border-cream-200">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="index.html" class="font-serif tracking-[0.25em] text-xl">THE WHITE BUTTERFLIES</a>
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="index.html#story" class="hover:opacity-70">Story</a>
+        <a href="index.html#collection" class="hover:opacity-70">Collection</a>
+        <a href="quiz.html" class="hover:opacity-70">Signature Scent Quiz</a>
+        <a href="index.html#contact" class="hover:opacity-70">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="py-20">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h1 class="font-serif text-5xl md:text-6xl leading-tight mb-6">
+        Answer a 30 second quiz to find your signature scent.
+      </h1>
+      <p class="text-butterfly-600 text-lg max-w-2xl mx-auto mb-4">
+        No hiding behind mailing lists. Just a few quick questions, and we’ll point you toward the scent profile that fits you best.
+      </p>
+      <p class="text-butterfly-500">
+        If you want something fully personal, you can request a bespoke signature afterwards.
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-20">
+    <div class="max-w-3xl mx-auto px-4">
+      <div class="bg-white rounded-2xl shadow-soft p-6 md:p-8">
+        <form id="quizForm" class="space-y-8">
+
+          <div>
+            <label class="block font-medium mb-3">1. What feeling do you want your scent to leave behind?</label>
+            <div class="grid gap-3">
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="feeling" value="warm" class="mr-2" required>
+                Warm, intimate, comforting
+              </label>
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="feeling" value="fresh" class="mr-2">
+                Fresh, clean, effortless
+              </label>
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="feeling" value="bold" class="mr-2">
+                Magnetic, bold, noticeable
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-3">2. Which setting feels most like you?</label>
+            <div class="grid gap-3">
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="setting" value="evening" class="mr-2" required>
+                Soft evening light, quiet conversation
+              </label>
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="setting" value="daylight" class="mr-2">
+                Open windows, daylight, clean air
+              </label>
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="setting" value="night" class="mr-2">
+                Night out, dark clothes, a little mystery
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-3">3. Which materials pull you in most?</label>
+            <div class="grid gap-3">
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="materials" value="woods" class="mr-2" required>
+                Woods, vanilla, soft skin warmth
+              </label>
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="materials" value="citrus" class="mr-2">
+                Citrus, airy florals, brightness
+              </label>
+              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+                <input type="radio" name="materials" value="spice" class="mr-2">
+                Spice, amber, darker depth
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <button type="submit" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+              Show My Result
+            </button>
+          </div>
+        </form>
+
+        <div id="quizResult" class="hidden mt-10 p-6 rounded-2xl bg-cream-50 border border-cream-200">
+          <p class="text-sm uppercase tracking-[0.2em] text-butterfly-500 mb-2">Your result</p>
+          <h2 id="resultTitle" class="font-serif text-3xl mb-3"></h2>
+          <p id="resultText" class="text-butterfly-700 mb-6"></p>
+          <div class="flex flex-wrap gap-3">
+            <a id="resultLink" href="index.html#collection" class="px-5 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+              View Recommendation
+            </a>
+            <a href="index.html#contact" class="px-5 py-3 rounded-full border border-butterfly-900/20 hover:bg-white">
+              Request Something More Personal
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-10 text-center text-sm text-butterfly-500">
+    <p>© <span id="year"></span> The White Butterflies</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const feeling = document.querySelector('input[name="feeling"]:checked')?.value;
+      const setting = document.querySelector('input[name="setting"]:checked')?.value;
+      const materials = document.querySelector('input[name="materials"]:checked')?.value;
+
+      const resultBox = document.getElementById('quizResult');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultText = document.getElementById('resultText');
+      const resultLink = document.getElementById('resultLink');
+
+      let result = {
+        title: 'Nostalgia No. 7',
+        text: 'You lean toward warmth, softness, and intimacy. A scent like Nostalgia No. 7 fits naturally: cashmere woods, vanilla warmth, and a quiet aura that stays close before drifting outward.',
+        link: 'index.html#collection'
+      };
+
+      if (
+        (feeling === 'warm' && materials === 'woods') ||
+        (setting === 'evening' && materials === 'woods')
+      ) {
+        result = {
+          title: 'Nostalgia No. 7',
+          text: 'You seem drawn to warmth, softness, and emotional depth. Nostalgia No. 7 is the closest fit: intimate woods, vanilla veil, and a skin-close trail that feels personal rather than loud.',
+          link: 'index.html#collection'
+        };
+      } else if (
+        feeling === 'fresh' ||
+        setting === 'daylight' ||
+        materials === 'citrus'
+      ) {
+        result = {
+          title: 'A Fresh Signature Direction',
+          text: 'You seem better suited to something brighter, cleaner, and more effortless. Your ideal signature would likely lean citrus, airy floral, or transparent woods rather than heavy sweetness.',
+          link: 'index.html#contact'
+        };
+      } else if (
+        feeling === 'bold' ||
+        setting === 'night' ||
+        materials === 'spice'
+      ) {
+        result = {
+          title: 'A Darker Signature Direction',
+          text: 'You seem to want something more magnetic and assertive. Your signature likely sits closer to spice, amber, darker woods, or a more pronounced sensual trail.',
+          link: 'index.html#contact'
+        };
+      }
+
+      resultTitle.textContent = result.title;
+      resultText.textContent = result.text;
+      resultLink.href = result.link;
+
+      resultBox.classList.remove('hidden');
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  </script>
+</body>
+</html>
