@@ -413,17 +413,18 @@ html { scroll-behavior: smooth; }
   </footer>
 
   <script>
-  // Toggle "Read more" section
-  const toggleBtn = document.getElementById('nostalgia-toggle');
-  const details = document.getElementById('nostalgia-details');
-  
-  toggleBtn.addEventListener('click', () => {
-    const isOpen = details.classList.toggle('open');
-    toggleBtn.textContent = isOpen ? 'Read less' : 'Read more';
-  });
+  // Toggle "Read more" section for collection card
+  const collectionToggle = document.getElementById('collection-toggle');
+  const collectionDetails = document.getElementById('collection-details');
 
-    
-    document.getElementById('year').textContent = new Date().getFullYear();
+  if (collectionToggle && collectionDetails) {
+    collectionToggle.addEventListener('click', () => {
+      const isOpen = collectionDetails.classList.toggle('open');
+      collectionToggle.textContent = isOpen ? 'Read less' : 'Read more';
+    });
+  }
+
+  document.getElementById('year').textContent = new Date().getFullYear();
 
     // ---- Simple Cart (no third-party) ----
     const CART_KEY = 'twb_cart_v1';
