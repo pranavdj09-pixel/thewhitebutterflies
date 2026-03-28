@@ -660,231 +660,122 @@ html { scroll-behavior: smooth; }
     });
 
     // Handle order form submit — composes email with order details
-    $('#orderForm').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      if (!cart.items.length) {
-        alert('Your cart is empty. Please add an item before placing an order.');
-      return;
-      const data = Object.fromEntries(new FormData(e.target).entries());
-      const t = cart.totals();
-      const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
-      const lines = cart.items.map(i=>`${i.qty} × ${i.name} — ${formatEUR(i.price*i.qty)}`).join('%0D%0A');
-      const body = `Order ID: ${orderId}%0D%0A%0D%0AItems:%0D%0A${lines}%0D%0A%0D%0ASubtotal: ${formatEUR(t.subtotal)}%0D%0AShipping: ${formatEUR(t.shipping)}%0D%0ATotal: ${formatEUR(t.total)}%0D%0A%0D%0AShipping to:%0D%0A${data.fullName}%0D%0A${data.address}%0D%0A${data.city} ${data.postcode}%0D%0A${data.country}%0D%0A%0D%0ANotes: ${data.notes||'-'}%0D%0A%0D%0APlease reply to confirm availability.`;
+    $('#orderForm').addEventListener('submit', (e) => {
+  e.preventDefault();
 
-      // EDIT THESE
-      
-      $('#postSubmit').innerHTML = `
-        <h3 class="font-serif text-2xl mb-2">Thanks, ${data.fullName}.</h3>
-        <p class="text-butterfly-700">Your order <strong>${orderId}</strong> was received.</p>
-        <p class="text-butterfly-600">You can download a copy of your order details below.</p>
-        <div class="mt-4 flex gap-3 flex-wrap">
-          <button class="px-4 py-2 rounded-full border" id="downloadInvoice">Download Order PDF</button>
-        </div>`;
+  if (!cart.items.length) {
+    alert('Your cart is empty. Please add an item before placing an order.');
+    return;
+  }
 
-      $('#postSubmit').classList.remove('hidden');
-      const savedItems = [...cart.items]; // snapshot before clearing the cart
-      
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  const t = cart.totals();
+  const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
 
-      // Generate simple PDF invoice using jsPDF (CDN)
-// Load jsPDF first, then set up the listener
-loadJsPdf().then(() => {
-  document.getElementById('downloadInvoice').addEventListener('click', () => {
-    const { jsPDF } = window.jspdf;
-    if (!jsPDF) {
-      alert('Invoice generator not loaded yet. Please try again.');
-      return;
-    }
+  $('#postSubmit').innerHTML = `
+    <h3 class="font-serif text-2xl mb-2">Thanks, ${data.fullName}.</h3>
+    <p class="text-butterfly-700">Your order <strong>${orderId}</strong> was received.</p>
+    <p class="text-butterfly-600">You can download a copy of your order details below.</p>
+    <div class="mt-4 flex gap-3 flex-wrap">
+      <button class="px-4 py-2 rounded-full border" id="downloadInvoice">Download Order PDF</button>
+    </div>`;
 
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  $('#postSubmit').classList.remove('hidden');
+  const savedItems = [...cart.items];
 
-    const cream = '#fff9ed';
-    const textColor = '#1e293b';
-    const gold = '#c69c34';
+  loadJsPdf().then(() => {
+    document.getElementById('downloadInvoice').addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      if (!jsPDF) {
+        alert('Invoice generator not loaded yet. Please try again.');
+        return;
+      }
 
-    doc.setFillColor(cream);
-    doc.rect(0, 0, 595, 842, 'F');
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 
-    doc.setFont('Times', 'normal');
-    doc.setFontSize(20);
-    doc.setTextColor(textColor);
-    doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S', 65, 70);
+      const cream = '#fff9ed';
+      const textColor = '#1e293b';
+      const gold = '#c69c34';
 
-    doc.setDrawColor(gold);
-    doc.setLineWidth(0.5);
-    doc.line(60, 85, 535, 85);
+      doc.setFillColor(cream);
+      doc.rect(0, 0, 595, 842, 'F');
 
-    doc.setFontSize(14);
-    doc.text('Order Confirmation', 65, 115);
+      doc.setFont('Times', 'normal');
+      doc.setFontSize(20);
+      doc.setTextColor(textColor);
+      doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S', 65, 70);
 
-    doc.setFontSize(11);
-    let y = 140;
-    doc.text(`Order ID: ${orderId}`, 65, y); y += 16;
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 65, y); y += 30;
+      doc.setDrawColor(gold);
+      doc.setLineWidth(0.5);
+      doc.line(60, 85, 535, 85);
 
-    doc.setFontSize(12);
-    doc.text('Billing Information', 65, y); y += 14;
-    doc.line(65, y, 250, y); y += 14;
-    doc.setFontSize(11);
-    doc.text(`${data.fullName}`, 65, y); y += 14;
-    doc.text(`${data.address}`, 65, y); y += 14;
-    doc.text(`${data.city}, ${data.postcode}`, 65, y); y += 14;
-    doc.text(`${data.country}`, 65, y); y += 30;
+      doc.setFontSize(14);
+      doc.text('Order Confirmation', 65, 115);
 
-    doc.setFontSize(12);
-    doc.text('Items', 65, y);
-    doc.line(65, y + 2, 250, y + 2);
-    y += 20;
-
-    savedItems.forEach(i => {
       doc.setFontSize(11);
-      doc.text(`${i.qty} × ${i.name}`, 65, y);
-      doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
-      y += 16;
-    });
+      let y = 140;
+      doc.text(`Order ID: ${orderId}`, 65, y); y += 16;
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 65, y); y += 30;
 
-    y += 10;
-    doc.line(65, y, 535, y);
-    y += 20;
-    doc.setFontSize(12);
-    doc.text(`Subtotal: €${t.subtotal.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
-    doc.text(`Shipping: €${t.shipping.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
-    doc.text(`Total: €${t.total.toFixed(2)}`, 400, y, { align: 'right' });
-
-    y += 50;
-    doc.line(60, y - 10, 535, y - 10);
-    doc.setFontSize(12);
-    doc.text('Thank you for your purchase.', 65, y);
-    y += 20;
-    doc.setFontSize(11);
-    doc.text('We hope this fragrance brings you quiet joy and warmth.', 65, y);
-
-    y += 60;
-    doc.setFontSize(10);
-    doc.setTextColor('#475569');
-    doc.text('www.thewhitebutterflies.com', 65, y);
-    doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
-
-    doc.save(`Invoice_${orderId}.pdf`);
-  }, { once: true });
-});
-
-
-  
-  // ✅ Set up the click event *after* jsPDF is available
-  document.getElementById('downloadInvoice').addEventListener('click', () => {
-    const { jsPDF } = window.jspdf;
-    if (!jsPDF) {
-      alert('jsPDF not loaded yet, please wait a moment and try again.');
-      return;
-    }
-
-    // 🧾 your branded invoice code here (everything from your message)
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-
-    const cream = '#fff9ed';
-    const textColor = '#1e293b';
-    const gold = '#c69c34';
-
-    doc.setFillColor(cream);
-    doc.rect(0, 0, 595, 842, 'F');
-
-    doc.setFont('Times', 'normal');
-    doc.setFontSize(20);
-    doc.setTextColor(textColor);
-    doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S', 65, 70);
-
-    doc.setDrawColor(gold);
-    doc.setLineWidth(0.5);
-    doc.line(60, 85, 535, 85);
-
-    doc.setFontSize(14);
-    doc.text('Order Confirmation', 65, 115);
-
-    doc.setFontSize(11);
-    let y = 140;
-    doc.text(`Order ID: ${orderId}`, 65, y); y += 16;
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 65, y); y += 30;
-
-    doc.setFontSize(12);
-    doc.text('Billing Information', 65, y); y += 14;
-    doc.line(65, y, 250, y); y += 14;
-    doc.setFontSize(11);
-    doc.text(`${data.fullName}`, 65, y); y += 14;
-    doc.text(`${data.address}`, 65, y); y += 14;
-    doc.text(`${data.city}, ${data.postcode}`, 65, y); y += 14;
-    doc.text(`${data.country}`, 65, y); y += 30;
-
-    doc.setFontSize(12);
-    doc.text('Items', 65, y);
-    doc.line(65, y + 2, 250, y + 2);
-    y += 20;
-
-    (savedItems || cart.items).forEach(i => {
+      doc.setFontSize(12);
+      doc.text('Billing Information', 65, y); y += 14;
+      doc.line(65, y, 250, y); y += 14;
       doc.setFontSize(11);
-      doc.text(`${i.qty} × ${i.name}`, 65, y);
-      doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
-      y += 16;
-    });
+      doc.text(`${data.fullName}`, 65, y); y += 14;
+      doc.text(`${data.address}`, 65, y); y += 14;
+      doc.text(`${data.city}, ${data.postcode}`, 65, y); y += 14;
+      doc.text(`${data.country}`, 65, y); y += 30;
 
-    y += 10;
-    doc.line(65, y, 535, y);
-    y += 20;
-    doc.setFontSize(12);
-    doc.text(`Subtotal: €${t.subtotal.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
-    doc.text(`Shipping: €${t.shipping.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
-    doc.text(`Total: €${t.total.toFixed(2)}`, 400, y, { align: 'right' });
+      doc.setFontSize(12);
+      doc.text('Items', 65, y);
+      doc.line(65, y + 2, 250, y + 2);
+      y += 20;
 
-    y += 50;
-    doc.line(60, y - 10, 535, y - 10);
-    doc.setFontSize(12);
-    doc.text('Thank you for your purchase.', 65, y);
-    y += 20;
-    doc.setFontSize(11);
-    doc.text('We hope this fragrance brings you quiet joy and warmth.', 65, y);
+      savedItems.forEach(i => {
+        doc.setFontSize(11);
+        doc.text(`${i.qty} × ${i.name}`, 65, y);
+        doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
+        y += 16;
+      });
 
-    y += 60;
-    doc.setFontSize(10);
-    doc.setTextColor('#475569');
-    doc.text('www.thewhitebutterflies.com', 65, y);
-    doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
+      y += 10;
+      doc.line(65, y, 535, y);
+      y += 20;
+      doc.setFontSize(12);
+      doc.text(`Subtotal: €${t.subtotal.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+      doc.text(`Shipping: €${t.shipping.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+      doc.text(`Total: €${t.total.toFixed(2)}`, 400, y, { align: 'right' });
 
-    doc.save(`Invoice_${orderId}.pdf`);
+      y += 50;
+      doc.line(60, y - 10, 535, y - 10);
+      doc.setFontSize(12);
+      doc.text('Thank you for your purchase.', 65, y);
+      y += 20;
+      doc.setFontSize(11);
+      doc.text('We hope this fragrance brings you quiet joy and warmth.', 65, y);
+
+      y += 60;
+      doc.setFontSize(10);
+      doc.setTextColor('#475569');
+      doc.text('www.thewhitebutterflies.com', 65, y);
+      doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
+
+      doc.save(`Invoice_${orderId}.pdf`);
+    }, { once: true });
   });
+
+  const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec';
+  const payload = { orderId, items: cart.items, totals: t, customer: data, timestamp: new Date().toISOString() };
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).then(() => {}).catch(() => {});
+
+  cart.items = [];
+  cart.save();
+  updateCartUI();
 });
-
-
-      // addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(()=>{
-      //   $('#downloadInvoice').addEventListener('click', ()=>{
-      //     const { jsPDF } = window.jspdf;
-      //     const doc = new jsPDF();
-      //     let y = 14;
-      //     doc.setFontSize(14); doc.text('Order Confirmation', 14, y); y+=8;
-      //     doc.setFontSize(11);
-      //     doc.text(`Order ID: ${orderId}`,14,y); y+=6;
-      //     doc.text(`Bill to: ${data.fullName}`,14,y); y+=6;
-      //     doc.text(`${data.address}`,14,y); y+=6;
-      //     doc.text(`${data.city} ${data.postcode}`,14,y); y+=6;
-      //     doc.text(`${data.country}`,14,y); y+=8;
-      //     doc.text('Items:',14,y); y+=6;
-      //     cart.items.forEach(i=>{ doc.text(`${i.qty} × ${i.name} — €${(i.price*i.qty).toFixed(2)}`, 14, y); y+=6; });
-      //     y+=2; doc.text(`Subtotal: ${formatEUR(t.subtotal)}`,14,y); y+=6;
-      //     doc.text(`Shipping: ${formatEUR(t.shipping)}`,14,y); y+=6;
-      //     doc.text(`Total: ${formatEUR(t.total)}`,14,y); y+=8;
-      //     doc.save(`Invoice_${orderId}.pdf`);
-      //   });
-      // });
-
-    
-      // ---- Server-side log (Google Apps Script webhook, CORS-safe) ----
-      const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec'; // replace after you deploy
-      const payload = { orderId, items: cart.items, totals: t, customer: data, timestamp: new Date().toISOString() };
-      fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }).then(()=>{}).catch(()=>{});
-
-      cart.items = []; cart.save(); updateCartUI();
-    });
-
-    cart.load();
-    updateCartUI();
 
 $('#contactForm').addEventListener('submit', (e) => {
   e.preventDefault();
