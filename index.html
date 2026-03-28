@@ -301,9 +301,20 @@ html { scroll-behavior: smooth; }
           </p>
           <div class="flex items-center justify-between">
             <span class="text-lg font-medium text-butterfly-900">€39.99</span>
-            <a href="#contact" class="px-4 py-2 rounded-full border border-butterfly-900/30 hover:bg-cream-50 text-butterfly-900">
+            <!-- <a href="#contact" class="px-4 py-2 rounded-full border border-butterfly-900/30 hover:bg-cream-50 text-butterfly-900">
               Inquire now
-            </a>
+            </a> -->
+            <div class="flex items-center justify-between">
+              <span class="text-lg font-medium text-butterfly-900">€39.99</span>
+              <button
+                class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="godfather-30"
+                data-name="The Godfather (No. 1) — Extrait 30 ml"
+                data-price="39.99"
+                data-size="30 ml">
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -322,9 +333,17 @@ html { scroll-behavior: smooth; }
           </p>
           <div class="flex items-center justify-between">
             <span class="text-lg font-medium text-butterfly-900">€49.99</span>
-            <a href="#contact" class="px-4 py-2 rounded-full border border-butterfly-900/30 hover:bg-cream-50 text-butterfly-900">
-              Inquire now
-            </a>
+            <div class="flex items-center justify-between">
+              <span class="text-lg font-medium text-butterfly-900">€49.99</span>
+              <button
+                class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="red-right-hand-30"
+                data-name="Red Right Hand (No. 111) — Extrait 30 ml"
+                data-price="49.99"
+                data-size="30 ml">
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -343,9 +362,17 @@ html { scroll-behavior: smooth; }
           </p>
           <div class="flex items-center justify-between">
             <span class="text-lg font-medium text-butterfly-900">€76.99</span>
-            <a href="#contact" class="px-4 py-2 rounded-full border border-butterfly-900/30 hover:bg-cream-50 text-butterfly-900">
-              Inquire now
-            </a>
+            <div class="flex items-center justify-between">
+              <span class="text-lg font-medium text-butterfly-900">€76.99</span>
+              <button
+                class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="nostalgia-30"
+                data-name="Nostalgia No. 7 — Extrait 30 ml"
+                data-price="76.99"
+                data-size="30 ml">
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -364,9 +391,17 @@ html { scroll-behavior: smooth; }
           </p>
           <div class="flex items-center justify-between">
             <span class="text-lg font-medium text-butterfly-900">€39.99</span>
-            <a href="#contact" class="px-4 py-2 rounded-full border border-butterfly-900/30 hover:bg-cream-50 text-butterfly-900">
-              Inquire now
-            </a>
+            <div class="flex items-center justify-between">
+              <span class="text-lg font-medium text-butterfly-900">€39.99</span>
+              <button
+                class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="tears-of-a-rose-30"
+                data-name="Tears of A Rose (No. 9) — Extrait 30 ml"
+                data-price="39.99"
+                data-size="30 ml">
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -385,9 +420,17 @@ html { scroll-behavior: smooth; }
           </p>
           <div class="flex items-center justify-between">
             <span class="text-lg font-medium text-butterfly-900">€49.99</span>
-            <a href="#contact" class="px-4 py-2 rounded-full border border-butterfly-900/30 hover:bg-cream-50 text-butterfly-900">
-              Inquire now
-            </a>
+            <div class="flex items-center justify-between">
+              <span class="text-lg font-medium text-butterfly-900">€49.99</span>
+              <button
+                class="add-to-cart px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+                data-id="the-woman-30"
+                data-name="The Woman (No. 2309) — Extrait 30 ml"
+                data-price="49.99"
+                data-size="30 ml">
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -494,6 +537,22 @@ html { scroll-behavior: smooth; }
   </footer>
 
   <script>
+  let jsPdfPromise = null;
+
+  function loadJsPdf() {
+    if (window.jspdf) return Promise.resolve(window.jspdf);
+    if (jsPdfPromise) return jsPdfPromise;
+  
+    jsPdfPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = () => resolve(window.jspdf);
+      s.onerror = reject;
+      document.body.appendChild(s);
+    });
+  
+    return jsPdfPromise;
+  }
   // Toggle "Read more" section for collection card
   const collectionToggle = document.getElementById('collection-toggle');
   const collectionDetails = document.getElementById('collection-details');
@@ -603,9 +662,9 @@ html { scroll-behavior: smooth; }
     // Handle order form submit — composes email with order details
     $('#orderForm').addEventListener('submit', (e)=>{
       e.preventDefault();
-      // if (!cart.items.length) {
-      //   alert('Your cart is empty. Please add an item before placing an order.');
-      // return;
+      if (!cart.items.length) {
+        alert('Your cart is empty. Please add an item before placing an order.');
+      return;
       const data = Object.fromEntries(new FormData(e.target).entries());
       const t = cart.totals();
       const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
@@ -628,16 +687,89 @@ html { scroll-behavior: smooth; }
 
       // Generate simple PDF invoice using jsPDF (CDN)
 // Load jsPDF first, then set up the listener
-const addScript = (src) => new Promise(r => {
-  const s = document.createElement('script');
-  s.src = src;
-  s.onload = r;
-  document.body.appendChild(s);
+loadJsPdf().then(() => {
+  document.getElementById('downloadInvoice').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      alert('Invoice generator not loaded yet. Please try again.');
+      return;
+    }
+
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+    const cream = '#fff9ed';
+    const textColor = '#1e293b';
+    const gold = '#c69c34';
+
+    doc.setFillColor(cream);
+    doc.rect(0, 0, 595, 842, 'F');
+
+    doc.setFont('Times', 'normal');
+    doc.setFontSize(20);
+    doc.setTextColor(textColor);
+    doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S', 65, 70);
+
+    doc.setDrawColor(gold);
+    doc.setLineWidth(0.5);
+    doc.line(60, 85, 535, 85);
+
+    doc.setFontSize(14);
+    doc.text('Order Confirmation', 65, 115);
+
+    doc.setFontSize(11);
+    let y = 140;
+    doc.text(`Order ID: ${orderId}`, 65, y); y += 16;
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 65, y); y += 30;
+
+    doc.setFontSize(12);
+    doc.text('Billing Information', 65, y); y += 14;
+    doc.line(65, y, 250, y); y += 14;
+    doc.setFontSize(11);
+    doc.text(`${data.fullName}`, 65, y); y += 14;
+    doc.text(`${data.address}`, 65, y); y += 14;
+    doc.text(`${data.city}, ${data.postcode}`, 65, y); y += 14;
+    doc.text(`${data.country}`, 65, y); y += 30;
+
+    doc.setFontSize(12);
+    doc.text('Items', 65, y);
+    doc.line(65, y + 2, 250, y + 2);
+    y += 20;
+
+    savedItems.forEach(i => {
+      doc.setFontSize(11);
+      doc.text(`${i.qty} × ${i.name}`, 65, y);
+      doc.text(`€${(i.price * i.qty).toFixed(2)}`, 400, y, { align: 'right' });
+      y += 16;
+    });
+
+    y += 10;
+    doc.line(65, y, 535, y);
+    y += 20;
+    doc.setFontSize(12);
+    doc.text(`Subtotal: €${t.subtotal.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+    doc.text(`Shipping: €${t.shipping.toFixed(2)}`, 400, y, { align: 'right' }); y += 16;
+    doc.text(`Total: €${t.total.toFixed(2)}`, 400, y, { align: 'right' });
+
+    y += 50;
+    doc.line(60, y - 10, 535, y - 10);
+    doc.setFontSize(12);
+    doc.text('Thank you for your purchase.', 65, y);
+    y += 20;
+    doc.setFontSize(11);
+    doc.text('We hope this fragrance brings you quiet joy and warmth.', 65, y);
+
+    y += 60;
+    doc.setFontSize(10);
+    doc.setTextColor('#475569');
+    doc.text('www.thewhitebutterflies.com', 65, y);
+    doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
+
+    doc.save(`Invoice_${orderId}.pdf`);
+  }, { once: true });
 });
 
-addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(() => {
-  console.log('jsPDF loaded');
 
+  
   // ✅ Set up the click event *after* jsPDF is available
   document.getElementById('downloadInvoice').addEventListener('click', () => {
     const { jsPDF } = window.jspdf;
@@ -742,6 +874,7 @@ addScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js')
       //   });
       // });
 
+    
       // ---- Server-side log (Google Apps Script webhook, CORS-safe) ----
       const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec'; // replace after you deploy
       const payload = { orderId, items: cart.items, totals: t, customer: data, timestamp: new Date().toISOString() };
