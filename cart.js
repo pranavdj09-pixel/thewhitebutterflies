@@ -12,7 +12,7 @@
 
 (() => {
   const CART_KEY = 'twb_cart_v1';
-  const SHIPPING_FLAT = 12.95;
+  const SHIPPING_FLAT = 6.96;
 
   // This lets cart.js reliably find index.html
   // whether it is loaded from the homepage
