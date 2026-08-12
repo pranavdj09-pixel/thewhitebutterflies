@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K. — The White Butterflies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            butterfly: {
+              50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',
+              400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',
+              800:'#1e293b',900:'#0f172a'
+            },
+            cream: {
+              50:'#fff9ed',100:'#fef3d9',200:'#fce7b3',300:'#fbdb8d',
+              400:'#f9cf67',500:'#f8c341',600:'#c69c34',700:'#947527',
+              800:'#634e1a',900:'#31270d'
+            }
+          },
+          fontFamily: {
+            serif:['Cormorant Garamond','Georgia','serif'],
+            sans:['Inter','system-ui','sans-serif']
+          },
+          boxShadow:{soft:'0 10px 30px rgba(0,0,0,0.08)'}
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-cream-50 text-butterfly-900 font-sans">
+
+  <header class="sticky top-0 z-50 backdrop-blur bg-cream-50/80 border-b border-cream-200">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../index.html" class="font-serif tracking-[0.25em] text-xl">
+        THE WHITE BUTTERFLIES
+      </a>
+
+      <div class="flex items-center gap-4">
+        <a href="../index.html#white-butterflies-collection"
+           class="hidden md:inline hover:opacity-70">
+          Back to Collection
+        </a>
+
+        <a href="../index.html#checkout"
+           class="px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white">
+          Cart
+          <span id="cartCount"
+                class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2">
+            0
+          </span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="py-16 md:py-24">
+      <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+
+        <div class="bg-white rounded-2xl shadow-soft p-6 md:p-10">
+          <img
+            src="../K.png"
+            alt="K. by The White Butterflies"
+            class="w-full h-[32rem] md:h-[42rem] object-contain">
+        </div>
+
+        <div>
+          <a href="../index.html#white-butterflies-collection"
+             class="text-sm text-butterfly-500 underline underline-offset-4">
+            ← The White Butterflies
+          </a>
+
+          <p class="text-xs uppercase tracking-[0.2em] text-cream-700 mt-8 mb-3">
+            The White Butterflies Collection
+          </p>
+
+          <h1 class="font-serif text-6xl md:text-7xl leading-tight mb-3">K.</h1>
+
+          <p class="text-butterfly-500 mb-8">
+            Eau de Parfum · 100 ml
+          </p>
+
+          <p class="text-xl text-butterfly-700 leading-relaxed mb-6">
+            Sweet, dark and strangely addictive. Not confectionery sweetness,
+            but something warmer, deeper and harder to leave alone.
+          </p>
+
+          <p class="text-butterfly-600 leading-relaxed mb-5">
+            K. is about the person you keep wanting back. The kind of presence
+            that lingers after it leaves — familiar enough to crave, dark enough
+            to remain slightly out of reach.
+          </p>
+
+          <p class="text-butterfly-600 leading-relaxed mb-10">
+            Lemon opens the composition with light before white musk, dark
+            chocolate and Indonesian patchouli pull it somewhere more intimate.
+            Vanilla and sandalwood soften the darkness without making it innocent.
+          </p>
+
+          <div class="border-y border-cream-300 py-6 mb-10">
+            <h2 class="font-serif text-3xl mb-4">Notes</h2>
+            <div class="grid grid-cols-2 gap-x-8 text-butterfly-600">
+              <p class="py-3 border-b border-cream-200">Lemon</p>
+              <p class="py-3 border-b border-cream-200">White Musk</p>
+              <p class="py-3 border-b border-cream-200">Dark Chocolate</p>
+              <p class="py-3 border-b border-cream-200">Indonesian Patchouli</p>
+              <p class="py-3 border-b border-cream-200">Vanilla</p>
+              <p class="py-3 border-b border-cream-200">Sandalwood</p>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-6">
+            <span class="font-serif text-4xl">€39.99</span>
+
+            <button
+              id="addProduct"
+              class="px-7 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90"
+              data-id="k-100"
+              data-name="K. — Eau de Parfum 100 ml"
+              data-price="39.99"
+              data-size="100 ml">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-10 text-center text-sm text-butterfly-500">
+    <p>© <span id="year"></span> The White Butterflies</p>
+  </footer>
+
+  <script>
+    const CART_KEY = 'twb_cart_v1';
+
+    const cart = {
+      items: [],
+      load() {
+        try {
+          this.items = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+        } catch {
+          this.items = [];
+        }
+      },
+      save() {
+        localStorage.setItem(CART_KEY, JSON.stringify(this.items));
+        updateCartCount();
+      },
+      add(product) {
+        const existing = this.items.find(item => item.id === product.id);
+        if (existing) existing.qty += 1;
+        else this.items.push({ ...product, qty: 1 });
+        this.save();
+      }
+    };
+
+    function updateCartCount() {
+      const count = document.getElementById('cartCount');
+      if (count) {
+        count.textContent = cart.items.reduce((total, item) => total + item.qty, 0);
+      }
+    }
+
+    cart.load();
+    updateCartCount();
+
+    const addProduct = document.getElementById('addProduct');
+
+    if (addProduct && !addProduct.disabled) {
+      addProduct.addEventListener('click', () => {
+        cart.add({
+          id: addProduct.dataset.id,
+          name: addProduct.dataset.name,
+          price: Number(addProduct.dataset.price),
+          size: addProduct.dataset.size
+        });
+
+        addProduct.textContent = 'Added to Cart';
+        setTimeout(() => {
+          addProduct.textContent = 'Add to Cart';
+        }, 1200);
+      });
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
