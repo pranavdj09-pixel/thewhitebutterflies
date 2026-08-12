@@ -37,6 +37,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 
+<script src="../cart.js"></script>
+
 <body class="bg-cream-50 text-butterfly-900 font-sans">
   <header class="sticky top-0 z-50 backdrop-blur bg-cream-50/80 border-b border-cream-200">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -48,14 +50,19 @@
         <a href="../index.html#numbered-collection" class="hidden md:inline hover:opacity-70">
           Back to Collection
         </a>
-        <a href="../index.html#checkout"
-          class="px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white">
-          Cart
-          <span id="cartCount"
-            class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2">
-            0
-          </span>
-        </a>
+        <button
+            id="openCart"
+            type="button"
+            class="px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white"
+          >
+            Add to Cart
+            <span
+              id="cartCount"
+              class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2"
+            >
+              0
+            </span>
+          </button>
       </div>
     </div>
   </header>
