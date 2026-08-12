@@ -55,7 +55,7 @@
             type="button"
             class="px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white"
           >
-            Add to Cart
+            Cart
             <span
               id="cartCount"
               class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2"
@@ -131,55 +131,6 @@
   <footer class="py-10 text-center text-sm text-butterfly-500">
     <p>© <span id="year"></span> The White Butterflies</p>
   </footer>
-
-  
-<script>
-  const CART_KEY = 'twb_cart_v1';
-  const $ = (sel, ctx=document) => ctx.querySelector(sel);
-
-  const cart = {
-    items: [],
-    load() {
-      try {
-        this.items = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-      } catch {
-        this.items = [];
-      }
-    },
-    save() {
-      localStorage.setItem(CART_KEY, JSON.stringify(this.items));
-      updateCartCount();
-    },
-    add(product) {
-      const existing = this.items.find(item => item.id === product.id);
-      if (existing) existing.qty += 1;
-      else this.items.push({...product, qty:1});
-      this.save();
-    }
-  };
-
-  function updateCartCount() {
-    const count = $('#cartCount');
-    if (count) count.textContent = cart.items.reduce((sum, item) => sum + item.qty, 0);
-  }
-
-  cart.load();
-  updateCartCount();
-
-  $('#addProduct')?.addEventListener('click', (event) => {
-    const button = event.currentTarget;
-    cart.add({
-      id: button.dataset.id,
-      name: button.dataset.name,
-      price: Number(button.dataset.price),
-      size: button.dataset.size
-    });
-    button.textContent = 'Added to Cart';
-    setTimeout(() => button.textContent = 'Add to Cart', 1200);
-  });
-
-  $('#year').textContent = new Date().getFullYear();
-</script>
 
 </body>
 </html>

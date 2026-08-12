@@ -631,7 +631,7 @@ html { scroll-behavior: smooth; }
     
   </footer>
 
-  <script>
+  <!-- <script>
   let jsPdfPromise = null;
 
   function loadJsPdf() {
@@ -905,7 +905,788 @@ $('#contactForm').addEventListener('submit', (e) => {
     observer.observe(el);
   });
     
-  </script>
+  </script> -->
+  <!-- SHARED CART SYSTEM -->
+<script src="./cart.js"></script>
+
+<script>
+  // ============================================================
+  // JSPDF LOADER
+  // ============================================================
+
+  let jsPdfPromise = null;
+
+  function loadJsPdf() {
+    if (window.jspdf) {
+      return Promise.resolve(window.jspdf);
+    }
+
+    if (jsPdfPromise) {
+      return jsPdfPromise;
+    }
+
+    jsPdfPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+
+      s.src =
+        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+
+      s.onload = () => resolve(window.jspdf);
+      s.onerror = reject;
+
+      document.body.appendChild(s);
+    });
+
+    return jsPdfPromise;
+  }
+
+
+  // ============================================================
+  // READ MORE TOGGLE
+  // ============================================================
+
+  const collectionToggle =
+    document.getElementById('collection-toggle');
+
+  const collectionDetails =
+    document.getElementById('collection-details');
+
+  if (collectionToggle && collectionDetails) {
+
+    collectionToggle.addEventListener('click', () => {
+
+      const isOpen =
+        collectionDetails.classList.toggle('open');
+
+      collectionToggle.textContent =
+        isOpen
+          ? 'Read less'
+          : 'Read more';
+    });
+  }
+
+
+  // ============================================================
+  // ORDER FORM
+  //
+  // IMPORTANT:
+  // The cart itself is NOT created here anymore.
+  // It comes entirely from cart.js.
+  // ============================================================
+
+  const orderForm =
+    document.getElementById('orderForm');
+
+  if (orderForm) {
+
+    orderForm.addEventListener('submit', (e) => {
+
+      e.preventDefault();
+
+
+      // --------------------------------------------
+      // Do not allow empty orders
+      // --------------------------------------------
+
+      if (!window.cart.items.length) {
+
+        alert(
+          'Your cart is empty. Please add an item before placing an order.'
+        );
+
+        return;
+      }
+
+
+      // --------------------------------------------
+      // Customer + order data
+      // --------------------------------------------
+
+      const data =
+        Object.fromEntries(
+          new FormData(e.target).entries()
+        );
+
+      const t =
+        window.cart.totals();
+
+      const orderId =
+        'TWB-' +
+        new Date()
+          .toISOString()
+          .replace(/[-:.TZ]/g, '')
+          .slice(0, 14);
+
+
+      // IMPORTANT:
+      // Save the items before clearing the cart.
+      // Invoice + webhook will use this snapshot.
+      const savedItems =
+        window.cart.items.map(item => ({
+          ...item
+        }));
+
+
+      // --------------------------------------------
+      // Confirmation message
+      // --------------------------------------------
+
+      const postSubmit =
+        document.getElementById('postSubmit');
+
+      postSubmit.innerHTML = `
+        <h3 class="font-serif text-2xl mb-2">
+          Thanks, ${data.fullName}.
+        </h3>
+
+        <p class="text-butterfly-700">
+          Your order
+          <strong>${orderId}</strong>
+          was received.
+        </p>
+
+        <p class="text-butterfly-600">
+          You can download a copy of your order details below.
+        </p>
+
+        <div class="mt-4 flex gap-3 flex-wrap">
+
+          <button
+            class="px-4 py-2 rounded-full border"
+            id="downloadInvoice"
+            type="button"
+          >
+            Download Order PDF
+          </button>
+
+        </div>
+      `;
+
+      postSubmit.classList.remove('hidden');
+
+
+      // ========================================================
+      // PDF INVOICE
+      // ========================================================
+
+      loadJsPdf()
+
+        .then(() => {
+
+          const downloadButton =
+            document.getElementById(
+              'downloadInvoice'
+            );
+
+          downloadButton.addEventListener(
+            'click',
+            () => {
+
+              const { jsPDF } =
+                window.jspdf;
+
+
+              if (!jsPDF) {
+
+                alert(
+                  'Invoice generator not loaded yet. Please try again.'
+                );
+
+                return;
+              }
+
+
+              const doc =
+                new jsPDF({
+                  unit: 'pt',
+                  format: 'a4'
+                });
+
+
+              // --------------------------------------------
+              // Colours
+              // --------------------------------------------
+
+              const cream =
+                '#fff9ed';
+
+              const textColor =
+                '#1e293b';
+
+              const gold =
+                '#c69c34';
+
+
+              // --------------------------------------------
+              // Background
+              // --------------------------------------------
+
+              doc.setFillColor(cream);
+
+              doc.rect(
+                0,
+                0,
+                595,
+                842,
+                'F'
+              );
+
+
+              // --------------------------------------------
+              // Brand heading
+              // --------------------------------------------
+
+              doc.setFont(
+                'Times',
+                'normal'
+              );
+
+              doc.setFontSize(20);
+
+              doc.setTextColor(
+                textColor
+              );
+
+              doc.text(
+                'T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S',
+                65,
+                70
+              );
+
+
+              // --------------------------------------------
+              // Gold separator
+              // --------------------------------------------
+
+              doc.setDrawColor(gold);
+
+              doc.setLineWidth(0.5);
+
+              doc.line(
+                60,
+                85,
+                535,
+                85
+              );
+
+
+              // --------------------------------------------
+              // Invoice title
+              // --------------------------------------------
+
+              doc.setFontSize(14);
+
+              doc.text(
+                'Order Confirmation',
+                65,
+                115
+              );
+
+
+              // --------------------------------------------
+              // Order information
+              // --------------------------------------------
+
+              doc.setFontSize(11);
+
+              let y = 140;
+
+              doc.text(
+                `Order ID: ${orderId}`,
+                65,
+                y
+              );
+
+              y += 16;
+
+
+              doc.text(
+                `Date: ${new Date().toLocaleDateString()}`,
+                65,
+                y
+              );
+
+              y += 30;
+
+
+              // --------------------------------------------
+              // Customer information
+              // --------------------------------------------
+
+              doc.setFontSize(12);
+
+              doc.text(
+                'Billing Information',
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.line(
+                65,
+                y,
+                250,
+                y
+              );
+
+              y += 14;
+
+
+              doc.setFontSize(11);
+
+
+              doc.text(
+                `${data.fullName}`,
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.text(
+                `${data.address}`,
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.text(
+                `${data.city}, ${data.postcode}`,
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.text(
+                `${data.country}`,
+                65,
+                y
+              );
+
+              y += 30;
+
+
+              // --------------------------------------------
+              // Items
+              // --------------------------------------------
+
+              doc.setFontSize(12);
+
+              doc.text(
+                'Items',
+                65,
+                y
+              );
+
+
+              doc.line(
+                65,
+                y + 2,
+                250,
+                y + 2
+              );
+
+              y += 20;
+
+
+              savedItems.forEach(item => {
+
+                doc.setFontSize(11);
+
+
+                doc.text(
+                  `${item.qty} × ${item.name}`,
+                  65,
+                  y
+                );
+
+
+                doc.text(
+                  `€${(
+                    item.price *
+                    item.qty
+                  ).toFixed(2)}`,
+                  500,
+                  y,
+                  {
+                    align: 'right'
+                  }
+                );
+
+
+                y += 16;
+              });
+
+
+              // --------------------------------------------
+              // Totals
+              // --------------------------------------------
+
+              y += 10;
+
+
+              doc.line(
+                65,
+                y,
+                535,
+                y
+              );
+
+
+              y += 20;
+
+
+              doc.setFontSize(12);
+
+
+              doc.text(
+                `Subtotal: €${t.subtotal.toFixed(2)}`,
+                500,
+                y,
+                {
+                  align: 'right'
+                }
+              );
+
+
+              y += 16;
+
+
+              doc.text(
+                `Shipping: €${t.shipping.toFixed(2)}`,
+                500,
+                y,
+                {
+                  align: 'right'
+                }
+              );
+
+
+              y += 16;
+
+
+              doc.text(
+                `Total: €${t.total.toFixed(2)}`,
+                500,
+                y,
+                {
+                  align: 'right'
+                }
+              );
+
+
+              // --------------------------------------------
+              // Thank-you message
+              // --------------------------------------------
+
+              y += 50;
+
+
+              doc.line(
+                60,
+                y - 10,
+                535,
+                y - 10
+              );
+
+
+              doc.setFontSize(12);
+
+
+              doc.text(
+                'Thank you for your purchase.',
+                65,
+                y
+              );
+
+
+              y += 20;
+
+
+              doc.setFontSize(11);
+
+
+              doc.text(
+                'We hope this fragrance brings you quiet joy and warmth.',
+                65,
+                y
+              );
+
+
+              // --------------------------------------------
+              // Footer
+              // --------------------------------------------
+
+              y += 60;
+
+
+              doc.setFontSize(10);
+
+              doc.setTextColor(
+                '#475569'
+              );
+
+
+              doc.text(
+                'www.thewhitebutterflies.com',
+                65,
+                y
+              );
+
+
+              doc.text(
+                'Email: pranavdj09@gmail.com | Phone: +31 6 84542568',
+                65,
+                y + 14
+              );
+
+
+              // --------------------------------------------
+              // Save PDF
+              // --------------------------------------------
+
+              doc.save(
+                `Invoice_${orderId}.pdf`
+              );
+
+            },
+            {
+              once: true
+            }
+          );
+
+        })
+
+        .catch(error => {
+
+          console.error(
+            'Could not load jsPDF:',
+            error
+          );
+
+        });
+
+
+      // ========================================================
+      // GOOGLE APPS SCRIPT ORDER LOG
+      // ========================================================
+
+      const WEBHOOK_URL =
+        'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec';
+
+
+      const payload = {
+
+        orderId,
+
+        items:
+          savedItems,
+
+        totals:
+          t,
+
+        customer:
+          data,
+
+        timestamp:
+          new Date().toISOString()
+
+      };
+
+
+      fetch(
+        WEBHOOK_URL,
+        {
+
+          method:
+            'POST',
+
+          headers: {
+
+            'Content-Type':
+              'text/plain;charset=utf-8'
+
+          },
+
+          body:
+            JSON.stringify(payload)
+
+        }
+      )
+
+      .then(() => {})
+
+      .catch(error => {
+
+        console.error(
+          'Order webhook error:',
+          error
+        );
+
+      });
+
+
+      // ========================================================
+      // CLEAR CART
+      //
+      // This is the ONLY place in index.html where the cart
+      // should be cleared.
+      //
+      // It happens AFTER somebody actually places an order.
+      // ========================================================
+
+      window.cart.items = [];
+
+      window.cart.save();
+
+    });
+  }
+
+
+  // ============================================================
+  // CONTACT FORM
+  // ============================================================
+
+  const contactForm =
+    document.getElementById(
+      'contactForm'
+    );
+
+  if (contactForm) {
+
+    contactForm.addEventListener(
+      'submit',
+      (e) => {
+
+        e.preventDefault();
+
+
+        const data =
+          Object.fromEntries(
+            new FormData(
+              e.target
+            ).entries()
+          );
+
+
+        const contactPayload = {
+
+          type:
+            'contact',
+
+          name:
+            data.fullName,
+
+          email:
+            data.email,
+
+          phone:
+            data.phone,
+
+          message:
+            data.message,
+
+          timestamp:
+            new Date().toISOString()
+
+        };
+
+
+        document
+          .getElementById(
+            'contactPayload'
+          )
+          .value =
+          JSON.stringify(
+            contactPayload
+          );
+
+
+        document
+          .getElementById(
+            'contactFallback'
+          )
+          .submit();
+
+
+        const contactStatus =
+          document.getElementById(
+            'contactStatus'
+          );
+
+
+        contactStatus.textContent =
+          'Message sent successfully!';
+
+
+        e.target.reset();
+
+      }
+    );
+  }
+
+
+  // ============================================================
+  // SCROLL FADE-IN ANIMATION
+  // ============================================================
+
+  const observer =
+    new IntersectionObserver(
+      (entries) => {
+
+        entries.forEach(
+          entry => {
+
+            if (
+              entry.isIntersecting
+            ) {
+
+              entry.target
+                .classList
+                .add(
+                  'visible'
+                );
+
+
+              observer.unobserve(
+                entry.target
+              );
+
+            }
+
+          }
+        );
+
+      },
+
+      {
+        threshold: 0.15
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      '.fade-in'
+    )
+    .forEach(
+      element => {
+
+        observer.observe(
+          element
+        );
+
+      }
+    );
+
+</script>
 <!-- Hidden fallback POST for contact (CORS-proof) -->
 <form id="contactFallback" method="POST"
       action="https://script.google.com/macros/s/AKfycbw7nUb9MbmkKWj0i49SYxYDdDlFHONT8_4h3bN1BXsA5INJiR8jGZ0lJObjMVFevzybJw/exec"
