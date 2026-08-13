@@ -81,68 +81,6 @@
   <section class="pb-20">
     <div class="max-w-3xl mx-auto px-4">
       <div class="bg-white rounded-2xl shadow-soft p-6 md:p-8">
-        <!-- <form id="quizForm" class="space-y-8">
-
-          <div>
-            <label class="block font-medium mb-3">1. What feeling do you want your scent to leave behind?</label>
-            <div class="grid gap-3">
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="feeling" value="warm" class="mr-2" required>
-                Warm, intimate, comforting
-              </label>
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="feeling" value="fresh" class="mr-2">
-                Fresh, clean, effortless
-              </label>
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="feeling" value="bold" class="mr-2">
-                Magnetic, bold, noticeable
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label class="block font-medium mb-3">2. Which setting feels most like you?</label>
-            <div class="grid gap-3">
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="setting" value="evening" class="mr-2" required>
-                Soft evening light, quiet conversation
-              </label>
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="setting" value="daylight" class="mr-2">
-                Open windows, daylight, clean air
-              </label>
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="setting" value="night" class="mr-2">
-                Night out, dark clothes, a little mystery
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label class="block font-medium mb-3">3. Which materials pull you in most?</label>
-            <div class="grid gap-3">
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="materials" value="woods" class="mr-2" required>
-                Woods, vanilla, soft skin warmth
-              </label>
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="materials" value="citrus" class="mr-2">
-                Citrus, airy florals, brightness
-              </label>
-              <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-                <input type="radio" name="materials" value="spice" class="mr-2">
-                Spice, amber, darker depth
-              </label>
-            </div>
-          </div>
-
-          <div class="pt-2">
-            <button type="submit" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
-              Show My Result
-            </button>
-          </div>
-        </form> -->
         <form id="quizForm" class="space-y-8">
 
   <div>
@@ -248,121 +186,337 @@
   <footer class="py-10 text-center text-sm text-butterfly-500">
     <p>© <span id="year"></span> The White Butterflies</p>
   </footer>
-
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-document.getElementById('quizForm').addEventListener('submit', function(e) {
-  e.preventDefault();
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-  const feeling = document.querySelector('input[name="feeling"]:checked')?.value;
-  const setting = document.querySelector('input[name="setting"]:checked')?.value;
-  const energy = document.querySelector('input[name="energy"]:checked')?.value;
-  const season = document.querySelector('input[name="season"]:checked')?.value;
+  document.getElementById('quizForm').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-  const resultBox = document.getElementById('quizResult');
-  const resultTitle = document.getElementById('resultTitle');
-  const resultText = document.getElementById('resultText');
-  const resultLink = document.getElementById('resultLink');
+    const feeling =
+      document.querySelector('input[name="feeling"]:checked')?.value;
 
-  // --- Build dynamic note profile ---
-  let notes = [];
+    const setting =
+      document.querySelector('input[name="setting"]:checked')?.value;
 
-  // Feeling
-  if (feeling === 'warm') notes.push('ambroxan warmth', 'soft patchouli', 'clean musks');
-  if (feeling === 'fresh') notes.push('bergamot', 'lemon zest', 'lavender', 'clary sage');
-  if (feeling === 'bold') notes.push('dark chocolate', 'jasmine', 'rose', 'oud');
+    const energy =
+      document.querySelector('input[name="energy"]:checked')?.value;
 
-  // Setting
-  if (setting === 'evening') notes.push('cashmere woods', 'clean florals');
-  if (setting === 'daylight') notes.push('citrus lift', 'ambroxan radiance', 'watery rose');
-  if (setting === 'night') notes.push('spice', 'leather', 'deep oud');
+    const season =
+      document.querySelector('input[name="season"]:checked')?.value;
 
-  // Energy
-  if (energy === 'day') notes.push('fresh florals', 'skin musks');
-  if (energy === 'night') notes.push('spiced amber', 'leather facets');
-  if (energy === 'both') notes.push('lily of the valley', 'velvety vanilla');
 
-  // Season
-  if (season === 'spring') notes.push('airy florals', 'soft musks');
-  if (season === 'summer') notes.push('light citrus', 'fruity brightness', 'coconut nuance');
-  if (season === 'autumn') notes.push('vanilla', 'woody amber', 'nostalgic warmth');
-  if (season === 'winter') notes.push('dark amber', 'animalic depth', 'oud');
+    // ============================================================
+    // STORE PRODUCTS
+    // ============================================================
 
-  // Remove duplicates
-  notes = [...new Set(notes)];
+    const products = {
 
-  // --- Scoring (same logic as before) ---
-  const nostalgiaScore =
-    (feeling === 'warm' ? 2 : 0) +
-    (setting === 'evening' ? 1 : 0) +
-    (energy === 'night' ? 1 : 0) +
-    (season === 'autumn' ? 2 : 0) +
-    (season === 'winter' ? 1 : 0);
+      nostalgia: {
+        name: 'Nostalgia',
+        link: 'products/nostalgia-no-7.html',
 
-  const freshScore =
-    (feeling === 'fresh' ? 2 : 0) +
-    (setting === 'daylight' ? 1 : 0) +
-    (energy === 'day' ? 1 : 0) +
-    (season === 'spring' ? 2 : 0) +
-    (season === 'summer' ? 1 : 0);
+        description:
+          'Jasmine air opening into cashmere woods, wrapped in vanilla and dry cedar.',
 
-  const boldScore =
-    (feeling === 'bold' ? 2 : 0) +
-    (setting === 'night' ? 2 : 0) +
-    (energy === 'night' ? 1 : 0) +
-    (season === 'winter' ? 1 : 0);
+        match:
+          'Your choices lean toward warmth, intimacy and emotional depth. Nostalgia is soft rather than demanding — woody, warm and quietly familiar, with jasmine air, cashmere woods, vanilla and dry cedar.',
 
-  let result = {};
+        scores: {
+          feeling: {
+            warm: 4,
+            fresh: 0,
+            bold: 1
+          },
 
-  // --- Final result ---
-  if (nostalgiaScore >= freshScore && nostalgiaScore >= boldScore) {
-    result = {
-      title: 'Nostalgia No. 7',
-      text: `You lean toward warmth, softness, and emotional depth.
+          setting: {
+            evening: 4,
+            daylight: 0,
+            night: 2
+          },
 
-There’s something in your choices that prefers closeness over projection. A scent that sits near the skin before slowly revealing itself.
+          energy: {
+            day: 0,
+            night: 2,
+            both: 3
+          },
 
-Your profile points toward notes like ${notes.slice(0,5).join(', ')}.
+          season: {
+            spring: 1,
+            summer: 0,
+            autumn: 4,
+            winter: 3
+          }
+        }
+      },
 
-This is the kind of scent people don’t notice immediately, but remember long after.`,
-      link: 'index.html#collection'
+
+      k: {
+        name: 'K.',
+        link: 'products/K.html',
+
+        description:
+          'Dark chocolate, white musk and Indonesian patchouli softened by vanilla and sandalwood, with a flash of lemon above it all.',
+
+        match:
+          'Your choices point toward something darker, sweeter and more magnetic. K. combines dark chocolate, white musk and Indonesian patchouli with vanilla and sandalwood, while lemon keeps a little light above the darkness. It is the scent in the collection built most around desire, attraction and wanting to come back for another smell.',
+
+        scores: {
+          feeling: {
+            warm: 2,
+            fresh: 0,
+            bold: 5
+          },
+
+          setting: {
+            evening: 3,
+            daylight: 0,
+            night: 5
+          },
+
+          energy: {
+            day: 0,
+            night: 5,
+            both: 2
+          },
+
+          season: {
+            spring: 0,
+            summer: 1,
+            autumn: 3,
+            winter: 5
+          }
+        }
+      },
+
+
+      tears: {
+        name: 'Tears of A Rose',
+        link: 'products/tears-of-a-rose.html',
+
+        description:
+          'Sweet watery rose, white musks, bitter rose, vanillin and skin-like warmth.',
+
+        match:
+          'Your choices have a softer, more luminous emotional character. Tears of A Rose moves between watery brightness and skin warmth — sweet rose, white musks and vanillin, with a slightly bitter edge that keeps it from becoming simply pretty.',
+
+        scores: {
+          feeling: {
+            warm: 3,
+            fresh: 3,
+            bold: 1
+          },
+
+          setting: {
+            evening: 3,
+            daylight: 4,
+            night: 1
+          },
+
+          energy: {
+            day: 3,
+            night: 1,
+            both: 4
+          },
+
+          season: {
+            spring: 5,
+            summer: 3,
+            autumn: 2,
+            winter: 1
+          }
+        }
+      },
+
+
+      godfather: {
+        name: 'The Godfather (No. 1)',
+        link: 'products/the-godfather-no-1.html',
+
+        description:
+          'Bergamot over leather, spice and woods, grounded by amber, vanilla and resin.',
+
+        match:
+          'Your choices suggest structure, depth and presence. The Godfather opens with bergamot before moving into leather, spice and woods, with amber, vanilla and resin underneath. It has weight without needing to shout about it.',
+
+        scores: {
+          feeling: {
+            warm: 2,
+            fresh: 1,
+            bold: 5
+          },
+
+          setting: {
+            evening: 2,
+            daylight: 0,
+            night: 5
+          },
+
+          energy: {
+            day: 0,
+            night: 5,
+            both: 1
+          },
+
+          season: {
+            spring: 0,
+            summer: 0,
+            autumn: 5,
+            winter: 4
+          }
+        }
+      },
+
+
+      no111: {
+        name: 'No. 111',
+        link: 'products/the-man.html',
+
+        description:
+          'Bergamot and lemon lifted by clary sage, vetiver and leather, drying into ambroxan and skin-like warmth.',
+
+        match:
+          'Your choices point toward freshness without sterility. No. 111 opens with bergamot and lemon, then moves through clary sage, vetiver and leather into ambroxan and warm skin. Clean and easy to wear, but still unmistakably a perfume rather than scented air.',
+
+        scores: {
+          feeling: {
+            warm: 1,
+            fresh: 5,
+            bold: 2
+          },
+
+          setting: {
+            evening: 1,
+            daylight: 5,
+            night: 1
+          },
+
+          energy: {
+            day: 5,
+            night: 0,
+            both: 3
+          },
+
+          season: {
+            spring: 4,
+            summer: 5,
+            autumn: 1,
+            winter: 0
+          }
+        }
+      },
+
+
+      no2309: {
+        name: 'No. 2309',
+        link: 'products/the-woman-no-2309.html',
+
+        description:
+          'Lemon and jammy red fruit over jasmine air, cashmere, rosy amber, white musks, vanilla and ambroxan.',
+
+        match:
+          'Your choices land between brightness and richness. No. 2309 opens with lemon and jammy red fruit, then becomes softer and fuller through jasmine, cashmere, rosy amber, white musks, vanilla and ambroxan. Luminous at the top, warmer underneath.',
+
+        scores: {
+          feeling: {
+            warm: 3,
+            fresh: 2,
+            bold: 4
+          },
+
+          setting: {
+            evening: 3,
+            daylight: 3,
+            night: 2
+          },
+
+          energy: {
+            day: 2,
+            night: 2,
+            both: 5
+          },
+
+          season: {
+            spring: 3,
+            summer: 4,
+            autumn: 3,
+            winter: 1
+          }
+        }
+      }
+
     };
-  } 
-  else if (freshScore >= nostalgiaScore && freshScore >= boldScore) {
-    result = {
-      title: 'A Luminous Signature',
-      text: `You gravitate toward clarity, light, and effortless presence.
 
-There’s a sense of openness in your choices. Something clean, breathable, and quietly put together.
 
-Your profile suggests notes like ${notes.slice(0,5).join(', ')}.
+    // ============================================================
+    // SCORE EVERY PRODUCT
+    // ============================================================
 
-Not heavy, not overwhelming. Just precise, fresh, and naturally you.`,
-      link: 'index.html#contact'
-    };
-  } 
-  else {
-    result = {
-      title: 'A Deeper Signature',
-      text: `You lean toward contrast, depth, and something a little more magnetic.
+    const results = Object.entries(products).map(([id, product]) => {
 
-There’s intention in your choices, not just to be pleasant, but to be felt.
+      const score =
+        product.scores.feeling[feeling] +
+        product.scores.setting[setting] +
+        product.scores.energy[energy] +
+        product.scores.season[season];
 
-Your profile points toward notes like ${notes.slice(0,5).join(', ')}.
+      return {
+        id,
+        ...product,
+        score
+      };
 
-This is the kind of scent that enters a room with you, and lingers after.`,
-      link: 'index.html#contact'
-    };
-  }
+    });
 
-  resultTitle.textContent = result.title;
-  resultText.textContent = result.text;
-  resultLink.href = result.link;
 
-  resultBox.classList.remove('hidden');
-  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-    
-  </script>
-</body>
+    // Highest score first
+    results.sort((a, b) => b.score - a.score);
+
+
+    const winner = results[0];
+
+
+    // ============================================================
+    // SHOW RESULT
+    // ============================================================
+
+    const resultBox =
+      document.getElementById('quizResult');
+
+    const resultTitle =
+      document.getElementById('resultTitle');
+
+    const resultText =
+      document.getElementById('resultText');
+
+    const resultLink =
+      document.getElementById('resultLink');
+
+
+    resultTitle.textContent =
+      `Your match: ${winner.name}`;
+
+
+    resultText.textContent =
+      winner.match;
+
+
+    resultLink.href =
+      winner.link;
+
+
+    resultLink.textContent =
+      `View ${winner.name}`;
+
+
+    resultBox.classList.remove('hidden');
+
+
+    resultBox.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+  });
+</script>
+  </body>
 </html>
