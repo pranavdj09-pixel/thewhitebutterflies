@@ -22,7 +22,7 @@
     : new URL('cart.js', window.location.href);
 
   const SITE_ROOT = new URL('./', scriptURL);
-  const CHECKOUT_URL = new URL('index.html#checkout', SITE_ROOT).href;
+  const CHECKOUT_URL = new URL('checkout.html', SITE_ROOT).href;
 
   // ------------------------------------------------------------
   // GLOBAL HELPERS
