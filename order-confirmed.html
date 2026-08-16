@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Received — The White Butterflies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            butterfly: {50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'},
+            cream: {50:'#fff9ed',100:'#fef3d9',200:'#fce7b3',300:'#fbdb8d',400:'#f9cf67',500:'#f8c341',600:'#c69c34',700:'#947527',800:'#634e1a',900:'#31270d'}
+          },
+          fontFamily: {serif:['Cormorant Garamond','ui-serif','Georgia','serif'],sans:['Inter','ui-sans-serif','system-ui','sans-serif']},
+          boxShadow: {soft:'0 10px 30px rgba(0,0,0,0.08)'}
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-cream-50 text-butterfly-900 font-sans min-h-screen">
+
+<header class="border-b border-cream-200">
+  <div class="max-w-4xl mx-auto px-4 py-5">
+    <a href="index.html" class="font-serif tracking-[0.25em] text-lg md:text-xl">THE WHITE BUTTERFLIES</a>
+  </div>
+</header>
+
+<main class="py-16 md:py-24">
+  <div class="max-w-3xl mx-auto px-4">
+    <section id="confirmationCard" class="rounded-2xl bg-white shadow-soft p-7 md:p-10">
+      <p class="text-sm uppercase tracking-[0.2em] text-cream-700 mb-3">Order received</p>
+      <h1 class="font-serif text-5xl md:text-6xl leading-tight mb-5">Thank you.</h1>
+      <p id="confirmationMessage" class="text-lg text-butterfly-600 mb-8"></p>
+      <div id="orderDetails" class="rounded-xl bg-cream-50 border border-cream-200 p-5 mb-7"></div>
+      <div class="flex flex-wrap gap-3">
+        <button id="downloadInvoice" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">Download Invoice</button>
+        <a href="index.html" class="px-6 py-3 rounded-full border border-butterfly-900/20 hover:bg-cream-50">Return to the shop</a>
+      </div>
+    </section>
+
+    <section id="missingOrder" class="hidden rounded-2xl bg-white shadow-soft p-8 text-center">
+      <h1 class="font-serif text-4xl mb-4">No recent order found.</h1>
+      <p class="text-butterfly-600 mb-6">This page only keeps the most recent order from this browser tab.</p>
+      <a href="index.html" class="inline-block px-6 py-3 rounded-full bg-butterfly-900 text-white">Return to the shop</a>
+    </section>
+  </div>
+</main>
+
+<footer class="py-10 text-center text-sm text-butterfly-500">© <span id="year"></span> The White Butterflies</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const rawOrder = sessionStorage.getItem('twb_last_order');
+  const confirmationCard = document.getElementById('confirmationCard');
+  const missingOrder = document.getElementById('missingOrder');
+
+  if (!rawOrder) {
+    confirmationCard.classList.add('hidden');
+    missingOrder.classList.remove('hidden');
+  } else {
+    const order = JSON.parse(rawOrder);
+    const customer = order.customer || {};
+    const totals = order.totals || {};
+    const discount = order.discount || {};
+    const items = order.items || [];
+
+    document.getElementById('confirmationMessage').innerHTML =
+      `Your order <strong>${order.orderId}</strong> has been received, ${customer.fullName || 'thank you'}.`;
+
+    const itemLines = items.map(item => `
+      <div class="flex justify-between gap-4 py-2">
+        <span>${item.qty} × ${item.name}</span>
+        <span>€${Number(item.price * item.qty).toFixed(2)}</span>
+      </div>
+    `).join('');
+
+    const discountLine = Number(discount.amount || 0) > 0 ? `
+      <div class="flex justify-between gap-4 py-2 text-cream-700">
+        <span>Discount (${discount.code})</span>
+        <span>−€${Number(discount.amount).toFixed(2)}</span>
+      </div>
+    ` : '';
+
+    document.getElementById('orderDetails').innerHTML = `
+      <div class="mb-4">${itemLines}</div>
+      <div class="border-t border-cream-200 pt-3 text-sm space-y-1">
+        <div class="flex justify-between"><span>Subtotal</span><span>€${Number(totals.subtotal || 0).toFixed(2)}</span></div>
+        <div class="flex justify-between"><span>Shipping</span><span>€${Number(totals.shipping || 0).toFixed(2)}</span></div>
+        ${discountLine}
+        <div class="flex justify-between font-medium text-lg pt-2"><span>Total</span><span>€${Number(totals.total || 0).toFixed(2)}</span></div>
+      </div>
+    `;
+
+    let jsPdfPromise = null;
+
+    function loadJsPdf() {
+      if (window.jspdf) return Promise.resolve(window.jspdf);
+      if (jsPdfPromise) return jsPdfPromise;
+
+      jsPdfPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        script.onload = () => resolve(window.jspdf);
+        script.onerror = reject;
+        document.body.appendChild(script);
+      });
+
+      return jsPdfPromise;
+    }
+
+    document.getElementById('downloadInvoice').addEventListener('click', async () => {
+      await loadJsPdf();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit:'pt', format:'a4'});
+      const cream = '#fff9ed';
+      const textColor = '#1e293b';
+      const gold = '#c69c34';
+
+      doc.setFillColor(cream);
+      doc.rect(0,0,595,842,'F');
+      doc.setFont('Times','normal');
+      doc.setFontSize(20);
+      doc.setTextColor(textColor);
+      doc.text('T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S',65,70);
+      doc.setDrawColor(gold);
+      doc.setLineWidth(0.5);
+      doc.line(60,85,535,85);
+      doc.setFontSize(14);
+      doc.text('Order Confirmation',65,115);
+
+      let y = 140;
+      doc.setFontSize(11);
+      doc.text(`Order ID: ${order.orderId}`,65,y); y += 16;
+      doc.text(`Date: ${new Date(order.timestamp).toLocaleDateString()}`,65,y); y += 30;
+
+      doc.setFontSize(12);
+      doc.text('Billing Information',65,y); y += 14;
+      doc.line(65,y,250,y); y += 14;
+      doc.setFontSize(11);
+      doc.text(`${customer.fullName || ''}`,65,y); y += 14;
+      doc.text(`${customer.streetName || ''} ${customer.houseNumber || ''}`.trim(),65,y); y += 14;
+      doc.text(`${customer.city || ''}, ${customer.postcode || ''}`,65,y); y += 14;
+      doc.text(`${customer.country || ''}`,65,y); y += 30;
+
+      doc.setFontSize(12);
+      doc.text('Items',65,y);
+      doc.line(65,y+2,250,y+2); y += 20;
+
+      items.forEach(item => {
+        doc.setFontSize(11);
+        const wrapped = doc.splitTextToSize(`${item.qty} × ${item.name}`,330);
+        doc.text(wrapped,65,y);
+        doc.text(`€${Number(item.price * item.qty).toFixed(2)}`,500,y,{align:'right'});
+        y += Math.max(16, wrapped.length * 13);
+      });
+
+      y += 10;
+      doc.line(65,y,535,y); y += 20;
+      doc.setFontSize(12);
+      doc.text(`Subtotal: €${Number(totals.subtotal || 0).toFixed(2)}`,500,y,{align:'right'}); y += 16;
+      doc.text(`Shipping: €${Number(totals.shipping || 0).toFixed(2)}`,500,y,{align:'right'}); y += 16;
+
+      if (Number(discount.amount || 0) > 0) {
+        doc.text(`Discount (${discount.code}): -€${Number(discount.amount).toFixed(2)}`,500,y,{align:'right'});
+        y += 16;
+      }
+
+      doc.text(`Total: €${Number(totals.total || 0).toFixed(2)}`,500,y,{align:'right'});
+      y += 50;
+      doc.line(60,y-10,535,y-10);
+      doc.setFontSize(12);
+      doc.text('Thank you for your purchase.',65,y); y += 20;
+      doc.setFontSize(11);
+      doc.text('We hope this fragrance brings you quiet joy and warmth.',65,y); y += 60;
+      doc.setFontSize(10);
+      doc.setTextColor('#475569');
+      doc.text('www.thewhitebutterflies.com',65,y);
+      doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568',65,y+14);
+      doc.save(`Invoice_${order.orderId}.pdf`);
+    });
+  }
+</script>
+
+</body>
+</html>

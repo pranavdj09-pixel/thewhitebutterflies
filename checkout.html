@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — The White Butterflies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            butterfly: {50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'},
+            cream: {50:'#fff9ed',100:'#fef3d9',200:'#fce7b3',300:'#fbdb8d',400:'#f9cf67',500:'#f8c341',600:'#c69c34',700:'#947527',800:'#634e1a',900:'#31270d'}
+          },
+          fontFamily: {serif:['Cormorant Garamond','ui-serif','Georgia','serif'],sans:['Inter','ui-sans-serif','system-ui','sans-serif']},
+          boxShadow: {soft:'0 10px 30px rgba(0,0,0,0.08)'}
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="./cart.js"></script>
+</head>
+<body class="bg-cream-50 text-butterfly-900 font-sans min-h-screen">
+
+<header class="border-b border-cream-200 bg-cream-50/90">
+  <div class="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between gap-4">
+    <a href="index.html" class="font-serif tracking-[0.25em] text-lg md:text-xl">THE WHITE BUTTERFLIES</a>
+    <a href="index.html#collection" class="text-sm text-butterfly-600 hover:text-butterfly-900">Continue shopping</a>
+  </div>
+</header>
+
+<main class="py-12 md:py-20">
+  <div class="max-w-5xl mx-auto px-4">
+    <div class="mb-10">
+      <p class="text-sm uppercase tracking-[0.2em] text-cream-700 mb-2">Your order</p>
+      <h1 class="font-serif text-5xl mb-3">Checkout</h1>
+      <p class="text-butterfly-600">Review your bag, add your details, and place your order.</p>
+    </div>
+
+    <div id="emptyCartNotice" class="hidden mb-8 rounded-2xl border border-cream-200 bg-white p-8 text-center">
+      <h2 class="font-serif text-3xl mb-3">Your bag is empty.</h2>
+      <p class="text-butterfly-600 mb-6">There is not much to check out yet. A tragic shortage of perfume.</p>
+      <a href="index.html#collection" class="inline-block px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">Return to the collection</a>
+    </div>
+
+    <div id="checkoutContent" class="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 items-start">
+      <section class="rounded-2xl bg-white shadow-soft p-6 lg:sticky lg:top-6">
+        <h2 class="font-serif text-3xl mb-5">Your Bag</h2>
+        <div id="summary"></div>
+
+        <div class="mt-6 pt-6 border-t border-cream-200">
+          <label for="discountCode" class="block text-sm font-medium mb-2">Discount code</label>
+          <div class="flex gap-2">
+            <input id="discountCode" type="text" autocomplete="off" placeholder="Enter code" class="min-w-0 flex-1 px-4 py-3 border rounded-xl uppercase bg-white">
+            <button id="applyDiscount" type="button" class="px-5 py-3 rounded-full border border-butterfly-900/20 bg-white hover:bg-cream-50">Apply</button>
+          </div>
+          <p id="discountStatus" class="text-sm mt-2 text-butterfly-500"></p>
+        </div>
+      </section>
+
+      <section class="rounded-2xl bg-white shadow-soft p-6 md:p-8">
+        <h2 class="font-serif text-3xl mb-6">Delivery Details</h2>
+        <form id="orderForm" class="grid md:grid-cols-2 gap-4">
+          <input required name="fullName" placeholder="Full name" class="px-4 py-3 border rounded-xl md:col-span-2">
+          <input required type="email" name="email" placeholder="Email" class="px-4 py-3 border rounded-xl md:col-span-2">
+          <input required name="streetName" placeholder="Street name" class="px-4 py-3 border rounded-xl">
+          <input required name="houseNumber" placeholder="House number (+ suffix)" class="px-4 py-3 border rounded-xl">
+          <input required name="city" placeholder="City" class="px-4 py-3 border rounded-xl">
+          <input required name="postcode" placeholder="Postcode" class="px-4 py-3 border rounded-xl">
+          <input required name="country" placeholder="Country" class="px-4 py-3 border rounded-xl md:col-span-2">
+          <textarea name="notes" placeholder="Notes (optional)" class="px-4 py-3 border rounded-xl md:col-span-2 h-28"></textarea>
+          <button id="placeOrderButton" class="mt-2 md:col-span-2 px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90" type="submit">Place Order</button>
+          <button id="cancelCheckout" type="button" class="md:col-span-2 text-center text-sm text-butterfly-500 underline underline-offset-4 hover:text-butterfly-900">Cancel Checkout</button>
+          <p class="text-xs text-butterfly-500 md:col-span-2 text-center">By placing an order you agree to our Terms and Privacy Policy.</p>
+          <p id="orderStatus" class="hidden text-sm md:col-span-2 text-center text-butterfly-600"></p>
+        </form>
+      </section>
+    </div>
+  </div>
+</main>
+
+<div id="cancelCheckoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-butterfly-900/40 backdrop-blur-sm px-4">
+  <div class="w-full max-w-md rounded-2xl bg-cream-50 shadow-2xl p-7">
+    <h3 class="font-serif text-3xl mb-3">Cancel checkout?</h3>
+    <p class="text-butterfly-600 mb-7">Would you like to keep the items in your bag, or remove them as well?</p>
+    <div class="grid gap-3">
+      <button id="cancelKeepCart" type="button" class="w-full px-5 py-3 rounded-full bg-white text-butterfly-900 border border-butterfly-900/20 hover:bg-cream-100">Cancel & Keep Items</button>
+      <button id="cancelDeleteCart" type="button" class="w-full px-5 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">Cancel & Delete Cart</button>
+    </div>
+    <button id="continueCheckout" type="button" class="block mx-auto mt-5 text-sm text-butterfly-500 underline underline-offset-4 hover:text-butterfly-900">Continue Checkout</button>
+  </div>
+</div>
+
+<footer class="py-10 text-center text-sm text-butterfly-500">© <span id="year"></span> The White Butterflies</footer>
+
+<!-- GOOGLE APP SCRIPT LINK -->
+
+<script>
+  const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbw6oj6t9Q9QnFaEuM7c9Cq8SwIcrGogJcvMVgeH3lcjSXtNzbkcDecRP2fc2cFvyVvQ5Q/exec';
+
+  const ACTIVE_DISCOUNT_CODES = {
+    CHASKA: { rate: 0.05, firstOrderOnly: true }
+  };
+
+  let appliedDiscountCode = '';
+
+  function formatEUR(value) {
+    return '€' + Number(value || 0).toFixed(2);
+  }
+
+  function getCheckoutTotals() {
+    const base = window.cart.totals();
+    const config = appliedDiscountCode ? ACTIVE_DISCOUNT_CODES[appliedDiscountCode] : null;
+    const totalBeforeDiscount = Number(base.total || 0);
+    const discount = config ? totalBeforeDiscount * config.rate : 0;
+    const total = Math.max(0, totalBeforeDiscount - discount);
+
+    return {
+      ...base,
+      discountCode: appliedDiscountCode,
+      discountRate: config ? config.rate : 0,
+      discount,
+      totalBeforeDiscount,
+      total
+    };
+  }
+
+  function renderCheckout() {
+    const emptyNotice = document.getElementById('emptyCartNotice');
+    const checkoutContent = document.getElementById('checkoutContent');
+    const summary = document.getElementById('summary');
+
+    if (!window.cart || !window.cart.items.length) {
+      emptyNotice.classList.remove('hidden');
+      checkoutContent.classList.add('hidden');
+      return;
+    }
+
+    emptyNotice.classList.add('hidden');
+    checkoutContent.classList.remove('hidden');
+
+    const t = getCheckoutTotals();
+    const items = window.cart.items.map(item => `
+      <div class="py-3 border-b border-cream-100 last:border-0">
+        <div class="flex justify-between gap-4">
+          <div>
+            <p class="font-medium">${item.name}</p>
+            <p class="text-sm text-butterfly-500">Qty ${item.qty}${item.size ? ` · ${item.size}` : ''}</p>
+          </div>
+          <span class="whitespace-nowrap">${formatEUR(item.price * item.qty)}</span>
+        </div>
+      </div>
+    `).join('');
+
+    const discountLine = t.discount > 0 ? `
+      <div class="flex justify-between text-cream-700">
+        <span>Discount (${t.discountCode} · ${Math.round(t.discountRate * 100)}%)</span>
+        <span>−${formatEUR(t.discount)}</span>
+      </div>
+    ` : '';
+
+    summary.innerHTML = `
+      <div class="mb-4">${items}</div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-butterfly-600">Subtotal</span><span>${formatEUR(t.subtotal)}</span></div>
+        <div class="flex justify-between"><span class="text-butterfly-600">Shipping</span><span>${formatEUR(t.shipping)}</span></div>
+        ${discountLine}
+        <div class="flex justify-between text-lg font-medium pt-3 border-t border-cream-200"><span>Total</span><span>${formatEUR(t.total)}</span></div>
+      </div>
+    `;
+  }
+
+  const discountInput = document.getElementById('discountCode');
+  const discountStatus = document.getElementById('discountStatus');
+  const applyDiscountButton = document.getElementById('applyDiscount');
+
+  function applyDiscount() {
+    const enteredCode = (discountInput.value || '').trim().toUpperCase();
+
+    if (!enteredCode) {
+      appliedDiscountCode = '';
+      discountStatus.textContent = 'Enter a discount code first.';
+      discountStatus.className = 'text-sm mt-2 text-butterfly-500';
+      renderCheckout();
+      return;
+    }
+
+    const config = ACTIVE_DISCOUNT_CODES[enteredCode];
+
+    if (!config) {
+      appliedDiscountCode = '';
+      discountStatus.textContent = 'That discount code is not active.';
+      discountStatus.className = 'text-sm mt-2 text-red-600';
+      renderCheckout();
+      return;
+    }
+
+    appliedDiscountCode = enteredCode;
+    discountInput.value = enteredCode;
+    discountStatus.textContent = `${enteredCode} applied — ${Math.round(config.rate * 100)}% off your final order.`;
+    discountStatus.className = 'text-sm mt-2 text-cream-700';
+    renderCheckout();
+  }
+
+  applyDiscountButton.addEventListener('click', applyDiscount);
+  discountInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      applyDiscount();
+    }
+  });
+
+
+  // ============================================================
+  // CANCEL CHECKOUT
+  // ============================================================
+
+  const cancelCheckoutModal = document.getElementById('cancelCheckoutModal');
+
+  document.getElementById('cancelCheckout').addEventListener('click', () => {
+    cancelCheckoutModal.classList.remove('hidden');
+    cancelCheckoutModal.classList.add('flex');
+  });
+
+  document.getElementById('continueCheckout').addEventListener('click', () => {
+    cancelCheckoutModal.classList.add('hidden');
+    cancelCheckoutModal.classList.remove('flex');
+  });
+
+  document.getElementById('cancelKeepCart').addEventListener('click', () => {
+    window.location.href = 'index.html#collection';
+  });
+
+  document.getElementById('cancelDeleteCart').addEventListener('click', () => {
+    window.cart.items = [];
+    window.cart.save();
+    window.location.href = 'index.html#collection';
+  });
+
+  const orderForm = document.getElementById('orderForm');
+
+  orderForm.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    if (!window.cart.items.length) {
+      renderCheckout();
+      return;
+    }
+
+    const button = document.getElementById('placeOrderButton');
+    const status = document.getElementById('orderStatus');
+    button.disabled = true;
+    button.textContent = 'Placing Order…';
+    status.classList.remove('hidden');
+    status.textContent = 'Submitting your order…';
+
+    const customer = Object.fromEntries(new FormData(orderForm).entries());
+    customer.streetName = (customer.streetName || '').trim();
+    customer.houseNumber = (customer.houseNumber || '').trim();
+    customer.address = `${customer.streetName} ${customer.houseNumber}`.trim();
+    customer.discountCode = appliedDiscountCode || '';
+
+    const totals = getCheckoutTotals();
+    const savedItems = window.cart.items.map(item => ({ ...item }));
+    const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0,14);
+
+    const discount = {
+      code: appliedDiscountCode || '',
+      rate: appliedDiscountCode ? ACTIVE_DISCOUNT_CODES[appliedDiscountCode].rate : 0,
+      amount: appliedDiscountCode ? totals.discount : 0,
+      firstOrderOnly: appliedDiscountCode ? ACTIVE_DISCOUNT_CODES[appliedDiscountCode].firstOrderOnly : false
+    };
+
+    const payload = {
+      orderId,
+      items: savedItems,
+      totals,
+      discount,
+      customer,
+      timestamp: new Date().toISOString()
+    };
+
+    sessionStorage.setItem('twb_last_order', JSON.stringify(payload));
+    console.log('ORDER PAYLOAD:', payload);
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(payload),
+        keepalive: true
+      });
+    } catch (error) {
+      console.error('Order webhook error:', error);
+    }
+
+    window.cart.items = [];
+    window.cart.save();
+    window.location.href = 'order-confirmed.html';
+  });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  if (window.cart) window.cart.load();
+  renderCheckout();
+</script>
+
+</body>
+</html>
