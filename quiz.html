@@ -61,6 +61,9 @@
         <a href="quiz.html" class="hover:opacity-70">Signature Scent Quiz</a>
         <a href="index.html#contact" class="hover:opacity-70">Contact</a>
       </nav>
+      <button id="openCart" type="button" class="relative px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white">
+        Cart <span id="cartCount" class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2">0</span>
+      </button>
     </div>
   </header>
 
@@ -84,7 +87,25 @@
         <form id="quizForm" class="space-y-8">
 
   <div>
-    <label class="block font-medium mb-3">1. What feeling do you want your scent to leave behind?</label>
+    <label class="block font-medium mb-3">1. What direction would you like your fragrance to lean?</label>
+    <div class="grid gap-3">
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="direction" value="feminine" class="mr-2" required>
+        Conventionally feminine
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="direction" value="masculine" class="mr-2">
+        Conventionally masculine
+      </label>
+      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
+        <input type="radio" name="direction" value="unisex" class="mr-2">
+        Unisex / no preference
+      </label>
+    </div>
+  </div>
+
+  <div>
+    <label class="block font-medium mb-3">2. What feeling do you want your scent to leave behind?</label>
     <div class="grid gap-3">
       <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
         <input type="radio" name="feeling" value="warm" class="mr-2" required>
@@ -102,7 +123,7 @@
   </div>
 
   <div>
-    <label class="block font-medium mb-3">2. Which setting feels most like you?</label>
+    <label class="block font-medium mb-3">3. Which setting feels most like you?</label>
     <div class="grid gap-3">
       <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
         <input type="radio" name="setting" value="evening" class="mr-2" required>
@@ -120,7 +141,7 @@
   </div>
 
   <div>
-    <label class="block font-medium mb-3">3. Are you more of a day person or a night person?</label>
+    <label class="block font-medium mb-3">4. Are you more of a day person or a night person?</label>
     <div class="grid gap-3">
       <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
         <input type="radio" name="energy" value="day" class="mr-2" required>
@@ -138,7 +159,7 @@
   </div>
 
   <div>
-    <label class="block font-medium mb-3">4. Which season feels most like you?</label>
+    <label class="block font-medium mb-3">5. Which season feels most like you?</label>
     <div class="grid gap-3">
       <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
         <input type="radio" name="season" value="spring" class="mr-2" required>
@@ -166,17 +187,97 @@
   </div>
 </form>
 
-        <div id="quizResult" class="hidden mt-10 p-6 rounded-2xl bg-cream-50 border border-cream-200">
-          <p class="text-sm uppercase tracking-[0.2em] text-butterfly-500 mb-2">Your result</p>
-          <h2 id="resultTitle" class="font-serif text-3xl mb-3"></h2>
-          <p id="resultText" class="text-butterfly-700 mb-6"></p>
-          <div class="flex flex-wrap gap-3">
-            <a id="resultLink" href="index.html#collection" class="px-5 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
-              View Recommendation
-            </a>
-            <a href="index.html#contact" class="px-5 py-3 rounded-full border border-butterfly-900/20 hover:bg-white">
-              Request Something More Personal
-            </a>
+        <div id="quizResult" class="hidden mt-10 rounded-2xl bg-cream-50 border border-cream-200 overflow-hidden">
+          <div class="grid md:grid-cols-2">
+            <div class="bg-white p-6 flex items-center justify-center">
+              <img id="resultImage" src="" alt="" class="w-full max-w-xs h-80 object-contain">
+              <div id="comingSoonVisual" class="hidden text-center py-20">
+                <p class="text-sm uppercase tracking-[0.25em] text-cream-700 mb-3">Coming Soon</p>
+                <p id="comingSoonName" class="font-serif text-4xl text-butterfly-900"></p>
+              </div>
+            </div>
+            <div class="p-6 md:p-8">
+              <p class="text-sm uppercase tracking-[0.2em] text-butterfly-500 mb-2">Your signature scent</p>
+              <h2 id="resultTitle" class="font-serif text-4xl mb-2"></h2>
+              <p id="resultMatch" class="hidden text-sm font-medium text-cream-700 mb-3"></p>
+              <p id="resultText" class="text-butterfly-700 mb-6"></p>
+              <a id="resultLink" href="index.html#collection" class="text-sm underline underline-offset-4 text-butterfly-600 hover:text-butterfly-900">
+                View full fragrance
+              </a>
+            </div>
+          </div>
+
+          <div class="border-t border-cream-200 bg-white p-6 md:p-8">
+            <div class="max-w-xl">
+              <h3 class="font-serif text-2xl mb-2">Keep your result.</h3>
+              <p class="text-butterfly-600 mb-5">
+                Enter your email and we’ll send your match to you so you don’t have to remember it.
+              </p>
+              <form id="quizEmailForm" class="space-y-3">
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <input id="quizEmail" name="email" type="email" required placeholder="Your email"
+                    class="flex-1 px-4 py-3 border rounded-xl bg-white">
+                  <button type="submit"
+                    class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90 whitespace-nowrap">
+                    Email My Result
+                  </button>
+                </div>
+                <label class="flex items-start gap-2 text-sm text-butterfly-600">
+                  <input id="marketingConsent" type="checkbox" class="mt-1">
+                  <span>Also send me occasional emails about new fragrances, samples and releases.</span>
+                </label>
+                <p id="emailStatus" class="text-sm text-butterfly-500"></p>
+              </form>
+            </div>
+          </div>
+
+          <div class="border-t border-cream-200 p-6 md:p-8">
+            <div class="mb-6">
+              <p class="text-sm uppercase tracking-[0.2em] text-butterfly-500 mb-2">What next?</p>
+              <h3 class="font-serif text-3xl">Smell it. Explore it. Or make it yours.</h3>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+              <article class="rounded-2xl bg-white border border-cream-200 p-5 flex flex-col">
+                <p class="text-sm text-cream-700 mb-2">TRY IT FIRST</p>
+                <h4 class="font-serif text-2xl mb-1">Try Your Match</h4>
+                <p id="trialName" class="text-sm text-butterfly-500 mb-4"></p>
+                <p class="text-butterfly-600 mb-4 flex-1">€5.99 credit toward any 100 ml fragrance.</p>
+                <div class="mb-4"><span class="text-2xl font-medium">€5.99</span><span class="text-sm text-butterfly-500"> · 10 ml</span></div>
+                <button id="trialButton" type="button"
+                  class="w-full px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+                  Try My Match
+                </button>
+              </article>
+
+              <article class="rounded-2xl bg-white border border-cream-200 p-5 flex flex-col">
+                <p class="text-sm text-butterfly-500 mb-2">EXPLORE MORE</p>
+                <h4 class="font-serif text-2xl mb-1">Personal Discovery</h4>
+                <p class="text-sm text-butterfly-500 mb-4">3 × 5 ml · chosen around your profile</p>
+                <p class="text-butterfly-600 mb-4 flex-1">€6.99 credit toward any 100 ml fragrance.</p>
+                <div class="mb-4"><span class="text-2xl font-medium">€15.99</span><span class="text-sm text-butterfly-500"> · 3 × 5 ml</span></div>
+                <button id="discoveryButton" type="button"
+                  class="w-full px-4 py-3 rounded-full bg-white text-butterfly-900 border border-butterfly-900/20 hover:bg-cream-50">
+                  Explore My Profile
+                </button>
+              </article>
+
+              <article class="rounded-2xl bg-white border border-butterfly-900/20 p-5 flex flex-col">
+                <p class="text-sm text-cream-700 mb-2">READY?</p>
+                <h4 class="font-serif text-2xl mb-1">Full Bottle</h4>
+                <p id="fullBottleName" class="text-sm text-butterfly-500 mb-4"></p>
+                <p class="text-butterfly-600 mb-4 flex-1">Skip the trial.</p>
+                <div class="mb-4"><span class="text-2xl font-medium">€59.99</span><span class="text-sm text-butterfly-500"> · 100 ml</span></div>
+                <button id="fullBottleButton" type="button"
+                  class="w-full px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+                  Get My Match
+                </button>
+              </article>
+            </div>
+
+            <p class="text-xs text-butterfly-500 mt-4">
+              One fragrance credit per 100 ml bottle. Shipping is not credited.
+            </p>
           </div>
         </div>
       </div>
@@ -186,337 +287,419 @@
   <footer class="py-10 text-center text-sm text-butterfly-500">
     <p>© <span id="year"></span> The White Butterflies</p>
   </footer>
+  <script src="./cart.js"></script>
+
   <script>
-  document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-  document.getElementById('quizForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const feeling =
-      document.querySelector('input[name="feeling"]:checked')?.value;
-
-    const setting =
-      document.querySelector('input[name="setting"]:checked')?.value;
-
-    const energy =
-      document.querySelector('input[name="energy"]:checked')?.value;
-
-    const season =
-      document.querySelector('input[name="season"]:checked')?.value;
-
-
-    // ============================================================
-    // STORE PRODUCTS
-    // ============================================================
+    const FULL_BOTTLE_PRICE = 59.99;
+    const TRIAL_PRICE = 5.99;
+    const DISCOVERY_PRICE = 15.99;
+    let latestQuizResult = null;
 
     const products = {
-
       nostalgia: {
+        direction: 'feminine',
         name: 'Nostalgia',
+        image: './Nostalgia.png',
         link: 'products/nostalgia-no-7.html',
-
-        description:
-          'Jasmine air opening into cashmere woods, wrapped in vanilla and dry cedar.',
-
-        match:
-          'Your choices lean toward warmth, intimacy and emotional depth. Nostalgia is soft rather than demanding — woody, warm and quietly familiar, with jasmine air, cashmere woods, vanilla and dry cedar.',
-
+        fullId: 'nostalgia-100',
+        fullName: 'Nostalgia — Eau de Parfum 100 ml',
+        match: 'Your choices lean toward warmth, intimacy and emotional depth. Nostalgia is woody, warm and quietly familiar, with jasmine air, cashmere woods, vanilla and dry cedar.',
         scores: {
-          feeling: {
-            warm: 4,
-            fresh: 0,
-            bold: 1
-          },
-
-          setting: {
-            evening: 4,
-            daylight: 0,
-            night: 2
-          },
-
-          energy: {
-            day: 0,
-            night: 2,
-            both: 3
-          },
-
-          season: {
-            spring: 1,
-            summer: 0,
-            autumn: 4,
-            winter: 3
-          }
+          feeling: { warm: 4, fresh: 0, bold: 1 },
+          setting: { evening: 4, daylight: 0, night: 2 },
+          energy: { day: 0, night: 2, both: 3 },
+          season: { spring: 1, summer: 0, autumn: 4, winter: 3 }
         }
       },
-
 
       k: {
+        direction: 'feminine',
         name: 'K.',
+        image: './K.png',
         link: 'products/K.html',
-
-        description:
-          'Dark chocolate, white musk and Indonesian patchouli softened by vanilla and sandalwood, with a flash of lemon above it all.',
-
-        match:
-          'Your choices point toward something darker, sweeter and more magnetic. K. combines dark chocolate, white musk and Indonesian patchouli with vanilla and sandalwood, while lemon keeps a little light above the darkness. It is the scent in the collection built most around desire, attraction and wanting to come back for another smell.',
-
+        fullId: 'k-100',
+        fullName: 'K. — Eau de Parfum 100 ml',
+        match: 'Your choices point toward something darker, sweeter and more magnetic. Dark chocolate, white musk and Indonesian patchouli sit over vanilla and sandalwood, with lemon keeping a little light above the darkness.',
         scores: {
-          feeling: {
-            warm: 2,
-            fresh: 0,
-            bold: 5
-          },
-
-          setting: {
-            evening: 3,
-            daylight: 0,
-            night: 5
-          },
-
-          energy: {
-            day: 0,
-            night: 5,
-            both: 2
-          },
-
-          season: {
-            spring: 0,
-            summer: 1,
-            autumn: 3,
-            winter: 5
-          }
+          feeling: { warm: 2, fresh: 0, bold: 5 },
+          setting: { evening: 3, daylight: 0, night: 5 },
+          energy: { day: 0, night: 5, both: 2 },
+          season: { spring: 0, summer: 1, autumn: 3, winter: 5 }
         }
       },
-
 
       tears: {
+        direction: 'feminine',
         name: 'Tears of A Rose',
+        image: './Tears of A Rose.png',
         link: 'products/tears-of-a-rose.html',
-
-        description:
-          'Sweet watery rose, white musks, bitter rose, vanillin and skin-like warmth.',
-
-        match:
-          'Your choices have a softer, more luminous emotional character. Tears of A Rose moves between watery brightness and skin warmth — sweet rose, white musks and vanillin, with a slightly bitter edge that keeps it from becoming simply pretty.',
-
+        fullId: 'tears-of-a-rose-100',
+        fullName: 'Tears of A Rose — Eau de Parfum 100 ml',
+        match: 'Your choices have a softer, more luminous emotional character. Watery rose, white musks and vanillin sit against a slightly bitter rose edge and skin-like warmth.',
         scores: {
-          feeling: {
-            warm: 3,
-            fresh: 3,
-            bold: 1
-          },
-
-          setting: {
-            evening: 3,
-            daylight: 4,
-            night: 1
-          },
-
-          energy: {
-            day: 3,
-            night: 1,
-            both: 4
-          },
-
-          season: {
-            spring: 5,
-            summer: 3,
-            autumn: 2,
-            winter: 1
-          }
+          feeling: { warm: 3, fresh: 3, bold: 1 },
+          setting: { evening: 3, daylight: 4, night: 1 },
+          energy: { day: 3, night: 1, both: 4 },
+          season: { spring: 5, summer: 3, autumn: 2, winter: 1 }
         }
       },
-
-
-      godfather: {
-        name: 'The Godfather (No. 1)',
-        link: 'products/the-godfather-no-1.html',
-
-        description:
-          'Bergamot over leather, spice and woods, grounded by amber, vanilla and resin.',
-
-        match:
-          'Your choices suggest structure, depth and presence. The Godfather opens with bergamot before moving into leather, spice and woods, with amber, vanilla and resin underneath. It has weight without needing to shout about it.',
-
-        scores: {
-          feeling: {
-            warm: 2,
-            fresh: 1,
-            bold: 5
-          },
-
-          setting: {
-            evening: 2,
-            daylight: 0,
-            night: 5
-          },
-
-          energy: {
-            day: 0,
-            night: 5,
-            both: 1
-          },
-
-          season: {
-            spring: 0,
-            summer: 0,
-            autumn: 5,
-            winter: 4
-          }
-        }
-      },
-
-
-      no111: {
-        name: 'No. 111',
-        link: 'products/the-man.html',
-
-        description:
-          'Bergamot and lemon lifted by clary sage, vetiver and leather, drying into ambroxan and skin-like warmth.',
-
-        match:
-          'Your choices point toward freshness without sterility. No. 111 opens with bergamot and lemon, then moves through clary sage, vetiver and leather into ambroxan and warm skin. Clean and easy to wear, but still unmistakably a perfume rather than scented air.',
-
-        scores: {
-          feeling: {
-            warm: 1,
-            fresh: 5,
-            bold: 2
-          },
-
-          setting: {
-            evening: 1,
-            daylight: 5,
-            night: 1
-          },
-
-          energy: {
-            day: 5,
-            night: 0,
-            both: 3
-          },
-
-          season: {
-            spring: 4,
-            summer: 5,
-            autumn: 1,
-            winter: 0
-          }
-        }
-      },
-
 
       no2309: {
+        direction: 'feminine',
         name: 'No. 2309',
+        image: './The Woman 100 ml.png',
         link: 'products/the-woman-no-2309.html',
-
-        description:
-          'Lemon and jammy red fruit over jasmine air, cashmere, rosy amber, white musks, vanilla and ambroxan.',
-
-        match:
-          'Your choices land between brightness and richness. No. 2309 opens with lemon and jammy red fruit, then becomes softer and fuller through jasmine, cashmere, rosy amber, white musks, vanilla and ambroxan. Luminous at the top, warmer underneath.',
-
+        fullId: 'the-woman-100',
+        fullName: 'No. 2309 — Extrait 100 ml',
+        match: 'Your choices land between brightness and richness. Lemon and jammy red fruit open into jasmine, cashmere, rosy amber, white musks, vanilla and ambroxan.',
         scores: {
-          feeling: {
-            warm: 3,
-            fresh: 2,
-            bold: 4
-          },
+          feeling: { warm: 3, fresh: 2, bold: 4 },
+          setting: { evening: 3, daylight: 3, night: 2 },
+          energy: { day: 2, night: 2, both: 5 },
+          season: { spring: 3, summer: 4, autumn: 3, winter: 1 }
+        }
+      },
 
-          setting: {
-            evening: 3,
-            daylight: 3,
-            night: 2
-          },
+      no2309summer: {
+        direction: 'feminine',
+        name: 'No. 2309 — Summer Edition (Coming Soon!)',
+        comingSoon: true,
+        // Temporary image/page fallback until the Summer Edition gets its own product assets.
+        image: './The Woman 100 ml.png',
+        link: 'index.html#collection',
+        fullId: 'the-woman-summer-100',
+        fullName: 'No. 2309 — Summer Edition 100 ml',
+        match: 'Notes: Lemon · Mandarin · Osmanthus · Jasmine · Cashmere · Rosy Amber · White Musk · Vanilla · Ambroxan',
+        scores: {
+          feeling: { warm: 2, fresh: 5, bold: 2 },
+          setting: { evening: 1, daylight: 5, night: 0 },
+          energy: { day: 4, night: 1, both: 5 },
+          season: { spring: 4, summer: 5, autumn: 1, winter: 0 }
+        }
+      },
 
-          energy: {
-            day: 2,
-            night: 2,
-            both: 5
-          },
+      rainynight: {
+        direction: 'feminine',
+        name: 'Rainy Night (Coming Soon!)',
+        comingSoon: true,
+        image: '',
+        link: 'index.html#collection',
+        fullId: 'rainy-night-100',
+        fullName: 'Rainy Night — 100 ml',
+        match: '',
+        scores: {
+          feeling: { warm: 2, fresh: 5, bold: 1 },
+          setting: { evening: 4, daylight: 1, night: 5 },
+          energy: { day: 1, night: 5, both: 3 },
+          season: { spring: 2, summer: 2, autumn: 3, winter: 4 }
+        }
+      },
 
-          season: {
-            spring: 3,
-            summer: 4,
-            autumn: 3,
-            winter: 1
-          }
+      godfather: {
+        direction: 'masculine',
+        name: 'The Godfather (No. 1)',
+        image: './The Godfather.png',
+        link: 'products/the-godfather-no-1.html',
+        fullId: 'godfather-100',
+        fullName: 'The Godfather (No. 1) — Eau de Toilette 100 ml',
+        match: 'The Godfather is the darker masculine structure in the house: bergamot over leather, spice and woods, grounded by amber, vanilla and resin.',
+        scores: {
+          feeling: { warm: 4, fresh: 0, bold: 5 },
+          setting: { evening: 4, daylight: 0, night: 5 },
+          energy: { day: 0, night: 5, both: 3 },
+          season: { spring: 1, summer: 0, autumn: 5, winter: 5 }
+        }
+      },
+
+      no111: {
+        direction: 'masculine',
+        name: 'No. 111',
+        image: './The Man.png',
+        link: 'products/the-man.html',
+        fullId: 'the-man-100',
+        fullName: 'No. 111 — Eau de Parfum 100 ml',
+        match: 'No. 111 is the fresher masculine structure in the house: bergamot and lemon with clary sage, vetiver and leather, drying into ambroxan and skin-like warmth.',
+        scores: {
+          feeling: { warm: 1, fresh: 5, bold: 2 },
+          setting: { evening: 1, daylight: 5, night: 1 },
+          energy: { day: 5, night: 0, both: 4 },
+          season: { spring: 4, summer: 5, autumn: 1, winter: 0 }
         }
       }
-
     };
 
+    function masculineTailoringSuggestion(winnerId, answers) {
+      const ideas = [];
 
-    // ============================================================
-    // SCORE EVERY PRODUCT
-    // ============================================================
+      if (winnerId === 'no111') {
+        if (answers.feeling === 'warm') ideas.push('warmer woods and a softer amber-musk base');
+        if (answers.feeling === 'bold') ideas.push('more depth through leather and woods');
+        if (answers.setting === 'evening' || answers.setting === 'night') ideas.push('a darker, warmer drydown');
+        if (answers.energy === 'night') ideas.push('more amber and woody weight');
+        if (answers.season === 'autumn') ideas.push('a little more spice and textured woods');
+        if (answers.season === 'winter') ideas.push('more amber, resinous warmth and body');
+      }
 
-    const results = Object.entries(products).map(([id, product]) => {
+      if (winnerId === 'godfather') {
+        if (answers.feeling === 'fresh') ideas.push('a brighter citrus and aromatic lift');
+        if (answers.setting === 'daylight') ideas.push('more transparency through citrus and cleaner woods');
+        if (answers.energy === 'day') ideas.push('a lighter top and cleaner musk');
+        if (answers.season === 'spring') ideas.push('more air, citrus and aromatic freshness');
+        if (answers.season === 'summer') ideas.push('a brighter citrus opening and less resinous weight');
+      }
 
-      const score =
-        product.scores.feeling[feeling] +
-        product.scores.setting[setting] +
-        product.scores.energy[energy] +
-        product.scores.season[season];
+      if (!ideas.length) {
+        ideas.push('small adjustments around your preferred balance of freshness, warmth and intensity');
+      }
 
-      return {
-        id,
-        ...product,
-        score
+      return [...new Set(ideas)].slice(0, 3).join(', ');
+    }
+
+    function masculineMatchPercentage(winner, runner) {
+      // A practical fit indicator, not a claim of scientific precision.
+      // Strong absolute fit + a clear lead over the other masculine structure raises the percentage.
+      const lead = Math.max(0, winner.score - runner.score);
+      return Math.min(96, Math.max(70, Math.round(66 + (winner.score * 1.25) + (lead * 0.65))));
+    }
+
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const answers = {
+        direction: document.querySelector('input[name="direction"]:checked')?.value,
+        feeling: document.querySelector('input[name="feeling"]:checked')?.value,
+        setting: document.querySelector('input[name="setting"]:checked')?.value,
+        energy: document.querySelector('input[name="energy"]:checked')?.value,
+        season: document.querySelector('input[name="season"]:checked')?.value
       };
 
+      // Feminine selections never receive the two conventionally masculine fragrances.
+      // Masculine selections are matched honestly between the only two masculine scents in the house.
+      // "Unisex / no preference" leaves the full collection open.
+      const eligibleEntries = Object.entries(products).filter(([, product]) => {
+        if (answers.direction === 'feminine') return product.direction === 'feminine';
+        if (answers.direction === 'masculine') return product.direction === 'masculine';
+        return true;
+      });
+
+      const results = eligibleEntries.map(([id, product]) => ({
+        id,
+        ...product,
+        score:
+          product.scores.feeling[answers.feeling] +
+          product.scores.setting[answers.setting] +
+          product.scores.energy[answers.energy] +
+          product.scores.season[answers.season]
+      }));
+
+      results.sort((a, b) => b.score - a.score);
+
+      const winner = results[0];
+      const runner = results[1] || results[0];
+
+      let displayText = winner.match;
+      let matchPercentage = null;
+      let tailoringSuggestion = '';
+
+      if (answers.direction === 'masculine') {
+        matchPercentage = masculineMatchPercentage(winner, runner);
+        tailoringSuggestion = masculineTailoringSuggestion(winner.id, answers);
+
+        displayText =
+          `${winner.match} This is the closest ready-to-wear match to your answers, not a claim that it is perfect. ` +
+          `To bring it closer to your profile, we’d explore ${tailoringSuggestion}. ` +
+          `You can still try it exactly as it is first and decide for yourself.`;
+      }
+
+      latestQuizResult = {
+        winner,
+        answers,
+        matchPercentage,
+        tailoringSuggestion,
+        completedAt: new Date().toISOString()
+      };
+
+      document.getElementById('resultTitle').textContent = winner.name;
+
+      const resultText = document.getElementById('resultText');
+      if (winner.match) {
+        resultText.textContent = displayText;
+        resultText.classList.remove('hidden');
+      } else {
+        resultText.textContent = '';
+        resultText.classList.add('hidden');
+      }
+
+      const resultMatch = document.getElementById('resultMatch');
+      if (matchPercentage !== null) {
+        resultMatch.textContent = `Closest match · ${matchPercentage}%`;
+        resultMatch.classList.remove('hidden');
+      } else {
+        resultMatch.textContent = '';
+        resultMatch.classList.add('hidden');
+      }
+
+      const resultLink = document.getElementById('resultLink');
+      if (winner.comingSoon) {
+        resultLink.textContent = 'Coming Soon!';
+        resultLink.removeAttribute('href');
+        resultLink.classList.add('pointer-events-none', 'opacity-60');
+      } else {
+        resultLink.href = winner.link;
+        resultLink.textContent = `View ${winner.name}`;
+        resultLink.classList.remove('pointer-events-none', 'opacity-60');
+      }
+
+      const image = document.getElementById('resultImage');
+      const comingSoonVisual = document.getElementById('comingSoonVisual');
+      const comingSoonName = document.getElementById('comingSoonName');
+
+      if (winner.comingSoon) {
+        image.classList.add('hidden');
+        image.removeAttribute('src');
+        image.alt = '';
+        comingSoonName.textContent = winner.name.replace(' (Coming Soon!)', '');
+        comingSoonVisual.classList.remove('hidden');
+      } else {
+        comingSoonVisual.classList.add('hidden');
+        image.classList.remove('hidden');
+        image.src = winner.image;
+        image.alt = `${winner.name} fragrance`;
+      }
+
+      const trialButton = document.getElementById('trialButton');
+      const fullBottleButton = document.getElementById('fullBottleButton');
+
+      if (winner.comingSoon) {
+        document.getElementById('trialName').textContent = `${winner.name.replace(' (Coming Soon!)', '')} · Coming Soon`;
+        document.getElementById('fullBottleName').textContent = `${winner.name.replace(' (Coming Soon!)', '')} · Coming Soon`;
+
+        trialButton.disabled = true;
+        fullBottleButton.disabled = true;
+        trialButton.textContent = 'Coming Soon';
+        fullBottleButton.textContent = 'Coming Soon';
+        trialButton.classList.add('opacity-50', 'cursor-not-allowed');
+        fullBottleButton.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        document.getElementById('trialName').textContent = `${winner.name} · 10 ml`;
+        document.getElementById('fullBottleName').textContent = `${winner.name} · 100 ml`;
+
+        trialButton.disabled = false;
+        fullBottleButton.disabled = false;
+        trialButton.textContent = 'Try My Match';
+        fullBottleButton.textContent = 'Get My Match';
+        trialButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        fullBottleButton.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      document.getElementById('quizResult').classList.remove('hidden');
+      document.getElementById('emailStatus').textContent = '';
+
+      document.getElementById('quizResult').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
     });
 
+    // Save quiz lead + ask Google Apps Script to email the result.
+    document.getElementById('quizEmailForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!latestQuizResult) return;
 
-    // Highest score first
-    results.sort((a, b) => b.score - a.score);
+      const email = document.getElementById('quizEmail').value.trim();
+      const marketingConsent = document.getElementById('marketingConsent').checked;
 
+      const payload = {
+        type: 'quiz_lead',
+        email,
+        marketingConsent,
+        result: latestQuizResult.winner.name,
+        resultId: latestQuizResult.winner.id,
+        resultLink: latestQuizResult.winner.link,
+        direction: latestQuizResult.answers.direction,
+        matchPercentage: latestQuizResult.matchPercentage,
+        tailoringSuggestion: latestQuizResult.tailoringSuggestion,
+        comingSoon: !!latestQuizResult.winner.comingSoon,
+        feeling: latestQuizResult.answers.feeling,
+        setting: latestQuizResult.answers.setting,
+        energy: latestQuizResult.answers.energy,
+        season: latestQuizResult.answers.season,
+        completedAt: latestQuizResult.completedAt,
+        submittedAt: new Date().toISOString()
+      };
 
-    const winner = results[0];
+      document.getElementById('quizLeadPayload').value = JSON.stringify(payload);
+      document.getElementById('quizLeadFallback').submit();
 
+      document.getElementById('emailStatus').textContent =
+        marketingConsent
+          ? 'Saved. Your result is on its way — and you’re on the list.'
+          : 'Saved. Your result is on its way.';
 
-    // ============================================================
-    // SHOW RESULT
-    // ============================================================
-
-    const resultBox =
-      document.getElementById('quizResult');
-
-    const resultTitle =
-      document.getElementById('resultTitle');
-
-    const resultText =
-      document.getElementById('resultText');
-
-    const resultLink =
-      document.getElementById('resultLink');
-
-
-    resultTitle.textContent =
-      `Your match: ${winner.name}`;
-
-
-    resultText.textContent =
-      winner.match;
-
-
-    resultLink.href =
-      winner.link;
-
-
-    resultLink.textContent =
-      `View ${winner.name}`;
-
-
-    resultBox.classList.remove('hidden');
-
-
-    resultBox.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
+      e.target.reset();
     });
 
-  });
-</script>
+    function addQuizItem(item, limitOne = false) {
+      if (!window.cart) return;
+
+      const existing = window.cart.items.find(product => product.id === item.id);
+      if (limitOne && existing) {
+        window.openCartDrawer?.();
+        return;
+      }
+
+      window.cart.add(item);
+      window.openCartDrawer?.();
+    }
+
+    document.getElementById('trialButton').addEventListener('click', () => {
+      if (!latestQuizResult) return;
+      const winner = latestQuizResult.winner;
+      if (winner.comingSoon) return;
+
+      addQuizItem({
+        id: `trial-${winner.id}-10`,
+        name: `${winner.name} — 10 ml Trial`,
+        price: TRIAL_PRICE,
+        size: '10 ml'
+      }, true);
+    });
+
+    document.getElementById('discoveryButton').addEventListener('click', () => {
+      if (!latestQuizResult) return;
+      const winner = latestQuizResult.winner;
+      const a = latestQuizResult.answers;
+
+      addQuizItem({
+        id: 'personal-discovery-3x5',
+        name: `Personal Discovery Set — 3 × 5 ml (Quiz match: ${winner.name}; ${a.direction}, ${a.feeling}, ${a.setting}, ${a.energy}, ${a.season})`,
+        price: DISCOVERY_PRICE,
+        size: '3 × 5 ml'
+      }, true);
+    });
+
+    document.getElementById('fullBottleButton').addEventListener('click', () => {
+      if (!latestQuizResult) return;
+      const winner = latestQuizResult.winner;
+      if (winner.comingSoon) return;
+
+      addQuizItem({
+        id: winner.fullId,
+        name: winner.fullName,
+        price: FULL_BOTTLE_PRICE,
+        size: '100 ml'
+      });
+    });
+  </script>
+
+  <!-- CORS-proof submission to the Google Apps Script already used by your contact form -->
+  <form id="quizLeadFallback" method="POST"
+        action="https://script.google.com/macros/s/AKfycbw6oj6t9Q9QnFaEuM7c9Cq8SwIcrGogJcvMVgeH3lcjSXtNzbkcDecRP2fc2cFvyVvQ5Q/exec"
+        target="quizLeadFrame" class="hidden">
+    <input type="hidden" name="payload" id="quizLeadPayload">
+  </form>
+  <iframe name="quizLeadFrame" style="display:none"></iframe>
   </body>
 </html>

@@ -213,7 +213,7 @@ html { scroll-behavior: smooth; }
       </p>
 
       <div class="flex items-center justify-between">
-        <span class="text-lg font-medium text-butterfly-900 ml-1">€74.99</span>
+        <span class="text-lg font-medium text-butterfly-900 ml-1">€84.99</span>
         <a href="#contact"
           class="px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90">
         Contact now
@@ -565,13 +565,34 @@ html { scroll-behavior: smooth; }
       <p class="text-butterfly-600 mb-6">Place your order below. You’ll see an on‑page confirmation when it’s captured.</p>
 
       <!-- Order Summary -->
-      <div id="summary" class="mb-8 p-4 bg-cream-50 rounded-xl border"></div>
+      <div id="summary" class="mb-6 p-4 bg-cream-50 rounded-xl border"></div>
+
+      <!-- Discount Code -->
+      <div class="mb-8">
+        <label for="discountCode" class="block text-sm font-medium mb-2">Discount code</label>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            id="discountCode"
+            type="text"
+            autocomplete="off"
+            placeholder="Enter code"
+            class="flex-1 px-4 py-3 border rounded-xl uppercase">
+          <button
+            id="applyDiscount"
+            type="button"
+            class="px-5 py-3 rounded-full bg-white text-butterfly-900 border border-butterfly-900/20 hover:bg-cream-50">
+            Apply
+          </button>
+        </div>
+        <p id="discountStatus" class="text-sm mt-2 text-butterfly-500"></p>
+      </div>
 
       <!-- Customer Form -->
       <form id="orderForm" class="grid md:grid-cols-2 gap-4">
         <input required name="fullName" placeholder="Full name" class="px-4 py-3 border rounded">
         <input required type="email" name="email" placeholder="Email" class="px-4 py-3 border rounded">
-        <input required name="address" placeholder="Street Name + House Number (+ Addition/Suffix if any)" class="px-4 py-3 border rounded md:col-span-2">
+        <input required name="streetName" placeholder="Street name" class="px-4 py-3 border rounded">
+        <input required name="houseNumber" placeholder="House number (+ suffix if any)" class="px-4 py-3 border rounded">
         <input required name="city" placeholder="City" class="px-4 py-3 border rounded">
         <input required name="postcode" placeholder="Postcode" class="px-4 py-3 border rounded">
         <input required name="country" placeholder="Country" class="px-4 py-3 border rounded">
@@ -747,6 +768,176 @@ html { scroll-behavior: smooth; }
   // It comes entirely from cart.js.
   // ============================================================
 
+  // ============================================================
+  // DISCOUNT CODES
+  // ============================================================
+
+  const ACTIVE_DISCOUNT_CODES = {
+    CHASKA: {
+      rate: 0.05,
+      firstOrderOnly: true
+    }
+  };
+
+  let appliedDiscountCode = '';
+
+  function checkoutFormatEUR(value) {
+    return '€' + Number(value || 0).toFixed(2);
+  }
+
+  function getCheckoutTotals() {
+    const base = window.cart.totals();
+
+    const discountConfig =
+      appliedDiscountCode
+        ? ACTIVE_DISCOUNT_CODES[appliedDiscountCode]
+        : null;
+
+    // "5% off the final order" = 5% off the total that would
+    // otherwise be payable, including shipping.
+    const totalBeforeDiscount = Number(base.total || 0);
+
+    const discount =
+      discountConfig
+        ? totalBeforeDiscount * discountConfig.rate
+        : 0;
+
+    const total =
+      Math.max(0, totalBeforeDiscount - discount);
+
+    return {
+      ...base,
+      discountCode: appliedDiscountCode,
+      discountRate: discountConfig ? discountConfig.rate : 0,
+      discount,
+      totalBeforeDiscount,
+      total
+    };
+  }
+
+  function renderCheckoutSummaryWithDiscount() {
+    const summary = document.getElementById('summary');
+
+    if (!summary || !window.cart) {
+      return;
+    }
+
+    const t = getCheckoutTotals();
+
+    const itemLines = window.cart.items
+      .map(item => `
+        <li class="flex justify-between gap-4">
+          <span>${item.qty} × ${item.name}</span>
+          <span>${checkoutFormatEUR(item.price * item.qty)}</span>
+        </li>
+      `)
+      .join('');
+
+    const discountLine =
+      t.discount > 0
+        ? `
+          <div class="flex items-center justify-between text-sm text-cream-700">
+            <span>Discount (${t.discountCode} · ${Math.round(t.discountRate * 100)}%)</span>
+            <span>−${checkoutFormatEUR(t.discount)}</span>
+          </div>
+        `
+        : '';
+
+    summary.innerHTML = `
+      <h3 class="font-medium mb-3">Order Summary</h3>
+
+      <ul class="space-y-2 mb-4">
+        ${itemLines}
+      </ul>
+
+      <div class="border-t pt-3 space-y-2">
+        <div class="flex items-center justify-between text-sm">
+          <span>Subtotal</span>
+          <span>${checkoutFormatEUR(t.subtotal)}</span>
+        </div>
+
+        <div class="flex items-center justify-between text-sm">
+          <span>Shipping</span>
+          <span>${checkoutFormatEUR(t.shipping)}</span>
+        </div>
+
+        ${discountLine}
+
+        <div class="flex items-center justify-between font-medium text-lg pt-1">
+          <span>Total</span>
+          <span>${checkoutFormatEUR(t.total)}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  const applyDiscountButton =
+    document.getElementById('applyDiscount');
+
+  const discountInput =
+    document.getElementById('discountCode');
+
+  const discountStatus =
+    document.getElementById('discountStatus');
+
+  applyDiscountButton?.addEventListener('click', () => {
+    const enteredCode =
+      (discountInput?.value || '')
+        .trim()
+        .toUpperCase();
+
+    if (!enteredCode) {
+      appliedDiscountCode = '';
+
+      if (discountStatus) {
+        discountStatus.textContent = 'Enter a discount code first.';
+        discountStatus.className = 'text-sm mt-2 text-butterfly-500';
+      }
+
+      renderCheckoutSummaryWithDiscount();
+      return;
+    }
+
+    const code =
+      ACTIVE_DISCOUNT_CODES[enteredCode];
+
+    if (!code) {
+      appliedDiscountCode = '';
+
+      if (discountStatus) {
+        discountStatus.textContent = 'That discount code is not active.';
+        discountStatus.className = 'text-sm mt-2 text-red-600';
+      }
+
+      renderCheckoutSummaryWithDiscount();
+      return;
+    }
+
+    appliedDiscountCode = enteredCode;
+
+    if (discountInput) {
+      discountInput.value = enteredCode;
+    }
+
+    if (discountStatus) {
+      discountStatus.textContent =
+        `${enteredCode} applied — ${Math.round(code.rate * 100)}% off your final order.`;
+
+      discountStatus.className =
+        'text-sm mt-2 text-cream-700';
+    }
+
+    renderCheckoutSummaryWithDiscount();
+  });
+
+  discountInput?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      applyDiscountButton?.click();
+    }
+  });
+
+
   const orderForm =
     document.getElementById('orderForm');
 
@@ -780,8 +971,23 @@ html { scroll-behavior: smooth; }
           new FormData(e.target).entries()
         );
 
+      // Keep the new address fields separate, while also building
+      // the old combined "address" value so the existing Google
+      // Apps Script keeps working without any backend change.
+      data.streetName =
+        (data.streetName || '').trim();
+
+      data.houseNumber =
+        (data.houseNumber || '').trim();
+
+      data.address =
+        `${data.streetName} ${data.houseNumber}`.trim();
+
       const t =
-        window.cart.totals();
+        getCheckoutTotals();
+
+      data.discountCode =
+        t.discountCode || '';
 
       const orderId =
         'TWB-' +
@@ -1020,7 +1226,7 @@ html { scroll-behavior: smooth; }
 
 
               doc.text(
-                `${data.address}`,
+                `${data.streetName} ${data.houseNumber}`.trim(),
                 65,
                 y
               );
@@ -1145,6 +1351,21 @@ html { scroll-behavior: smooth; }
               y += 16;
 
 
+              if (t.discount > 0) {
+
+                doc.text(
+                  `Discount (${t.discountCode}): -€${t.discount.toFixed(2)}`,
+                  500,
+                  y,
+                  {
+                    align: 'right'
+                  }
+                );
+
+                y += 16;
+              }
+
+
               doc.text(
                 `Total: €${t.total.toFixed(2)}`,
                 500,
@@ -1252,7 +1473,7 @@ html { scroll-behavior: smooth; }
       // ========================================================
 
       const WEBHOOK_URL =
-        'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec';
+        'https://script.google.com/macros/s/AKfycbw6oj6t9Q9QnFaEuM7c9Cq8SwIcrGogJcvMVgeH3lcjSXtNzbkcDecRP2fc2cFvyVvQ5Q/exec';
 
 
       const payload = {
@@ -1264,6 +1485,17 @@ html { scroll-behavior: smooth; }
 
         totals:
           t,
+
+        discount: {
+          code: t.discountCode || '',
+          rate: t.discountRate || 0,
+          amount: t.discount || 0,
+          firstOrderOnly:
+            !!(
+              t.discountCode &&
+              ACTIVE_DISCOUNT_CODES[t.discountCode]?.firstOrderOnly
+            )
+        },
 
         customer:
           data,
@@ -1603,7 +1835,7 @@ if (cancelDeleteCart && cancelCheckoutModal) {
 </script>
 <!-- Hidden fallback POST for contact (CORS-proof) -->
 <form id="contactFallback" method="POST"
-      action="https://script.google.com/macros/s/AKfycbw7nUb9MbmkKWj0i49SYxYDdDlFHONT8_4h3bN1BXsA5INJiR8jGZ0lJObjMVFevzybJw/exec"
+      action="https://script.google.com/macros/s/AKfycbw6oj6t9Q9QnFaEuM7c9Cq8SwIcrGogJcvMVgeH3lcjSXtNzbkcDecRP2fc2cFvyVvQ5Q/exec"
       target="contactFrame" class="hidden">
   <input type="hidden" name="payload" id="contactPayload">
 </form>
