@@ -90,10 +90,8 @@
 
 <footer class="py-10 text-center text-sm text-butterfly-500">© <span id="year"></span> The White Butterflies</footer>
 
-<!-- GOOGLE APPS SCRIPT -->
-
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwPKgSa8oRyq6OcglEmwXrJTlDZVzrXslkJLgAgVUNJ7R9pt-t5JqyM5CqjiZR2_YlNA/exec';
+  const APPS_SCRIPT_URL = 'PASTE_YOUR_CURRENT_APPS_SCRIPT_EXEC_URL_HERE';
 
   document.getElementById('year').textContent =
     new Date().getFullYear();
@@ -482,13 +480,10 @@
   window.addEventListener(
     'message',
     event => {
-      if (
-        event.source !==
-          statusBridgeFrame.contentWindow
-      ) {
-        return;
-      }
-
+      // Google Apps Script HTML Service adds its own sandboxed iframe.
+      // Because of that, event.source is not guaranteed to equal the
+      // outer hidden iframe (statusBridgeFrame.contentWindow).
+      // The random one-time bridgeToken below is our correlation check.
       const data =
         event.data || {};
 
@@ -738,7 +733,7 @@
       doc.text(payment.status === 'paid' ? 'We hope this fragrance brings you quiet joy and warmth.' : 'This order will be fulfilled after payment is confirmed.', 65, y); y += 60;
       doc.setFontSize(10);
       doc.setTextColor('#475569');
-      doc.text('https://pranavdj09-pixel.github.io/thewhitebutterflies/#', 65, y);
+      doc.text('www.thewhitebutterflies.com', 65, y);
       doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
       doc.save(`Order_${order.orderId}.pdf`);
     }
