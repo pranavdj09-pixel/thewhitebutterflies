@@ -51,7 +51,7 @@
 
       <div class="flex flex-wrap gap-3">
         <button id="downloadInvoice" class="hidden px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
-          Download Order PDF
+          Download Invoice
         </button>
 
         <a id="retryPayment" href="checkout.html" class="hidden px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
@@ -91,7 +91,7 @@
 <footer class="py-10 text-center text-sm text-butterfly-500">© <span id="year"></span> The White Butterflies</footer>
 
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwPKgSa8oRyq6OcglEmwXrJTlDZVzrXslkJLgAgVUNJ7R9pt-t5JqyM5CqjiZR2_YlNA/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2h5pEdUTF6uZEFgv4dQyNnedjy7PtKhmhVGys8ko_9P67y-f8BwOOs2uNKlfN34quOA/exec';
 
   document.getElementById('year').textContent =
     new Date().getFullYear();
@@ -266,6 +266,12 @@
   function showPaymentState(statusData) {
     clearTimeout(statusTimer);
 
+    // Prefer the server-side order snapshot. This means the invoice still
+    // works after a refresh/new tab even if sessionStorage is gone.
+    if (statusData && statusData.order) {
+      order = statusData.order;
+    }
+
     loading.classList.add('hidden');
     missing.classList.add('hidden');
     card.classList.remove('hidden');
@@ -348,12 +354,13 @@
         'Thank you.';
 
       message.innerHTML =
-        `Your order <strong>${statusData.orderId || orderId}</strong> has been paid successfully.`;
+        `Your order <strong>${statusData.orderId || orderId}</strong> has been paid successfully. A confirmation email with your invoice is being sent to the email used at checkout.`;
 
       clearCartAfterAcceptedOrder();
 
       if (order) {
         order.payment = {
+          ...(order.payment || {}),
           id: statusData.paymentId,
           method,
           status,
@@ -366,6 +373,9 @@
         );
 
         renderOrderDetails();
+
+        // The invoice button is back, and it no longer depends solely
+        // on the pre-Mollie browser session surviving the redirect.
         downloadButton.classList.remove('hidden');
       }
 
@@ -684,7 +694,7 @@
       doc.setLineWidth(0.5);
       doc.line(60, 85, 535, 85);
       doc.setFontSize(14);
-      doc.text('Order Confirmation', 65, 115);
+      doc.text('Invoice', 65, 115);
 
       let y = 140;
       doc.setFontSize(11);
@@ -697,7 +707,11 @@
       doc.line(65, y, 250, y); y += 14;
       doc.setFontSize(11);
       doc.text(`${customer.fullName || ''}`, 65, y); y += 14;
-      doc.text(`${customer.streetName || ''} ${customer.houseNumber || ''}`.trim(), 65, y); y += 14;
+      doc.text(
+        `${customer.address || `${customer.streetName || ''} ${customer.houseNumber || ''}`.trim()}`,
+        65,
+        y
+      ); y += 14;
       doc.text(`${customer.city || ''}, ${customer.postcode || ''}`, 65, y); y += 14;
       doc.text(`${customer.country || ''}`, 65, y); y += 30;
 
@@ -733,9 +747,9 @@
       doc.text(payment.status === 'paid' ? 'We hope this fragrance brings you quiet joy and warmth.' : 'This order will be fulfilled after payment is confirmed.', 65, y); y += 60;
       doc.setFontSize(10);
       doc.setTextColor('#475569');
-      doc.text('www.thewhitebutterflies.com', 65, y);
+      doc.text('pranavdj09-pixel.github.io/thewhitebutterflies', 65, y);
       doc.text('Email: pranavdj09@gmail.com | Phone: +31 6 84542568', 65, y + 14);
-      doc.save(`Order_${order.orderId}.pdf`);
+      doc.save(`Invoice_${order.orderId}.pdf`);
     }
   );
 
