@@ -35,6 +35,8 @@
 
 <main class="py-12 md:py-20">
   <div class="max-w-5xl mx-auto px-4">
+    <div id="paymentReturnNotice" class="hidden mb-6 rounded-2xl border border-cream-300 bg-cream-100 p-4 text-butterfly-700"></div>
+
     <div class="mb-10">
       <p class="text-sm uppercase tracking-[0.2em] text-cream-700 mb-2">Your order</p>
       <h1 class="font-serif text-5xl mb-3">Checkout</h1>
@@ -73,7 +75,49 @@
           <input required name="postcode" placeholder="Postcode" class="px-4 py-3 border rounded-xl">
           <input required name="country" placeholder="Country" class="px-4 py-3 border rounded-xl md:col-span-2">
           <textarea name="notes" placeholder="Notes (optional)" class="px-4 py-3 border rounded-xl md:col-span-2 h-28"></textarea>
-          <button id="placeOrderButton" class="mt-2 md:col-span-2 px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90" type="submit">Place Order</button>
+          <div class="md:col-span-2 mt-3 pt-6 border-t border-cream-200">
+            <p class="font-serif text-2xl mb-1">Payment</p>
+            <p class="text-sm text-butterfly-500 mb-4">
+              Choose how you would like to pay. Cash is not offered through the public checkout.
+            </p>
+
+            <div class="grid gap-3">
+
+              <label class="payment-choice cursor-pointer rounded-2xl border border-butterfly-900/20 bg-cream-50 p-4 flex items-start gap-3">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="ideal"
+                  checked
+                  class="mt-1">
+                <span>
+                  <span class="block font-medium">iDEAL</span>
+                  <span class="block text-sm text-butterfly-500 mt-1">
+                    Pay immediately through your bank using Mollie.
+                  </span>
+                </span>
+              </label>
+
+              <label class="payment-choice cursor-pointer rounded-2xl border border-butterfly-900/20 bg-white p-4 flex items-start gap-3">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="banktransfer"
+                  class="mt-1">
+                <span>
+                  <span class="block font-medium">Bank transfer</span>
+                  <span class="block text-sm text-butterfly-500 mt-1">
+                    Mollie will provide the bank details and payment reference. Your order is fulfilled after the transfer is received.
+                  </span>
+                </span>
+              </label>
+
+            </div>
+          </div>
+
+          <button id="placeOrderButton" class="mt-2 md:col-span-2 px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed" type="submit">
+            Pay securely with iDEAL
+          </button>
           <button id="cancelCheckout" type="button" class="md:col-span-2 text-center text-sm text-butterfly-500 underline underline-offset-4 hover:text-butterfly-900">Cancel Checkout</button>
           <p class="text-xs text-butterfly-500 md:col-span-2 text-center">By placing an order you agree to our Terms and Privacy Policy.</p>
           <p id="orderStatus" class="hidden text-sm md:col-span-2 text-center text-butterfly-600"></p>
@@ -95,12 +139,18 @@
   </div>
 </div>
 
+
+<iframe
+  id="paymentBridgeFrame"
+  name="paymentBridgeFrame"
+  class="hidden"
+  title="Payment bridge">
+</iframe>
+
 <footer class="py-10 text-center text-sm text-butterfly-500">© <span id="year"></span> The White Butterflies</footer>
 
-<!-- GOOGLE APP SCRIPT LINK -->
-
 <script>
-  const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbw6oj6t9Q9QnFaEuM7c9Cq8SwIcrGogJcvMVgeH3lcjSXtNzbkcDecRP2fc2cFvyVvQ5Q/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbBQ9lV6-wOZHPZIRP0TcGi4G-44I0tx3l3zsz7udm0rt5_QSqD52obcK76im5v8ynTQ/exec';
 
   const ACTIVE_DISCOUNT_CODES = {
     CHASKA: { rate: 0.05, firstOrderOnly: true }
@@ -172,6 +222,10 @@
         <div class="flex justify-between text-lg font-medium pt-3 border-t border-cream-200"><span>Total</span><span>${formatEUR(t.total)}</span></div>
       </div>
     `;
+
+    if (typeof updatePaymentButton === 'function') {
+      updatePaymentButton();
+    }
   }
 
   const discountInput = document.getElementById('discountCode');
@@ -241,67 +295,454 @@
     window.location.href = 'index.html#collection';
   });
 
-  const orderForm = document.getElementById('orderForm');
+  const paymentRadios =
+    Array.from(
+      document.querySelectorAll(
+        'input[name="paymentMethod"]'
+      )
+    );
 
-  orderForm.addEventListener('submit', async event => {
-    event.preventDefault();
+  function selectedPaymentMethod() {
+    return (
+      paymentRadios.find(
+        radio =>
+          radio.checked
+      )?.value ||
+      'ideal'
+    );
+  }
 
-    if (!window.cart.items.length) {
-      renderCheckout();
+  function updatePaymentButton() {
+    const button =
+      document.getElementById(
+        'placeOrderButton'
+      );
+
+    if (!button) {
       return;
     }
 
-    const button = document.getElementById('placeOrderButton');
-    const status = document.getElementById('orderStatus');
-    button.disabled = true;
-    button.textContent = 'Placing Order…';
-    status.classList.remove('hidden');
-    status.textContent = 'Submitting your order…';
+    const method =
+      selectedPaymentMethod();
 
-    const customer = Object.fromEntries(new FormData(orderForm).entries());
-    customer.streetName = (customer.streetName || '').trim();
-    customer.houseNumber = (customer.houseNumber || '').trim();
-    customer.address = `${customer.streetName} ${customer.houseNumber}`.trim();
-    customer.discountCode = appliedDiscountCode || '';
+    const total =
+      getCheckoutTotals().total;
 
-    const totals = getCheckoutTotals();
-    const savedItems = window.cart.items.map(item => ({ ...item }));
-    const orderId = 'TWB-' + new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0,14);
+    button.textContent =
+      method === 'banktransfer'
+        ? `Continue to bank transfer · ${formatEUR(total)}`
+        : `Pay ${formatEUR(total)} with iDEAL`;
+  }
 
-    const discount = {
-      code: appliedDiscountCode || '',
-      rate: appliedDiscountCode ? ACTIVE_DISCOUNT_CODES[appliedDiscountCode].rate : 0,
-      amount: appliedDiscountCode ? totals.discount : 0,
-      firstOrderOnly: appliedDiscountCode ? ACTIVE_DISCOUNT_CODES[appliedDiscountCode].firstOrderOnly : false
-    };
+  paymentRadios.forEach(
+    radio => {
+      radio.addEventListener(
+        'change',
+        () => {
+          document
+            .querySelectorAll(
+              '.payment-choice'
+            )
+            .forEach(
+              label => {
+                const input =
+                  label.querySelector(
+                    'input[type="radio"]'
+                  );
 
-    const payload = {
-      orderId,
-      items: savedItems,
-      totals,
-      discount,
-      customer,
-      timestamp: new Date().toISOString()
-    };
+                label.classList.toggle(
+                  'bg-cream-50',
+                  !!input?.checked
+                );
 
-    sessionStorage.setItem('twb_last_order', JSON.stringify(payload));
-    console.log('ORDER PAYLOAD:', payload);
+                label.classList.toggle(
+                  'bg-white',
+                  !input?.checked
+                );
+              }
+            );
 
-    try {
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {'Content-Type':'text/plain;charset=utf-8'},
-        body: JSON.stringify(payload),
-        keepalive: true
-      });
-    } catch (error) {
-      console.error('Order webhook error:', error);
+          updatePaymentButton();
+        }
+      );
+    }
+  );
+
+
+  // ============================================================
+  // RETURN FROM A CANCELLED MOLLIE CHECKOUT
+  // ============================================================
+
+  const urlParams =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  if (
+    urlParams.get('payment') ===
+    'cancelled'
+  ) {
+    const notice =
+      document.getElementById(
+        'paymentReturnNotice'
+      );
+
+    notice.textContent =
+      'Payment cancelled. Nothing was charged, and your bag is still here if you want to try again.';
+
+    notice.classList.remove(
+      'hidden'
+    );
+
+    history.replaceState(
+      null,
+      '',
+      window.location.pathname
+    );
+  }
+
+
+  // ============================================================
+  // CREATE MOLLIE PAYMENT THROUGH GOOGLE APPS SCRIPT
+  //
+  // GitHub Pages cannot safely hold the Mollie API key.
+  // We POST the order into a hidden Apps Script iframe.
+  // Apps Script creates the Mollie payment server-side and sends
+  // the checkout URL back with postMessage().
+  // ============================================================
+
+  const orderForm =
+    document.getElementById(
+      'orderForm'
+    );
+
+  const paymentBridgeFrame =
+    document.getElementById(
+      'paymentBridgeFrame'
+    );
+
+  let pendingPaymentBridge =
+    null;
+
+
+  function makeBridgeToken() {
+    if (
+      window.crypto &&
+      typeof window.crypto.randomUUID === 'function'
+    ) {
+      return window.crypto
+        .randomUUID()
+        .replace(/-/g, '');
     }
 
-    window.cart.items = [];
-    window.cart.save();
-    window.location.href = 'order-confirmed.html';
-  });
+    return (
+      Date.now().toString(36) +
+      Math.random().toString(36).slice(2) +
+      Math.random().toString(36).slice(2)
+    );
+  }
+
+
+  function restorePaymentButton(message) {
+    const button =
+      document.getElementById(
+        'placeOrderButton'
+      );
+
+    const status =
+      document.getElementById(
+        'orderStatus'
+      );
+
+    button.disabled = false;
+    updatePaymentButton();
+
+    if (message) {
+      status.classList.remove('hidden');
+      status.textContent = message;
+    }
+  }
+
+
+  window.addEventListener(
+    'message',
+    event => {
+      if (!pendingPaymentBridge) {
+        return;
+      }
+
+      // Apps Script HTML Service runs the returned page inside its own
+      // sandboxed iframe. That means event.source is not necessarily the
+      // outer paymentBridgeFrame window. The random bridgeToken below is
+      // the actual correlation/security check for this one-time response.
+      const message =
+        event.data || {};
+
+      if (
+        message.bridgeToken !==
+        pendingPaymentBridge.token
+      ) {
+        return;
+      }
+
+      if (
+        ![
+          'twb-payment-created',
+          'twb-payment-error'
+        ].includes(
+          message.type
+        )
+      ) {
+        return;
+      }
+
+      clearTimeout(
+        pendingPaymentBridge.timeoutId
+      );
+
+      const pending =
+        pendingPaymentBridge;
+
+      pendingPaymentBridge =
+        null;
+
+      if (
+        message.type ===
+          'twb-payment-error' ||
+        !message.ok
+      ) {
+        restorePaymentButton(
+          message.error ||
+          'Could not start the payment. Please try again.'
+        );
+
+        return;
+      }
+
+      if (!message.checkoutUrl) {
+        restorePaymentButton(
+          'Mollie did not return a checkout URL.'
+        );
+
+        return;
+      }
+
+      // Keep the secure server-calculated order snapshot while
+      // the customer leaves our site for Mollie.
+      sessionStorage.setItem(
+        'twb_pending_order',
+        JSON.stringify(
+          message.order
+        )
+      );
+
+      sessionStorage.setItem(
+        'twb_pending_order_id',
+        message.orderId || ''
+      );
+
+      sessionStorage.setItem(
+        'twb_pending_payment_id',
+        message.paymentId || ''
+      );
+
+      window.location.href =
+        message.checkoutUrl;
+    }
+  );
+
+
+  function submitPaymentToAppsScript(payload) {
+    if (
+      !APPS_SCRIPT_URL ||
+      APPS_SCRIPT_URL.includes(
+        'PASTE_YOUR_CURRENT'
+      )
+    ) {
+      throw new Error(
+        'Add your current Google Apps Script /exec URL to checkout.html first.'
+      );
+    }
+
+    const form =
+      document.createElement(
+        'form'
+      );
+
+    form.method = 'POST';
+    form.action = APPS_SCRIPT_URL;
+    form.target = 'paymentBridgeFrame';
+    form.className = 'hidden';
+
+    const input =
+      document.createElement(
+        'input'
+      );
+
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value =
+      JSON.stringify(payload);
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  }
+
+
+  orderForm.addEventListener(
+    'submit',
+    event => {
+      event.preventDefault();
+
+      if (
+        !window.cart ||
+        !window.cart.items.length
+      ) {
+        renderCheckout();
+        return;
+      }
+
+      if (pendingPaymentBridge) {
+        return;
+      }
+
+      const button =
+        document.getElementById(
+          'placeOrderButton'
+        );
+
+      const status =
+        document.getElementById(
+          'orderStatus'
+        );
+
+      const method =
+        selectedPaymentMethod();
+
+      button.disabled = true;
+
+      button.textContent =
+        method === 'banktransfer'
+          ? 'Preparing bank transfer…'
+          : 'Opening iDEAL…';
+
+      status.classList.remove(
+        'hidden'
+      );
+
+      status.textContent =
+        'Creating a secure Mollie payment…';
+
+      const formData =
+        Object.fromEntries(
+          new FormData(
+            orderForm
+          ).entries()
+        );
+
+      const customer = {
+        fullName:
+          (formData.fullName || '')
+            .trim(),
+
+        email:
+          (formData.email || '')
+            .trim(),
+
+        streetName:
+          (formData.streetName || '')
+            .trim(),
+
+        houseNumber:
+          (formData.houseNumber || '')
+            .trim(),
+
+        city:
+          (formData.city || '')
+            .trim(),
+
+        postcode:
+          (formData.postcode || '')
+            .trim(),
+
+        country:
+          (formData.country || '')
+            .trim(),
+
+        notes:
+          (formData.notes || '')
+            .trim()
+      };
+
+      const bridgeToken =
+        makeBridgeToken();
+
+      const timeoutId =
+        setTimeout(
+          () => {
+            if (
+              !pendingPaymentBridge ||
+              pendingPaymentBridge.token !==
+                bridgeToken
+            ) {
+              return;
+            }
+
+            pendingPaymentBridge = null;
+
+            restorePaymentButton(
+              'The payment service took too long to answer. Nothing has been charged. Please try again.'
+            );
+          },
+          30000
+        );
+
+      pendingPaymentBridge = {
+        token:
+          bridgeToken,
+        timeoutId
+      };
+
+      try {
+        submitPaymentToAppsScript({
+          type:
+            'create_payment',
+
+          bridgeToken,
+
+          items:
+            window.cart.items,
+
+          discountCode:
+            appliedDiscountCode || '',
+
+          clientTotals:
+            getCheckoutTotals(),
+
+          paymentMethod:
+            method,
+
+          customer
+        });
+
+      } catch (error) {
+        clearTimeout(timeoutId);
+        pendingPaymentBridge = null;
+
+        console.error(
+          'Payment creation error:',
+          error
+        );
+
+        restorePaymentButton(
+          error.message ||
+          'Could not start the payment. Please try again.'
+        );
+      }
+    }
+  );
 
   document.getElementById('year').textContent = new Date().getFullYear();
 
