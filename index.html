@@ -113,6 +113,7 @@ html { scroll-behavior: smooth; }
   </style>
 </head>
 
+<script src="./catalog.js"></script>
 <script src="./cart.js"></script>
 
 <body class="bg-cream-50 text-butterfly-900 font-sans">
@@ -537,7 +538,7 @@ html { scroll-behavior: smooth; }
       <!-- Trust row -->
       <div class="mt-10 grid md:grid-cols-3 gap-6 text-sm text-butterfly-600">
         <div class="p-4 rounded-xl bg-cream-100">Orders captured instantly to our system.</div>
-        <div class="p-4 rounded-xl bg-cream-100">We never store card data, and use trusted external processors.</div>
+        <div class="p-4 rounded-xl bg-cream-100">Payments are completed securely on Mollie's hosted checkout. We do not collect card or online-banking credentials.</div>
         <div class="p-4 rounded-xl bg-cream-100">Dispatch window: 3–5 business days</div>
       </div>
     </div>
@@ -569,17 +570,27 @@ html { scroll-behavior: smooth; }
         </details>
         <details class="py-4">
           <summary class="cursor-pointer font-medium">What strength are your perfumes?</summary>
-          <p class="mt-2 text-butterfly-600">We have a variety of EDPs and EDTs, No. 2309 is a Parfum Extrait, with a 23.5% parfum concentration. The signature range is concentrated based on the scent.</p>
+          <p class="mt-2 text-butterfly-600">Compared to your usual EDPs and EDTs, Nostalgia is a Parfum Extrait, with a 50% parfum concentration. It is composed for intimacy first, then diffusion. The signature range is concentrated based on the scent.</p>
         </details>
         <details class="py-4">
           <summary class="cursor-pointer font-medium">Returns & exchanges</summary>
-          <p class="mt-2 text-butterfly-600">For hygiene and safety, perfumes are final sale.</p>
+          <p class="mt-2 text-butterfly-600">For hygiene and safety, perfumes are final sale. Try our Discovery Set to test a fragrance in a small batch, 100% money back gaurantee on the discovery set.</p>
         </details>
       </div>
     </div>
   </section>
 
-  <!-- CONTACT FORM -->
+  
+  <section class="py-10">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="rounded-2xl bg-cream-100 border border-cream-200 p-5 text-sm text-butterfly-600">
+        <strong class="text-butterfly-900">Shipping:</strong>
+        €6.96 within the Netherlands. Shipping elsewhere in the EU varies by destination and is confirmed before payment.
+      </div>
+    </div>
+  </section>
+
+<!-- CONTACT FORM -->
 <section id="contact" class="py-20 bg-cream-100 fade-in">
   <div class="max-w-3xl mx-auto px-4 text-center">
     <h2 class="font-serif text-3xl mb-6">Get in Touch</h2>
@@ -655,8 +666,9 @@ html { scroll-behavior: smooth; }
   if (year) year.textContent = new Date().getFullYear();
 </script>
 <!-- Hidden fallback POST for contact (CORS-proof) -->
+ <!-- GOOGLE APPS SCRIPT -->
 <form id="contactFallback" method="POST"
-      action="https://script.google.com/macros/s/AKfycby2h5pEdUTF6uZEFgv4dQyNnedjy7PtKhmhVGys8ko_9P67y-f8BwOOs2uNKlfN34quOA/exec"
+      action="https://script.google.com/macros/s/AKfycbwiNI4sVCokxOIsQptKXeMGrR2BMkBEPLvO7wQ-Yrut7sPm9I8Xs6OWNm55ORTjzXm8JA/exec"
       target="contactFrame" class="hidden">
   <input type="hidden" name="payload" id="contactPayload">
 </form>

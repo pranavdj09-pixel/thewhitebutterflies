@@ -46,7 +46,6 @@
       <p id="confirmationMessage" class="text-lg text-butterfly-600 mb-8"></p>
 
       <div id="paymentStatusBox" class="rounded-xl bg-cream-100 border border-cream-200 p-5 mb-5"></div>
-      <div id="bankTransferBox" class="hidden rounded-xl bg-white border border-cream-300 p-5 mb-5"></div>
       <div id="orderDetails" class="hidden rounded-xl bg-cream-50 border border-cream-200 p-5 mb-7"></div>
 
       <div class="flex flex-wrap gap-3">
@@ -91,7 +90,8 @@
 <footer class="py-10 text-center text-sm text-butterfly-500">© <span id="year"></span> The White Butterflies</footer>
 
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2h5pEdUTF6uZEFgv4dQyNnedjy7PtKhmhVGys8ko_9P67y-f8BwOOs2uNKlfN34quOA/exec';
+  const APPS_SCRIPT_URL =
+    'https://script.google.com/macros/s/AKfycbwiNI4sVCokxOIsQptKXeMGrR2BMkBEPLvO7wQ-Yrut7sPm9I8Xs6OWNm55ORTjzXm8JA/exec';
 
   document.getElementById('year').textContent =
     new Date().getFullYear();
@@ -292,11 +292,6 @@
         'retryPayment'
       );
 
-    const bankBox =
-      document.getElementById(
-        'bankTransferBox'
-      );
-
     const title =
       document.getElementById(
         'statusTitle'
@@ -312,12 +307,27 @@
         'confirmationMessage'
       );
 
+    const paymentMethodLabels = {
+      mollie_checkout: 'Mollie Checkout',
+      ideal: 'iDEAL',
+      bancontact: 'Bancontact',
+      creditcard: 'Credit / debit card',
+      paybybank: 'Pay by Bank',
+      paypal: 'PayPal',
+      banktransfer: 'Bank transfer via Mollie',
+      applepay: 'Apple Pay',
+      googlepay: 'Google Pay',
+      eps: 'EPS',
+      kbc: 'KBC/CBC',
+      belfius: 'Belfius',
+      mybank: 'MyBank',
+      przelewy24: 'Przelewy24'
+    };
+
     const paymentMethodLabel =
-      method === 'ideal'
-        ? 'iDEAL'
-        : method === 'banktransfer'
-          ? 'Bank transfer'
-          : method || 'Payment';
+      paymentMethodLabels[method.toLowerCase()] ||
+      method ||
+      'Mollie Checkout';
 
     statusBox.innerHTML = `
       <div class="flex justify-between gap-4">
@@ -343,7 +353,6 @@
 
     retry.classList.add('hidden');
     checkAgain.classList.add('hidden');
-    bankBox.classList.add('hidden');
     downloadButton.classList.add('hidden');
 
     if (status === 'paid') {
@@ -385,63 +394,6 @@
       return;
     }
 
-    if (
-      method === 'banktransfer' &&
-      ['open', 'pending'].includes(status)
-    ) {
-      eyebrow.textContent =
-        'Bank transfer awaiting payment';
-
-      title.textContent =
-        'Your order is reserved.';
-
-      message.innerHTML =
-        `Your order <strong>${statusData.orderId || orderId}</strong> is waiting for the transfer. We will fulfil it after Mollie confirms the money has arrived.`;
-
-      clearCartAfterAcceptedOrder();
-
-      if (order) {
-        order.payment = {
-          id: statusData.paymentId,
-          method,
-          status
-        };
-
-        sessionStorage.setItem(
-          'twb_last_order',
-          JSON.stringify(order)
-        );
-
-        renderOrderDetails();
-        downloadButton.classList.remove('hidden');
-      }
-
-      const bank =
-        statusData.bankTransfer;
-
-      if (bank) {
-        bankBox.innerHTML = `
-          <h2 class="font-serif text-2xl mb-3">Bank transfer details</h2>
-          <div class="text-sm space-y-2">
-            ${bank.bankName ? `<div><span class="text-butterfly-500">Bank:</span> ${bank.bankName}</div>` : ''}
-            ${bank.bankAccount ? `<div><span class="text-butterfly-500">IBAN:</span> <strong>${bank.bankAccount}</strong></div>` : ''}
-            ${bank.bankBic ? `<div><span class="text-butterfly-500">BIC:</span> ${bank.bankBic}</div>` : ''}
-            ${bank.transferReference ? `<div><span class="text-butterfly-500">Reference:</span> <strong>${bank.transferReference}</strong></div>` : ''}
-          </div>
-          <p class="text-xs text-butterfly-500 mt-4">
-            Use Mollie's exact reference so the transfer can be matched to your order. Mollie also sends the transfer instructions to the email entered at checkout.
-          </p>
-          ${bank.statusUrl ? `<a href="${bank.statusUrl}" class="inline-block mt-4 text-sm underline underline-offset-4">Check transfer status with Mollie</a>` : ''}
-        `;
-
-        bankBox.classList.remove('hidden');
-      }
-
-      sessionStorage.removeItem('twb_pending_order');
-      sessionStorage.removeItem('twb_pending_order_id');
-      sessionStorage.removeItem('twb_pending_payment_id');
-      return;
-    }
 
     if (
       ['failed', 'canceled', 'expired'].includes(status)
@@ -475,7 +427,7 @@
     checkAgain.classList.remove('hidden');
 
     if (
-      method === 'ideal' &&
+      ['open', 'pending', 'authorized'].includes(status) &&
       statusAttempts < 5
     ) {
       statusTimer =
@@ -615,6 +567,29 @@
   );
 
 
+  function prettyPaymentMethod(method) {
+    const labels = {
+      mollie_checkout: 'Mollie Checkout',
+      ideal: 'iDEAL',
+      bancontact: 'Bancontact',
+      creditcard: 'Credit / debit card',
+      paybybank: 'Pay by Bank',
+      paypal: 'PayPal',
+      banktransfer: 'Bank transfer via Mollie',
+      applepay: 'Apple Pay',
+      googlepay: 'Google Pay',
+      eps: 'EPS',
+      kbc: 'KBC/CBC',
+      belfius: 'Belfius',
+      mybank: 'MyBank',
+      przelewy24: 'Przelewy24'
+    };
+
+    const value = String(method || '').toLowerCase();
+    return labels[value] || method || 'Mollie Checkout';
+  }
+
+
   // ============================================================
   // PDF ORDER CONFIRMATION
   // ============================================================
@@ -700,7 +675,7 @@
       doc.setFontSize(11);
       doc.text(`Order ID: ${order.orderId}`, 65, y); y += 16;
       doc.text(`Date: ${new Date(order.timestamp).toLocaleDateString()}`, 65, y); y += 16;
-      doc.text(`Payment: ${payment.method || ''} · ${String(payment.status || '').toUpperCase()}`, 65, y); y += 30;
+      doc.text(`Payment: ${prettyPaymentMethod(payment.method)} · ${String(payment.status || '').toUpperCase()}`, 65, y); y += 30;
 
       doc.setFontSize(12);
       doc.text('Billing Information', 65, y); y += 14;

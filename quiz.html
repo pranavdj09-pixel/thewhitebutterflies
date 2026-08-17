@@ -242,8 +242,8 @@
                 <p class="text-sm text-cream-700 mb-2">TRY IT FIRST</p>
                 <h4 class="font-serif text-2xl mb-1">Try Your Match</h4>
                 <p id="trialName" class="text-sm text-butterfly-500 mb-4"></p>
-                <p class="text-butterfly-600 mb-4 flex-1">€5.99 credit toward any 100 ml fragrance.</p>
-                <div class="mb-4"><span class="text-2xl font-medium">€5.99</span><span class="text-sm text-butterfly-500"> · 10 ml</span></div>
+                <p class="text-butterfly-600 mb-4 flex-1"><span id="trialCreditText"></span></p>
+                <div class="mb-4"><span id="trialPrice" class="text-2xl font-medium"></span><span id="trialVolume" class="text-sm text-butterfly-500"></span></div>
                 <button id="trialButton" type="button"
                   class="w-full px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
                   Try My Match
@@ -254,8 +254,8 @@
                 <p class="text-sm text-butterfly-500 mb-2">EXPLORE MORE</p>
                 <h4 class="font-serif text-2xl mb-1">Personal Discovery</h4>
                 <p class="text-sm text-butterfly-500 mb-4">3 × 5 ml · chosen around your profile</p>
-                <p class="text-butterfly-600 mb-4 flex-1">€6.99 credit toward any 100 ml fragrance.</p>
-                <div class="mb-4"><span class="text-2xl font-medium">€15.99</span><span class="text-sm text-butterfly-500"> · 3 × 5 ml</span></div>
+                <p class="text-butterfly-600 mb-4 flex-1"><span id="discoveryCreditText"></span></p>
+                <div class="mb-4"><span id="discoveryPrice" class="text-2xl font-medium"></span><span id="discoveryVolume" class="text-sm text-butterfly-500"></span></div>
                 <button id="discoveryButton" type="button"
                   class="w-full px-4 py-3 rounded-full bg-white text-butterfly-900 border border-butterfly-900/20 hover:bg-cream-50">
                   Explore My Profile
@@ -267,7 +267,7 @@
                 <h4 class="font-serif text-2xl mb-1">Full Bottle</h4>
                 <p id="fullBottleName" class="text-sm text-butterfly-500 mb-4"></p>
                 <p class="text-butterfly-600 mb-4 flex-1">Skip the trial.</p>
-                <div class="mb-4"><span id="fullBottlePrice" class="text-2xl font-medium">—</span><span class="text-sm text-butterfly-500"> · 100 ml</span></div>
+                <div class="mb-4"><span id="fullBottlePrice" class="text-2xl font-medium"></span><span id="fullBottleVolume" class="text-sm text-butterfly-500"></span></div>
                 <button id="fullBottleButton" type="button"
                   class="w-full px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
                   Get My Match
@@ -287,156 +287,72 @@
   <footer class="py-10 text-center text-sm text-butterfly-500">
     <p>© <span id="year"></span> The White Butterflies</p>
   </footer>
-  <script src="./cart.js"></script>
+  <script src="./catalog.js"></script>
+<script src="./cart.js"></script>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Temporary per-fragrance prices until catalog.js is implemented.
-    const FULL_BOTTLE_PRICES = {
-      nostalgia: 54.99,
-      k: 54.99,
-      tears: 54.99,
-      no2309: 74.99,
-      godfather: 64.99,
-      no111: 74.99
-    };
-    const TRIAL_PRICE = 5.99;
-    const DISCOVERY_PRICE = 15.99;
+    const TRIAL_OFFER = window.TWB_STORE.offers.trial;
+    const DISCOVERY_OFFER = window.TWB_STORE.offers.discovery;
+
     let latestQuizResult = null;
 
-    const products = {
-      nostalgia: {
-        direction: 'feminine',
-        name: 'Nostalgia',
-        image: './Nostalgia.png',
-        link: 'products/nostalgia-no-7.html',
-        fullId: 'nostalgia-100',
-        fullName: 'Nostalgia — Eau de Parfum 100 ml',
-        match: 'Your choices lean toward warmth, intimacy and emotional depth. Nostalgia is woody, warm and quietly familiar, with jasmine air, cashmere woods, vanilla and dry cedar.',
-        scores: {
-          feeling: { warm: 4, fresh: 0, bold: 1 },
-          setting: { evening: 4, daylight: 0, night: 2 },
-          energy: { day: 0, night: 2, both: 3 },
-          season: { spring: 1, summer: 0, autumn: 4, winter: 3 }
-        }
-      },
+    document.getElementById('trialPrice').textContent =
+      window.TWB_catalogFormatEUR(TRIAL_OFFER.price);
 
-      k: {
-        direction: 'feminine',
-        name: 'K.',
-        image: './K.png',
-        link: 'products/K.html',
-        fullId: 'k-100',
-        fullName: 'K. — Eau de Parfum 100 ml',
-        match: 'Your choices point toward something darker, sweeter and more magnetic. Dark chocolate, white musk and Indonesian patchouli sit over vanilla and sandalwood, with lemon keeping a little light above the darkness.',
-        scores: {
-          feeling: { warm: 2, fresh: 0, bold: 5 },
-          setting: { evening: 3, daylight: 0, night: 5 },
-          energy: { day: 0, night: 5, both: 2 },
-          season: { spring: 0, summer: 1, autumn: 3, winter: 5 }
-        }
-      },
+    document.getElementById('trialVolume').textContent =
+      ` · ${TRIAL_OFFER.volume}`;
 
-      tears: {
-        direction: 'feminine',
-        name: 'Tears of A Rose',
-        image: './Tears of A Rose.png',
-        link: 'products/tears-of-a-rose.html',
-        fullId: 'tears-of-a-rose-100',
-        fullName: 'Tears of A Rose — Eau de Parfum 100 ml',
-        match: 'Your choices have a softer, more luminous emotional character. Watery rose, white musks and vanillin sit against a slightly bitter rose edge and skin-like warmth.',
-        scores: {
-          feeling: { warm: 3, fresh: 3, bold: 1 },
-          setting: { evening: 3, daylight: 4, night: 1 },
-          energy: { day: 3, night: 1, both: 4 },
-          season: { spring: 5, summer: 3, autumn: 2, winter: 1 }
-        }
-      },
+    document.getElementById('trialCreditText').textContent =
+      `${window.TWB_catalogFormatEUR(TRIAL_OFFER.credit)} credit toward any 100 ml fragrance.`;
 
-      no2309: {
-        direction: 'feminine',
-        name: 'No. 2309',
-        image: './The Woman 100 ml.png',
-        link: 'products/the-woman-no-2309.html',
-        fullId: 'the-woman-100',
-        fullName: 'No. 2309 — Extrait 100 ml',
-        match: 'Your choices land between brightness and richness. Lemon and jammy red fruit open into jasmine, cashmere, rosy amber, white musks, vanilla and ambroxan.',
-        scores: {
-          feeling: { warm: 3, fresh: 2, bold: 4 },
-          setting: { evening: 3, daylight: 3, night: 2 },
-          energy: { day: 2, night: 2, both: 5 },
-          season: { spring: 3, summer: 4, autumn: 3, winter: 1 }
-        }
-      },
+    document.getElementById('discoveryPrice').textContent =
+      window.TWB_catalogFormatEUR(DISCOVERY_OFFER.price);
 
-      no2309summer: {
-        direction: 'feminine',
-        name: 'No. 2309 — Summer Edition (Coming Soon!)',
-        comingSoon: true,
-        // Temporary image/page fallback until the Summer Edition gets its own product assets.
-        image: './The Woman 100 ml.png',
-        link: 'index.html#collection',
-        fullId: 'the-woman-summer-100',
-        fullName: 'No. 2309 — Summer Edition 100 ml',
-        match: 'Notes: Lemon · Mandarin · Osmanthus · Jasmine · Cashmere · Rosy Amber · White Musk · Vanilla · Ambroxan',
-        scores: {
-          feeling: { warm: 2, fresh: 5, bold: 2 },
-          setting: { evening: 1, daylight: 5, night: 0 },
-          energy: { day: 4, night: 1, both: 5 },
-          season: { spring: 4, summer: 5, autumn: 1, winter: 0 }
-        }
-      },
+    document.getElementById('discoveryVolume').textContent =
+      ` · ${DISCOVERY_OFFER.volume}`;
 
-      rainynight: {
-        direction: 'feminine',
-        name: 'Rainy Night (Coming Soon!)',
-        comingSoon: true,
-        image: '',
-        link: 'index.html#collection',
-        fullId: 'rainy-night-100',
-        fullName: 'Rainy Night — 100 ml',
-        match: '',
-        scores: {
-          feeling: { warm: 2, fresh: 5, bold: 1 },
-          setting: { evening: 4, daylight: 1, night: 5 },
-          energy: { day: 1, night: 5, both: 3 },
-          season: { spring: 2, summer: 2, autumn: 3, winter: 4 }
-        }
-      },
+    document.getElementById('discoveryCreditText').textContent =
+      `${window.TWB_catalogFormatEUR(DISCOVERY_OFFER.credit)} credit toward any 100 ml fragrance.`;
 
-      godfather: {
-        direction: 'masculine',
-        name: 'The Godfather (No. 1)',
-        image: './The Godfather.png',
-        link: 'products/the-godfather-no-1.html',
-        fullId: 'godfather-100',
-        fullName: 'The Godfather (No. 1) — Eau de Toilette 100 ml',
-        match: 'The Godfather is the darker masculine structure in the house: bergamot over leather, spice and woods, grounded by amber, vanilla and resin.',
-        scores: {
-          feeling: { warm: 4, fresh: 0, bold: 5 },
-          setting: { evening: 4, daylight: 0, night: 5 },
-          energy: { day: 0, night: 5, both: 3 },
-          season: { spring: 1, summer: 0, autumn: 5, winter: 5 }
-        }
-      },
 
-      no111: {
-        direction: 'masculine',
-        name: 'No. 111',
-        image: './The Man.png',
-        link: 'products/the-man.html',
-        fullId: 'the-man-100',
-        fullName: 'No. 111 — Eau de Parfum 100 ml',
-        match: 'No. 111 is the fresher masculine structure in the house: bergamot and lemon with clary sage, vetiver and leather, drying into ambroxan and skin-like warmth.',
-        scores: {
-          feeling: { warm: 1, fresh: 5, bold: 2 },
-          setting: { evening: 1, daylight: 5, night: 1 },
-          energy: { day: 5, night: 0, both: 4 },
-          season: { spring: 4, summer: 5, autumn: 1, winter: 0 }
-        }
-      }
-    };
+    // Build the quiz catalogue from catalog.js.
+    // Prices, volumes, availability and IDs therefore stay synchronized
+    // with the rest of the website.
+    const products = Object.fromEntries(
+      Object.entries(window.TWB_STORE.products)
+        .filter(([, product]) => product.quiz)
+        .map(([fullId, product]) => [
+          product.quizId,
+          {
+            direction: product.quiz.direction,
+            name:
+              product.name +
+              (product.comingSoon ? ' (Coming Soon!)' : ''),
+            comingSoon: product.comingSoon,
+            image:
+              product.image
+                ? './' + product.image
+                : '',
+            link:
+              product.page || 'index.html#collection',
+            fullId,
+            fullName: product.cartName,
+            price: product.price,
+            volume: product.volume,
+            match: product.quiz.match,
+            scores: product.quiz.scores
+          }
+        ])
+    );
+
+    /*
+      Quiz products are now defined in catalog.js.
+      The old duplicated product object is intentionally removed below.
+    */
+
+
 
     function masculineTailoringSuggestion(winnerId, answers) {
       const ideas = [];
@@ -506,9 +422,6 @@
 
       const winner = results[0];
       const runner = results[1] || results[0];
-
-      winner.price =
-        FULL_BOTTLE_PRICES[winner.id] ?? null;
 
       let displayText = winner.match;
       let matchPercentage = null;
@@ -583,10 +496,27 @@
       const trialButton = document.getElementById('trialButton');
       const fullBottleButton = document.getElementById('fullBottleButton');
 
+      const fullBottlePrice =
+        document.getElementById('fullBottlePrice');
+
+      const fullBottleVolume =
+        document.getElementById('fullBottleVolume');
+
       if (winner.comingSoon) {
-        document.getElementById('trialName').textContent = `${winner.name.replace(' (Coming Soon!)', '')} · Coming Soon`;
-        document.getElementById('fullBottleName').textContent = `${winner.name.replace(' (Coming Soon!)', '')} · Coming Soon`;
-        document.getElementById('fullBottlePrice').textContent = 'Coming Soon';
+        const cleanName =
+          winner.name.replace(' (Coming Soon!)', '');
+
+        document.getElementById('trialName').textContent =
+          `${cleanName} · Coming Soon`;
+
+        document.getElementById('fullBottleName').textContent =
+          `${cleanName} · Coming Soon`;
+
+        fullBottlePrice.textContent =
+          'Coming Soon';
+
+        fullBottleVolume.textContent =
+          '';
 
         trialButton.disabled = true;
         fullBottleButton.disabled = true;
@@ -595,10 +525,17 @@
         trialButton.classList.add('opacity-50', 'cursor-not-allowed');
         fullBottleButton.classList.add('opacity-50', 'cursor-not-allowed');
       } else {
-        document.getElementById('trialName').textContent = `${winner.name} · 10 ml`;
-        document.getElementById('fullBottleName').textContent = `${winner.name} · 100 ml`;
-        document.getElementById('fullBottlePrice').textContent =
-          `€${Number(winner.price).toFixed(2)}`;
+        document.getElementById('trialName').textContent =
+          `${winner.name} · ${TRIAL_OFFER.volume}`;
+
+        document.getElementById('fullBottleName').textContent =
+          `${winner.name} · ${winner.volume}`;
+
+        fullBottlePrice.textContent =
+          window.TWB_catalogFormatEUR(winner.price);
+
+        fullBottleVolume.textContent =
+          ` · ${winner.volume}`;
 
         trialButton.disabled = false;
         fullBottleButton.disabled = false;
@@ -676,8 +613,8 @@
       addQuizItem({
         id: `trial-${winner.id}-10`,
         name: `${winner.name} — 10 ml Trial`,
-        price: TRIAL_PRICE,
-        size: '10 ml'
+        price: TRIAL_OFFER.price,
+        size: TRIAL_OFFER.volume
       }, true);
     });
 
@@ -689,8 +626,8 @@
       addQuizItem({
         id: 'personal-discovery-3x5',
         name: `Personal Discovery Set — 3 × 5 ml (Quiz match: ${winner.name}; ${a.direction}, ${a.feeling}, ${a.setting}, ${a.energy}, ${a.season})`,
-        price: DISCOVERY_PRICE,
-        size: '3 × 5 ml'
+        price: DISCOVERY_OFFER.price,
+        size: DISCOVERY_OFFER.volume
       }, true);
     });
 
@@ -703,14 +640,15 @@
         id: winner.fullId,
         name: winner.fullName,
         price: winner.price,
-        size: '100 ml'
+        size: winner.volume
       });
     });
   </script>
 
   <!-- CORS-proof submission to the Google Apps Script already used by your contact form -->
+  <!-- GOOGLE APPS SCRIPT -->
   <form id="quizLeadFallback" method="POST"
-        action="https://script.google.com/macros/s/AKfycby2h5pEdUTF6uZEFgv4dQyNnedjy7PtKhmhVGys8ko_9P67y-f8BwOOs2uNKlfN34quOA/exec"
+        action="https://script.google.com/macros/s/AKfycbwiNI4sVCokxOIsQptKXeMGrR2BMkBEPLvO7wQ-Yrut7sPm9I8Xs6OWNm55ORTjzXm8JA/exec"
         target="quizLeadFrame" class="hidden">
     <input type="hidden" name="payload" id="quizLeadPayload">
   </form>

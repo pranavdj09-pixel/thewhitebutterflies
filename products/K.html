@@ -35,6 +35,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 
+<script src="../catalog.js"></script>
 <script src="../cart.js"></script>
 
 <body class="bg-cream-50 text-butterfly-900 font-sans">
@@ -91,7 +92,7 @@
 
           <h1 class="font-serif text-6xl md:text-7xl leading-tight mb-3">K.</h1>
 
-          <p class="text-butterfly-500 mb-8">
+          <p class="text-butterfly-500 mb-8" data-catalog-meta="k-100">
             Eau de Parfum · 100 ml
           </p>
 
@@ -125,7 +126,7 @@
           </div>
 
           <div class="flex items-center justify-between gap-6">
-            <span class="font-serif text-4xl">€54.99</span>
+            <span class="font-serif text-4xl" data-catalog-price="k-100">€0.00</span>
 
             <button
               id="addProduct"
@@ -180,25 +181,6 @@
     cart.load();
     updateCartCount();
 
-    const addProduct = document.getElementById('addProduct');
-
-    if (addProduct && !addProduct.disabled) {
-      addProduct.addEventListener('click', () => {
-        cart.add({
-          id: addProduct.dataset.id,
-          name: addProduct.dataset.name,
-          price: Number(addProduct.dataset.price),
-          size: addProduct.dataset.size
-        });
-
-        addProduct.textContent = 'Added to Cart';
-        setTimeout(() => {
-          addProduct.textContent = 'Add to Cart';
-        }, 1200);
-      });
-    }
-
-    document.getElementById('year').textContent = new Date().getFullYear();
   </script> -->
 
 </body>
