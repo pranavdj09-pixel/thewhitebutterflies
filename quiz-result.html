@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Signature Scent — The White Butterflies</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <script src="./catalog.js"></script>
+
+  <style>
+    :root{
+      --ink:#0f172a;
+      --ink-2:#334155;
+      --muted:#64748b;
+      --cream:#fff9ed;
+      --cream-2:#fef3d9;
+      --cream-3:#fce7b3;
+      --gold:#c69c34;
+      --gold-dark:#947527;
+      --white:#ffffff;
+      --line:rgba(198,156,52,.28);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      background:var(--cream);
+      color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+
+    a{color:inherit}
+
+    .shell{
+      width:min(1180px,calc(100% - 32px));
+      margin:0 auto;
+    }
+
+    .topbar{
+      border-bottom:1px solid var(--cream-3);
+      background:rgba(255,249,237,.92);
+      backdrop-filter:blur(14px);
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+
+    .topbar-inner{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand{
+      font-family:"Cormorant Garamond",Georgia,serif;
+      font-size:20px;
+      letter-spacing:.24em;
+      text-decoration:none;
+    }
+
+    .quiet-link{
+      font-size:13px;
+      color:var(--muted);
+      text-decoration:none;
+    }
+
+    .quiet-link:hover{text-decoration:underline}
+
+    .hero{
+      padding:64px 0 90px;
+    }
+
+    .result-grid{
+      display:grid;
+      grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
+      gap:64px;
+      align-items:start;
+    }
+
+    .visual-card{
+      min-height:640px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px;
+      position:sticky;
+      top:104px;
+    }
+
+    .product-image{
+      width:min(100%,430px);
+      max-height:560px;
+      object-fit:contain;
+      display:block;
+    }
+
+    .result-grid.no-image{
+      grid-template-columns:minmax(0,760px);
+      justify-content:center;
+    }
+
+    .result-grid.no-image .visual-card{
+      display:none;
+    }
+
+    .coming-soon{
+      position:relative;
+      z-index:1;
+      text-align:center;
+    }
+
+    .bottle-fallback{
+      position:relative;
+      z-index:1;
+      width:210px;
+      height:360px;
+      border:1px solid rgba(15,23,42,.18);
+      border-radius:20px 20px 28px 28px;
+      background:linear-gradient(145deg,#ffffff 0%,#fbfaf7 52%,#eee9df 100%);
+      box-shadow:
+        0 28px 55px rgba(15,23,42,.12),
+        inset 0 0 0 10px rgba(255,255,255,.48);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:26px;
+    }
+
+    .bottle-fallback::before{
+      content:"";
+      position:absolute;
+      top:-49px;
+      width:76px;
+      height:54px;
+      border:1px solid rgba(15,23,42,.18);
+      border-bottom:0;
+      border-radius:7px 7px 0 0;
+      background:#e7e5e0;
+    }
+
+    .bottle-fallback::after{
+      content:"";
+      position:absolute;
+      top:-12px;
+      width:112px;
+      height:18px;
+      border:1px solid rgba(15,23,42,.14);
+      background:#f4f1ea;
+    }
+
+    .bottle-label{
+      width:100%;
+      padding:24px 12px;
+      border-top:1px solid rgba(198,156,52,.45);
+      border-bottom:1px solid rgba(198,156,52,.45);
+    }
+
+    .bottle-label small{
+      display:block;
+      letter-spacing:.22em;
+      font-size:8px;
+      color:#947527;
+      margin-bottom:10px;
+    }
+
+    .bottle-label strong{
+      display:block;
+      font-family:"Cormorant Garamond",Georgia,serif;
+      font-size:28px;
+      font-weight:400;
+      line-height:1;
+    }
+
+    .eyebrow{
+      text-transform:uppercase;
+      letter-spacing:.25em;
+      font-size:11px;
+      color:var(--gold-dark);
+      margin:0 0 14px;
+    }
+
+    h1,h2,h3{
+      font-family:"Cormorant Garamond",Georgia,serif;
+      font-weight:400;
+    }
+
+    h1{
+      font-size:clamp(54px,7vw,86px);
+      line-height:.95;
+      margin:0 0 18px;
+      letter-spacing:-.025em;
+    }
+
+    .result-copy{
+      max-width:670px;
+      color:var(--ink-2);
+      font-size:16px;
+      line-height:1.8;
+      margin:0;
+    }
+
+    .match-note{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin:14px 0 0;
+      padding:7px 11px;
+      border-radius:999px;
+      background:var(--cream-2);
+      color:var(--gold-dark);
+      border:1px solid var(--cream-3);
+      font-size:12px;
+      font-weight:500;
+    }
+
+    .divider{
+      height:1px;
+      background:linear-gradient(90deg,var(--gold),rgba(198,156,52,0));
+      margin:36px 0;
+    }
+
+    .offer{
+      border:1px solid var(--cream-3);
+      border-radius:24px;
+      background:var(--white);
+      padding:30px;
+      box-shadow:0 18px 55px rgba(15,23,42,.07);
+    }
+
+    .offer-kicker{
+      font-size:11px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:var(--gold-dark);
+      margin-bottom:8px;
+    }
+
+    .offer h2{
+      font-size:42px;
+      line-height:1.04;
+      margin:0 0 10px;
+    }
+
+    .offer-lede{
+      color:var(--muted);
+      line-height:1.7;
+      margin:0 0 22px;
+      max-width:580px;
+    }
+
+    .price-line{
+      display:flex;
+      align-items:baseline;
+      gap:11px;
+      margin-bottom:17px;
+    }
+
+    .price{
+      font-family:"Cormorant Garamond",Georgia,serif;
+      font-size:44px;
+      line-height:1;
+    }
+
+    .volume{
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .credit{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:15px 16px;
+      border:1px solid var(--line);
+      background:var(--cream);
+      border-radius:15px;
+      margin:0 0 22px;
+    }
+
+    .credit-dot{
+      flex:none;
+      width:9px;
+      height:9px;
+      margin-top:5px;
+      border-radius:50%;
+      background:var(--gold);
+    }
+
+    .credit strong{
+      display:block;
+      font-size:13px;
+      margin-bottom:3px;
+    }
+
+    .credit span{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .primary{
+      width:100%;
+      border:0;
+      border-radius:999px;
+      background:var(--ink);
+      color:white;
+      padding:16px 22px;
+      font-size:15px;
+      font-weight:500;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .primary:hover{opacity:.9;transform:translateY(-1px)}
+    .primary:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+    .microcopy{
+      margin:11px 0 0;
+      text-align:center;
+      color:#94a3b8;
+      font-size:11px;
+    }
+
+    .secondary-actions{
+      display:grid;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .secondary-action{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:16px 18px;
+      border:1px solid var(--cream-3);
+      background:transparent;
+      border-radius:16px;
+      color:var(--ink-2);
+      text-decoration:none;
+      cursor:pointer;
+      font:inherit;
+      text-align:left;
+    }
+
+    .secondary-action:hover{background:rgba(255,255,255,.5)}
+    .secondary-action small{color:var(--muted)}
+
+    .runner-card{
+      margin-top:24px;
+      padding:18px;
+      border-left:2px solid var(--gold);
+      background:rgba(255,255,255,.42);
+    }
+
+    .runner-card p{
+      margin:0;
+      color:var(--ink-2);
+      line-height:1.65;
+      font-size:14px;
+    }
+
+    .email-card{
+      margin-top:34px;
+      padding-top:30px;
+      border-top:1px solid var(--cream-3);
+    }
+
+    .email-card h3{
+      font-size:28px;
+      margin:0 0 6px;
+    }
+
+    .email-card p{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.65;
+      margin:0 0 15px;
+    }
+
+    .email-row{
+      display:flex;
+      gap:10px;
+    }
+
+    .email-row input{
+      min-width:0;
+      flex:1;
+      padding:13px 15px;
+      border:1px solid var(--cream-3);
+      border-radius:999px;
+      background:white;
+      color:var(--ink);
+      font:inherit;
+    }
+
+    .email-row button{
+      flex:none;
+      border:1px solid rgba(15,23,42,.18);
+      background:white;
+      border-radius:999px;
+      padding:13px 18px;
+      cursor:pointer;
+      font:inherit;
+    }
+
+    .email-status{
+      min-height:18px;
+      margin-top:9px;
+      color:var(--gold-dark);
+      font-size:12px;
+    }
+
+    .footer{
+      border-top:1px solid var(--cream-3);
+      padding:28px 0 44px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    @media (max-width:900px){
+      .result-grid{
+        grid-template-columns:1fr;
+        gap:34px;
+      }
+
+      .visual-card{
+        position:relative;
+        top:auto;
+        min-height:430px;
+      }
+
+      .hero{
+        padding-top:36px;
+      }
+    }
+
+    @media (max-width:560px){
+      .shell{width:min(100% - 24px,1180px)}
+      .topbar-inner{min-height:62px}
+      .brand{font-size:16px;letter-spacing:.18em}
+      .visual-card{padding:24px;min-height:360px}
+      .offer{padding:22px}
+      .offer h2{font-size:36px}
+      .email-row{flex-direction:column}
+      .email-row button{width:100%}
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a href="index.html" class="brand">THE WHITE BUTTERFLIES</a>
+    <a href="quiz.html" class="quiet-link">Retake quiz</a>
+  </div>
+</header>
+
+<main class="hero">
+  <div class="shell result-grid">
+
+    <aside class="visual-card">
+      <img id="productImage" class="product-image" alt="">
+    </aside>
+
+    <section>
+      <p id="resultEyebrow" class="eyebrow">Your Signature Scent</p>
+      <h1 id="resultName">Your Match</h1>
+      <p id="resultText" class="result-copy"></p>
+      <div id="matchNote" class="match-note" hidden></div>
+
+      <div class="divider"></div>
+
+      <div id="primaryOffer" class="offer">
+        <div id="offerKicker" class="offer-kicker">Meet it on skin</div>
+        <h2 id="offerTitle">Don’t commit to 100 ml yet.</h2>
+        <p id="offerLede" class="offer-lede"></p>
+
+        <div class="price-line">
+          <span id="offerPrice" class="price"></span>
+          <span id="offerVolume" class="volume"></span>
+        </div>
+
+        <div class="credit">
+          <div class="credit-dot"></div>
+          <div>
+            <strong id="creditTitle"></strong>
+            <span id="creditText"></span>
+          </div>
+        </div>
+
+        <button id="primaryButton" class="primary" type="button"></button>
+        <p id="primaryMicrocopy" class="microcopy"></p>
+      </div>
+
+      <div id="runnerCard" class="runner-card" hidden>
+        <p id="runnerText"></p>
+      </div>
+
+      <div class="secondary-actions">
+        <button id="secondaryDiscovery" class="secondary-action" type="button">
+          <span>
+            <strong id="secondaryDiscoveryTitle">Not completely convinced?</strong><br>
+            <small id="secondaryDiscoveryText">Compare 3 fragrances instead.</small>
+          </span>
+          <span>→</span>
+        </button>
+
+        <a id="fullBottleLink" class="secondary-action" href="index.html#collection">
+          <span>
+            <strong>Already sure?</strong><br>
+            <small id="fullBottleText">View the 100 ml.</small>
+          </span>
+          <span>→</span>
+        </a>
+      </div>
+
+      <div class="email-card">
+        <h3>Keep your result.</h3>
+        <p>
+          Optional. We’ll email your match so it doesn’t disappear into the usual graveyard of forgotten tabs.
+        </p>
+
+        <form id="emailForm">
+          <div class="email-row">
+            <input id="emailInput" type="email" required placeholder="Your email">
+            <button type="submit">Email My Result</button>
+          </div>
+
+          <label style="display:flex;gap:8px;align-items:flex-start;margin-top:10px;color:#64748b;font-size:12px;">
+            <input id="marketingConsent" type="checkbox" style="margin-top:2px">
+            <span>Also send me occasional emails about new fragrances, samples and releases.</span>
+          </label>
+
+          <div id="emailStatus" class="email-status"></div>
+        </form>
+      </div>
+
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  © <span id="year"></span> The White Butterflies
+</footer>
+
+<form id="quizLeadFallback" method="POST"
+  action="PASTE_YOUR_CURRENT_APPS_SCRIPT_EXEC_URL_HERE"
+  target="quizLeadFrame" style="display:none">
+  <input type="hidden" name="payload" id="quizLeadPayload">
+</form>
+<iframe name="quizLeadFrame" style="display:none"></iframe>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const TRIAL = window.TWB_STORE.offers.trial;
+  const DISCOVERY = window.TWB_STORE.offers.discovery;
+
+  const params = new URLSearchParams(window.location.search);
+  const stored = sessionStorage.getItem('twb_quiz_result');
+
+  let result = null;
+
+  try {
+    result = stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    console.warn(error);
+  }
+
+  const catalogProducts = Object.entries(window.TWB_STORE.products)
+    .filter(([, product]) => product.quiz)
+    .map(([fullId, product]) => ({
+      id: product.quizId,
+      fullId,
+      name: product.name,
+      fullName: product.cartName,
+      price: product.price,
+      volume: product.volume,
+      link: product.page || 'index.html#collection',
+      image: product.image ? './' + product.image : '',
+      match: product.quiz.match,
+      comingSoon: !!product.comingSoon
+    }));
+
+  function catalogQuizProduct(id) {
+    return catalogProducts.find(product => product.id === id) || null;
+  }
+
+  // Direct-link fallback / useful for previewing the page.
+  if (!result || !result.winner) {
+    const winner = catalogQuizProduct(params.get('match')) || catalogQuizProduct('godfather');
+    const runner = catalogQuizProduct(params.get('runner')) || catalogQuizProduct('no111');
+
+    result = {
+      winner,
+      runner,
+      answers: {
+        direction: winner?.id === 'godfather' || winner?.id === 'no111' ? 'masculine' : 'unisex',
+        feeling:'warm',
+        setting:'evening',
+        energy:'both',
+        season:'autumn'
+      },
+      lead: params.get('mode') === 'discovery' ? 1 : 5,
+      mode: params.get('mode') || 'trial',
+      matchPercentage: null,
+      tailoringSuggestion:'',
+      displayText: winner?.match || '',
+      completedAt:new Date().toISOString()
+    };
+  }
+
+  const winner = result.winner;
+  const runner = result.runner || winner;
+
+  // Merge in live catalog data so price/volume/page stay current.
+  const liveWinner = catalogQuizProduct(winner.id) || winner;
+  const liveRunner = catalogQuizProduct(runner.id) || runner;
+
+  const mode =
+    liveWinner.comingSoon
+      ? 'discovery'
+      : (result.mode || (Number(result.lead || 0) <= 2 ? 'discovery' : 'trial'));
+
+  const productImage = document.getElementById('productImage');
+  const resultGrid = document.querySelector('.result-grid');
+
+  function hideImageArea() {
+    productImage.remove();
+    resultGrid.classList.add('no-image');
+  }
+
+  if (!liveWinner.image) {
+    hideImageArea();
+  } else {
+    productImage.src = liveWinner.image;
+    productImage.alt = `${liveWinner.name} fragrance`;
+
+    productImage.addEventListener(
+      'error',
+      hideImageArea,
+      { once:true }
+    );
+  }
+
+  document.title = `${liveWinner.name} — Your Signature Scent`;
+  document.getElementById('resultName').textContent = liveWinner.name;
+  document.getElementById('resultText').textContent =
+    result.displayText || liveWinner.match || '';
+
+  if (result.matchPercentage) {
+    const note = document.getElementById('matchNote');
+    note.hidden = false;
+    note.textContent = `Closest ready-to-wear match · ${result.matchPercentage}%`;
+  }
+
+  const offerKicker = document.getElementById('offerKicker');
+  const offerTitle = document.getElementById('offerTitle');
+  const offerLede = document.getElementById('offerLede');
+  const offerPrice = document.getElementById('offerPrice');
+  const offerVolume = document.getElementById('offerVolume');
+  const creditTitle = document.getElementById('creditTitle');
+  const creditText = document.getElementById('creditText');
+  const primaryButton = document.getElementById('primaryButton');
+  const microcopy = document.getElementById('primaryMicrocopy');
+  const runnerCard = document.getElementById('runnerCard');
+  const runnerText = document.getElementById('runnerText');
+  const secondaryDiscovery = document.getElementById('secondaryDiscovery');
+  const secondaryDiscoveryTitle = document.getElementById('secondaryDiscoveryTitle');
+  const secondaryDiscoveryText = document.getElementById('secondaryDiscoveryText');
+  const fullBottleLink = document.getElementById('fullBottleLink');
+
+  if (mode === 'trial') {
+    offerKicker.textContent = 'Meet it on skin';
+    offerTitle.textContent = 'Don’t commit to 100 ml yet.';
+    offerLede.textContent =
+      `Perfume changes on skin. Wear ${liveWinner.name} properly before deciding whether it belongs in your collection.`;
+
+    offerPrice.textContent = window.TWB_catalogFormatEUR(TRIAL.price);
+    offerVolume.textContent = TRIAL.volume;
+
+    creditTitle.textContent =
+      `${window.TWB_catalogFormatEUR(TRIAL.credit)} becomes full-bottle credit.`;
+
+    creditText.textContent =
+      `If ${liveWinner.name} becomes yours, the full trial price is credited toward a 100 ml fragrance.`;
+
+    primaryButton.textContent =
+      `Try My Match — ${window.TWB_catalogFormatEUR(TRIAL.price)}`;
+
+    microcopy.textContent =
+      `${TRIAL.volume}. No subscription. No commitment to the full bottle.`;
+
+    secondaryDiscoveryTitle.textContent = 'Not completely convinced?';
+    secondaryDiscoveryText.textContent =
+      `Compare 3 fragrances instead — ${window.TWB_catalogFormatEUR(DISCOVERY.price)}.`;
+
+  } else {
+    document.getElementById('resultEyebrow').textContent = 'Your scent profile';
+
+    offerKicker.textContent = 'Your answers are close';
+    offerTitle.textContent = 'Compare before you decide.';
+    offerLede.textContent =
+      `Your top results sit close together. Rather than pretending the quiz knows your skin better than you do, compare the profile properly.`;
+
+    offerPrice.textContent = window.TWB_catalogFormatEUR(DISCOVERY.price);
+    offerVolume.textContent = DISCOVERY.volume;
+
+    creditTitle.textContent =
+      `${window.TWB_catalogFormatEUR(DISCOVERY.credit)} becomes full-bottle credit.`;
+
+    creditText.textContent =
+      `The set is chosen around your profile, with ${liveWinner.name} as the strongest match.`;
+
+    primaryButton.textContent =
+      `Explore My Profile — ${window.TWB_catalogFormatEUR(DISCOVERY.price)}`;
+
+    microcopy.textContent =
+      `${DISCOVERY.volume}. Compare them on skin before choosing a full bottle.`;
+
+    runnerCard.hidden = false;
+
+    if (liveRunner && liveRunner.id !== liveWinner.id) {
+      runnerText.innerHTML =
+        `Your strongest match is <strong>${liveWinner.name}</strong>, but <strong>${liveRunner.name}</strong> is close enough that smelling both is more useful than manufacturing certainty.`;
+    } else {
+      runnerText.textContent =
+        `Your answers are spread across more than one scent profile. The discovery route gives you the better comparison.`;
+    }
+
+    secondaryDiscoveryTitle.textContent =
+      `Want the strongest match anyway?`;
+
+    secondaryDiscoveryText.textContent =
+      `Try ${liveWinner.name} alone — ${window.TWB_catalogFormatEUR(TRIAL.price)}.`;
+  }
+
+  if (!liveWinner.comingSoon && liveWinner.link) {
+    fullBottleLink.href = liveWinner.link;
+    document.getElementById('fullBottleText').textContent =
+      `View ${liveWinner.name} · ${liveWinner.volume}.`;
+  } else {
+    fullBottleLink.href = 'index.html#collection';
+    document.getElementById('fullBottleText').textContent =
+      'This fragrance is coming soon.';
+  }
+
+  function goToCheckoutWith(item) {
+    const CART_KEY = 'twb_cart_v1';
+
+    let items = [];
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+      items = Array.isArray(saved) ? saved : [];
+    } catch (error) {
+      items = [];
+    }
+
+    const existing = items.find(entry => entry.id === item.id);
+
+    if (existing) {
+      existing.qty = Math.max(1, Number(existing.qty) || 1);
+    } else {
+      items.push({
+        ...item,
+        qty: 1
+      });
+    }
+
+    localStorage.setItem(
+      CART_KEY,
+      JSON.stringify(items)
+    );
+
+    window.location.href = 'checkout.html';
+  }
+
+  function trialItem() {
+    return {
+      id: `trial-${liveWinner.id}-10`,
+      name: `${liveWinner.name} — 10 ml Trial`,
+      price: TRIAL.price,
+      size: TRIAL.volume
+    };
+  }
+
+  function discoveryItem() {
+    const a = result.answers || {};
+
+    return {
+      id:'personal-discovery-3x5',
+      name:
+        `Personal Discovery Set — 3 × 5 ml ` +
+        `(Quiz match: ${liveWinner.name}; ` +
+        `${a.direction || 'unisex'}, ${a.feeling || ''}, ${a.setting || ''}, ${a.energy || ''}, ${a.season || ''})`,
+      price:DISCOVERY.price,
+      size:DISCOVERY.volume
+    };
+  }
+
+  primaryButton.addEventListener('click', () => {
+    if (mode === 'trial') {
+      if (liveWinner.comingSoon) return;
+      goToCheckoutWith(trialItem());
+    } else {
+      goToCheckoutWith(discoveryItem());
+    }
+  });
+
+  secondaryDiscovery.addEventListener('click', () => {
+    if (mode === 'trial') {
+      goToCheckoutWith(discoveryItem());
+    } else {
+      if (liveWinner.comingSoon) return;
+      goToCheckoutWith(trialItem());
+    }
+  });
+
+  document.getElementById('emailForm').addEventListener('submit', event => {
+    event.preventDefault();
+
+    const email = document.getElementById('emailInput').value.trim();
+    const marketingConsent = document.getElementById('marketingConsent').checked;
+
+    const payload = {
+      type:'quiz_lead',
+      email,
+      marketingConsent,
+      result:liveWinner.name,
+      resultId:liveWinner.id,
+      resultLink:liveWinner.link,
+      direction:result.answers?.direction || '',
+      matchPercentage:result.matchPercentage,
+      tailoringSuggestion:result.tailoringSuggestion || '',
+      comingSoon:!!liveWinner.comingSoon,
+      feeling:result.answers?.feeling || '',
+      setting:result.answers?.setting || '',
+      energy:result.answers?.energy || '',
+      season:result.answers?.season || '',
+      completedAt:result.completedAt || '',
+      submittedAt:new Date().toISOString()
+    };
+
+    const fallback = document.getElementById('quizLeadFallback');
+
+    if (
+      !fallback.action ||
+      fallback.action.includes('PASTE_YOUR_CURRENT')
+    ) {
+      document.getElementById('emailStatus').textContent =
+        'Add your current Apps Script /exec URL to this page before using email results.';
+      return;
+    }
+
+    document.getElementById('quizLeadPayload').value =
+      JSON.stringify(payload);
+
+    fallback.submit();
+
+    document.getElementById('emailStatus').textContent =
+      marketingConsent
+        ? 'Saved. Your result is on its way — and you’re on the list.'
+        : 'Saved. Your result is on its way.';
+
+    event.target.reset();
+  });
+</script>
+
+</body>
+</html>

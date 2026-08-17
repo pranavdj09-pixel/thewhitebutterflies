@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Signature Scent Quiz — The White Butterflies</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -11,404 +12,325 @@
         extend: {
           colors: {
             butterfly: {
-              50: '#f8fafc',
-              100: '#f1f5f9',
-              200: '#e2e8f0',
-              300: '#cbd5e1',
-              400: '#94a3b8',
-              500: '#64748b',
-              600: '#475569',
-              700: '#334155',
-              800: '#1e293b',
-              900: '#0f172a',
+              50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',
+              400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',
+              800:'#1e293b',900:'#0f172a'
             },
             cream: {
-              50: '#fff9ed',
-              100: '#fef3d9',
-              200: '#fce7b3',
-              300: '#fbdb8d',
-              400: '#f9cf67',
-              500: '#f8c341',
-              600: '#c69c34',
-              700: '#947527',
-              800: '#634e1a',
-              900: '#31270d',
-            },
+              50:'#fff9ed',100:'#fef3d9',200:'#fce7b3',300:'#fbdb8d',
+              400:'#f9cf67',500:'#f8c341',600:'#c69c34',700:'#947527',
+              800:'#634e1a',900:'#31270d'
+            }
           },
           fontFamily: {
-            serif: ['Cormorant Garamond', 'ui-serif', 'Georgia', 'serif'],
-            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+            serif:['Cormorant Garamond','ui-serif','Georgia','serif'],
+            sans:['Inter','ui-sans-serif','system-ui','sans-serif']
           },
           boxShadow: {
-            soft: '0 10px 30px rgba(0,0,0,0.08)'
+            soft:'0 16px 44px rgba(15,23,42,0.08)'
           }
         }
       }
-    }
+    };
   </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <script src="./catalog.js"></script>
+  <script src="./cart.js"></script>
 </head>
+
 <body class="bg-cream-50 text-butterfly-900 font-sans">
 
-  <header class="sticky top-0 z-50 backdrop-blur bg-cream-50/80 border-b border-cream-200">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="index.html" class="font-serif tracking-[0.25em] text-xl">THE WHITE BUTTERFLIES</a>
-      <nav class="hidden md:flex items-center gap-8">
-        <a href="index.html#story" class="hover:opacity-70">Story</a>
-        <a href="index.html#collection" class="hover:opacity-70">Collection</a>
-        <a href="quiz.html" class="hover:opacity-70">Signature Scent Quiz</a>
-        <a href="index.html#contact" class="hover:opacity-70">Contact</a>
-      </nav>
-      <button id="openCart" type="button" class="relative px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white">
-        Cart <span id="cartCount" class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2">0</span>
-      </button>
-    </div>
-  </header>
+<header class="sticky top-0 z-50 backdrop-blur bg-cream-50/90 border-b border-cream-200">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="index.html" class="font-serif tracking-[0.25em] text-xl">THE WHITE BUTTERFLIES</a>
 
-  <section class="py-20">
+    <button id="openCart" type="button"
+      class="relative px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white">
+      Cart
+      <span id="cartCount"
+        class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="pt-16 pb-10 md:pt-24">
     <div class="max-w-3xl mx-auto px-4 text-center">
-      <h1 class="font-serif text-5xl md:text-6xl leading-tight mb-6">
-        Answer a 30 second quiz to find your signature scent.
-      </h1>
-      <p class="text-butterfly-600 text-lg max-w-2xl mx-auto mb-4">
-        No hiding behind mailing lists. Just a few quick questions, and we’ll point you toward the scent profile that fits you best.
+      <p class="text-xs md:text-sm uppercase tracking-[0.28em] text-cream-700 mb-4">
+        Signature Scent Finder
       </p>
-      <p class="text-butterfly-500">
-        If you want something fully personal, you can request a bespoke signature afterwards.
+
+      <h1 class="font-serif text-5xl md:text-6xl leading-[0.98] mb-6">
+        Find the fragrance that feels most like you.
+      </h1>
+
+      <p class="text-butterfly-600 text-lg max-w-2xl mx-auto">
+        Five quick choices. Then we’ll give you one clear place to begin.
       </p>
     </div>
   </section>
 
-  <section class="pb-20">
+  <section class="pb-24">
     <div class="max-w-3xl mx-auto px-4">
-      <div class="bg-white rounded-2xl shadow-soft p-6 md:p-8">
-        <form id="quizForm" class="space-y-8">
 
-  <div>
-    <label class="block font-medium mb-3">1. What direction would you like your fragrance to lean?</label>
-    <div class="grid gap-3">
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="direction" value="feminine" class="mr-2" required>
-        Conventionally feminine
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="direction" value="masculine" class="mr-2">
-        Conventionally masculine
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="direction" value="unisex" class="mr-2">
-        Unisex / no preference
-      </label>
-    </div>
-  </div>
+      <div class="mb-5 flex items-center gap-3">
+        <div class="h-1 flex-1 rounded-full bg-cream-200 overflow-hidden">
+          <div id="progressBar" class="h-full bg-cream-600 transition-all duration-300" style="width:0%"></div>
+        </div>
+        <span id="progressText" class="text-xs text-butterfly-500">0 / 5</span>
+      </div>
 
-  <div>
-    <label class="block font-medium mb-3">2. What feeling do you want your scent to leave behind?</label>
-    <div class="grid gap-3">
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="feeling" value="warm" class="mr-2" required>
-        Warm, intimate, comforting
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="feeling" value="fresh" class="mr-2">
-        Fresh, clean, effortless
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="feeling" value="bold" class="mr-2">
-        Magnetic, bold, noticeable
-      </label>
-    </div>
-  </div>
+      <div class="bg-white rounded-[1.6rem] shadow-soft border border-cream-200 p-6 md:p-9">
+        <form id="quizForm" class="space-y-10">
 
-  <div>
-    <label class="block font-medium mb-3">3. Which setting feels most like you?</label>
-    <div class="grid gap-3">
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="setting" value="evening" class="mr-2" required>
-        Soft evening light, quiet conversation
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="setting" value="daylight" class="mr-2">
-        Open windows, daylight, clean air
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="setting" value="night" class="mr-2">
-        Night out, dark clothes, a little mystery
-      </label>
-    </div>
-  </div>
-
-  <div>
-    <label class="block font-medium mb-3">4. Are you more of a day person or a night person?</label>
-    <div class="grid gap-3">
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="energy" value="day" class="mr-2" required>
-        Day person: light, clarity, fresh starts
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="energy" value="night" class="mr-2">
-        Night person: depth, calm, slow intensity
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="energy" value="both" class="mr-2">
-        Somewhere in between
-      </label>
-    </div>
-  </div>
-
-  <div>
-    <label class="block font-medium mb-3">5. Which season feels most like you?</label>
-    <div class="grid gap-3">
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="season" value="spring" class="mr-2" required>
-        Spring: airy, alive, soft brightness
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="season" value="summer" class="mr-2">
-        Summer: radiant, easy, sun-warmed
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="season" value="autumn" class="mr-2">
-        Autumn: warm, nostalgic, textured
-      </label>
-      <label class="border rounded-xl p-4 cursor-pointer hover:bg-cream-50">
-        <input type="radio" name="season" value="winter" class="mr-2">
-        Winter: quiet, elegant, deep
-      </label>
-    </div>
-  </div>
-
-  <div class="pt-2">
-    <button type="submit" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
-      Show My Result
-    </button>
-  </div>
-</form>
-
-        <div id="quizResult" class="hidden mt-10 rounded-2xl bg-cream-50 border border-cream-200 overflow-hidden">
-          <div class="grid md:grid-cols-2">
-            <div class="bg-white p-6 flex items-center justify-center">
-              <img id="resultImage" src="" alt="" class="w-full max-w-xs h-80 object-contain">
-              <div id="comingSoonVisual" class="hidden text-center py-20">
-                <p class="text-sm uppercase tracking-[0.25em] text-cream-700 mb-3">Coming Soon</p>
-                <p id="comingSoonName" class="font-serif text-4xl text-butterfly-900"></p>
-              </div>
+          <fieldset data-question>
+            <legend class="font-serif text-2xl md:text-3xl mb-5">
+              1. What direction would you like your fragrance to lean?
+            </legend>
+            <div class="grid gap-3">
+              <label class="choice">
+                <input type="radio" name="direction" value="feminine" required>
+                <span>Conventionally feminine</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="direction" value="masculine">
+                <span>Conventionally masculine</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="direction" value="unisex">
+                <span>Unisex / no preference</span>
+              </label>
             </div>
-            <div class="p-6 md:p-8">
-              <p class="text-sm uppercase tracking-[0.2em] text-butterfly-500 mb-2">Your signature scent</p>
-              <h2 id="resultTitle" class="font-serif text-4xl mb-2"></h2>
-              <p id="resultMatch" class="hidden text-sm font-medium text-cream-700 mb-3"></p>
-              <p id="resultText" class="text-butterfly-700 mb-6"></p>
-              <a id="resultLink" href="index.html#collection" class="text-sm underline underline-offset-4 text-butterfly-600 hover:text-butterfly-900">
-                View full fragrance
-              </a>
+          </fieldset>
+
+          <fieldset data-question>
+            <legend class="font-serif text-2xl md:text-3xl mb-5">
+              2. What feeling do you want your scent to leave behind?
+            </legend>
+            <div class="grid gap-3">
+              <label class="choice">
+                <input type="radio" name="feeling" value="warm" required>
+                <span>Warm, intimate, comforting</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="feeling" value="fresh">
+                <span>Fresh, clean, effortless</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="feeling" value="bold">
+                <span>Magnetic, bold, noticeable</span>
+              </label>
             </div>
-          </div>
+          </fieldset>
 
-          <div class="border-t border-cream-200 bg-white p-6 md:p-8">
-            <div class="max-w-xl">
-              <h3 class="font-serif text-2xl mb-2">Keep your result.</h3>
-              <p class="text-butterfly-600 mb-5">
-                Enter your email and we’ll send your match to you so you don’t have to remember it.
-              </p>
-              <form id="quizEmailForm" class="space-y-3">
-                <div class="flex flex-col sm:flex-row gap-3">
-                  <input id="quizEmail" name="email" type="email" required placeholder="Your email"
-                    class="flex-1 px-4 py-3 border rounded-xl bg-white">
-                  <button type="submit"
-                    class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90 whitespace-nowrap">
-                    Email My Result
-                  </button>
-                </div>
-                <label class="flex items-start gap-2 text-sm text-butterfly-600">
-                  <input id="marketingConsent" type="checkbox" class="mt-1">
-                  <span>Also send me occasional emails about new fragrances, samples and releases.</span>
-                </label>
-                <p id="emailStatus" class="text-sm text-butterfly-500"></p>
-              </form>
+          <fieldset data-question>
+            <legend class="font-serif text-2xl md:text-3xl mb-5">
+              3. Which setting feels most like you?
+            </legend>
+            <div class="grid gap-3">
+              <label class="choice">
+                <input type="radio" name="setting" value="evening" required>
+                <span>Soft evening light, quiet conversation</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="setting" value="daylight">
+                <span>Open windows, daylight, clean air</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="setting" value="night">
+                <span>Night out, dark clothes, a little mystery</span>
+              </label>
             </div>
-          </div>
+          </fieldset>
 
-          <div class="border-t border-cream-200 p-6 md:p-8">
-            <div class="mb-6">
-              <p class="text-sm uppercase tracking-[0.2em] text-butterfly-500 mb-2">What next?</p>
-              <h3 class="font-serif text-3xl">Smell it. Explore it. Or make it yours.</h3>
+          <fieldset data-question>
+            <legend class="font-serif text-2xl md:text-3xl mb-5">
+              4. Are you more of a day person or a night person?
+            </legend>
+            <div class="grid gap-3">
+              <label class="choice">
+                <input type="radio" name="energy" value="day" required>
+                <span>Day person: light, clarity, fresh starts</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="energy" value="night">
+                <span>Night person: depth, calm, slow intensity</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="energy" value="both">
+                <span>Somewhere in between</span>
+              </label>
             </div>
+          </fieldset>
 
-            <div class="grid md:grid-cols-3 gap-4">
-              <article class="rounded-2xl bg-white border border-cream-200 p-5 flex flex-col">
-                <p class="text-sm text-cream-700 mb-2">TRY IT FIRST</p>
-                <h4 class="font-serif text-2xl mb-1">Try Your Match</h4>
-                <p id="trialName" class="text-sm text-butterfly-500 mb-4"></p>
-                <p class="text-butterfly-600 mb-4 flex-1"><span id="trialCreditText"></span></p>
-                <div class="mb-4"><span id="trialPrice" class="text-2xl font-medium"></span><span id="trialVolume" class="text-sm text-butterfly-500"></span></div>
-                <button id="trialButton" type="button"
-                  class="w-full px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
-                  Try My Match
-                </button>
-              </article>
-
-              <article class="rounded-2xl bg-white border border-cream-200 p-5 flex flex-col">
-                <p class="text-sm text-butterfly-500 mb-2">EXPLORE MORE</p>
-                <h4 class="font-serif text-2xl mb-1">Personal Discovery</h4>
-                <p class="text-sm text-butterfly-500 mb-4">3 × 5 ml · chosen around your profile</p>
-                <p class="text-butterfly-600 mb-4 flex-1"><span id="discoveryCreditText"></span></p>
-                <div class="mb-4"><span id="discoveryPrice" class="text-2xl font-medium"></span><span id="discoveryVolume" class="text-sm text-butterfly-500"></span></div>
-                <button id="discoveryButton" type="button"
-                  class="w-full px-4 py-3 rounded-full bg-white text-butterfly-900 border border-butterfly-900/20 hover:bg-cream-50">
-                  Explore My Profile
-                </button>
-              </article>
-
-              <article class="rounded-2xl bg-white border border-butterfly-900/20 p-5 flex flex-col">
-                <p class="text-sm text-cream-700 mb-2">READY?</p>
-                <h4 class="font-serif text-2xl mb-1">Full Bottle</h4>
-                <p id="fullBottleName" class="text-sm text-butterfly-500 mb-4"></p>
-                <p class="text-butterfly-600 mb-4 flex-1">Skip the trial.</p>
-                <div class="mb-4"><span id="fullBottlePrice" class="text-2xl font-medium"></span><span id="fullBottleVolume" class="text-sm text-butterfly-500"></span></div>
-                <button id="fullBottleButton" type="button"
-                  class="w-full px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
-                  Get My Match
-                </button>
-              </article>
+          <fieldset data-question>
+            <legend class="font-serif text-2xl md:text-3xl mb-5">
+              5. Which season feels most like you?
+            </legend>
+            <div class="grid gap-3">
+              <label class="choice">
+                <input type="radio" name="season" value="spring" required>
+                <span>Spring: airy, alive, soft brightness</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="season" value="summer">
+                <span>Summer: radiant, easy, sun-warmed</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="season" value="autumn">
+                <span>Autumn: warm, nostalgic, textured</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="season" value="winter">
+                <span>Winter: quiet, elegant, deep</span>
+              </label>
             </div>
+          </fieldset>
 
-            <p class="text-xs text-butterfly-500 mt-4">
-              One fragrance credit per 100 ml bottle. Shipping is not credited.
+          <div class="pt-2">
+            <button type="submit"
+              class="w-full sm:w-auto px-7 py-3.5 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+              Show My Signature Scent
+            </button>
+
+            <p class="text-xs text-butterfly-500 mt-3">
+              Your result opens on the next page. No email required.
             </p>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </section>
+</main>
 
-  <footer class="py-10 text-center text-sm text-butterfly-500">
-    <p>© <span id="year"></span> The White Butterflies</p>
-  </footer>
-  <script src="./catalog.js"></script>
-<script src="./cart.js"></script>
+<footer class="py-10 text-center text-sm text-butterfly-500">
+  © <span id="year"></span> The White Butterflies
+</footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+<style>
+  .choice {
+    display:flex;
+    align-items:center;
+    gap:.75rem;
+    padding:1rem 1.05rem;
+    border:1px solid #e2e8f0;
+    border-radius:1rem;
+    cursor:pointer;
+    transition:.18s ease;
+  }
 
-    const TRIAL_OFFER = window.TWB_STORE.offers.trial;
-    const DISCOVERY_OFFER = window.TWB_STORE.offers.discovery;
+  .choice:hover {
+    background:#fff9ed;
+    border-color:#f9cf67;
+  }
 
-    let latestQuizResult = null;
+  .choice:has(input:checked) {
+    background:#fff9ed;
+    border-color:#c69c34;
+    box-shadow:inset 0 0 0 1px #c69c34;
+  }
 
-    document.getElementById('trialPrice').textContent =
-      window.TWB_catalogFormatEUR(TRIAL_OFFER.price);
+  .choice input {
+    accent-color:#0f172a;
+  }
+</style>
 
-    document.getElementById('trialVolume').textContent =
-      ` · ${TRIAL_OFFER.volume}`;
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-    document.getElementById('trialCreditText').textContent =
-      `${window.TWB_catalogFormatEUR(TRIAL_OFFER.credit)} credit toward any 100 ml fragrance.`;
+  const products = Object.fromEntries(
+    Object.entries(window.TWB_STORE.products)
+      .filter(([, product]) => product.quiz)
+      .map(([fullId, product]) => [
+        product.quizId,
+        {
+          direction: product.quiz.direction,
+          name: product.name,
+          comingSoon: !!product.comingSoon,
+          image: product.image ? './' + product.image : '',
+          link: product.page || 'index.html#collection',
+          fullId,
+          fullName: product.cartName,
+          price: product.price,
+          volume: product.volume,
+          match: product.quiz.match,
+          scores: product.quiz.scores
+        }
+      ])
+  );
 
-    document.getElementById('discoveryPrice').textContent =
-      window.TWB_catalogFormatEUR(DISCOVERY_OFFER.price);
+  function masculineTailoringSuggestion(winnerId, answers) {
+    const ideas = [];
 
-    document.getElementById('discoveryVolume').textContent =
-      ` · ${DISCOVERY_OFFER.volume}`;
-
-    document.getElementById('discoveryCreditText').textContent =
-      `${window.TWB_catalogFormatEUR(DISCOVERY_OFFER.credit)} credit toward any 100 ml fragrance.`;
-
-
-    // Build the quiz catalogue from catalog.js.
-    // Prices, volumes, availability and IDs therefore stay synchronized
-    // with the rest of the website.
-    const products = Object.fromEntries(
-      Object.entries(window.TWB_STORE.products)
-        .filter(([, product]) => product.quiz)
-        .map(([fullId, product]) => [
-          product.quizId,
-          {
-            direction: product.quiz.direction,
-            name:
-              product.name +
-              (product.comingSoon ? ' (Coming Soon!)' : ''),
-            comingSoon: product.comingSoon,
-            image:
-              product.image
-                ? './' + product.image
-                : '',
-            link:
-              product.page || 'index.html#collection',
-            fullId,
-            fullName: product.cartName,
-            price: product.price,
-            volume: product.volume,
-            match: product.quiz.match,
-            scores: product.quiz.scores
-          }
-        ])
-    );
-
-    /*
-      Quiz products are now defined in catalog.js.
-      The old duplicated product object is intentionally removed below.
-    */
-
-
-
-    function masculineTailoringSuggestion(winnerId, answers) {
-      const ideas = [];
-
-      if (winnerId === 'no111') {
-        if (answers.feeling === 'warm') ideas.push('warmer woods and a softer amber-musk base');
-        if (answers.feeling === 'bold') ideas.push('more depth through leather and woods');
-        if (answers.setting === 'evening' || answers.setting === 'night') ideas.push('a darker, warmer drydown');
-        if (answers.energy === 'night') ideas.push('more amber and woody weight');
-        if (answers.season === 'autumn') ideas.push('a little more spice and textured woods');
-        if (answers.season === 'winter') ideas.push('more amber, resinous warmth and body');
-      }
-
-      if (winnerId === 'godfather') {
-        if (answers.feeling === 'fresh') ideas.push('a brighter citrus and aromatic lift');
-        if (answers.setting === 'daylight') ideas.push('more transparency through citrus and cleaner woods');
-        if (answers.energy === 'day') ideas.push('a lighter top and cleaner musk');
-        if (answers.season === 'spring') ideas.push('more air, citrus and aromatic freshness');
-        if (answers.season === 'summer') ideas.push('a brighter citrus opening and less resinous weight');
-      }
-
-      if (!ideas.length) {
-        ideas.push('small adjustments around your preferred balance of freshness, warmth and intensity');
-      }
-
-      return [...new Set(ideas)].slice(0, 3).join(', ');
+    if (winnerId === 'no111') {
+      if (answers.feeling === 'warm') ideas.push('warmer woods and a softer amber-musk base');
+      if (answers.feeling === 'bold') ideas.push('more depth through leather and woods');
+      if (answers.setting === 'evening' || answers.setting === 'night') ideas.push('a darker, warmer drydown');
+      if (answers.energy === 'night') ideas.push('more amber and woody weight');
+      if (answers.season === 'autumn') ideas.push('a little more spice and textured woods');
+      if (answers.season === 'winter') ideas.push('more amber, resinous warmth and body');
     }
 
-    function masculineMatchPercentage(winner, runner) {
-      // A practical fit indicator, not a claim of scientific precision.
-      // Strong absolute fit + a clear lead over the other masculine structure raises the percentage.
-      const lead = Math.max(0, winner.score - runner.score);
-      return Math.min(96, Math.max(70, Math.round(66 + (winner.score * 1.25) + (lead * 0.65))));
+    if (winnerId === 'godfather') {
+      if (answers.feeling === 'fresh') ideas.push('a brighter citrus and aromatic lift');
+      if (answers.setting === 'daylight') ideas.push('more transparency through citrus and cleaner woods');
+      if (answers.energy === 'day') ideas.push('a lighter top and cleaner musk');
+      if (answers.season === 'spring') ideas.push('more air, citrus and aromatic freshness');
+      if (answers.season === 'summer') ideas.push('a brighter citrus opening and less resinous weight');
     }
 
-    document.getElementById('quizForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+    if (!ideas.length) {
+      ideas.push('small adjustments around your preferred balance of freshness, warmth and intensity');
+    }
 
-      const answers = {
-        direction: document.querySelector('input[name="direction"]:checked')?.value,
-        feeling: document.querySelector('input[name="feeling"]:checked')?.value,
-        setting: document.querySelector('input[name="setting"]:checked')?.value,
-        energy: document.querySelector('input[name="energy"]:checked')?.value,
-        season: document.querySelector('input[name="season"]:checked')?.value
-      };
+    return [...new Set(ideas)].slice(0, 3).join(', ');
+  }
 
-      // Feminine selections never receive the two conventionally masculine fragrances.
-      // Masculine selections are matched honestly between the only two masculine scents in the house.
-      // "Unisex / no preference" leaves the full collection open.
-      const eligibleEntries = Object.entries(products).filter(([, product]) => {
-        if (answers.direction === 'feminine') return product.direction === 'feminine';
-        if (answers.direction === 'masculine') return product.direction === 'masculine';
-        return true;
-      });
+  function masculineMatchPercentage(winner, runner) {
+    const lead = Math.max(0, winner.score - runner.score);
+    return Math.min(96, Math.max(70, Math.round(66 + (winner.score * 1.25) + (lead * 0.65))));
+  }
 
-      const results = eligibleEntries.map(([id, product]) => ({
+  function updateProgress() {
+    const names = ['direction', 'feeling', 'setting', 'energy', 'season'];
+    const answered = names.filter(
+      name => document.querySelector(`input[name="${name}"]:checked`)
+    ).length;
+
+    document.getElementById('progressBar').style.width =
+      `${(answered / names.length) * 100}%`;
+
+    document.getElementById('progressText').textContent =
+      `${answered} / ${names.length}`;
+  }
+
+  document.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', updateProgress);
+  });
+
+  document.getElementById('quizForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const answers = {
+      direction: document.querySelector('input[name="direction"]:checked')?.value,
+      feeling: document.querySelector('input[name="feeling"]:checked')?.value,
+      setting: document.querySelector('input[name="setting"]:checked')?.value,
+      energy: document.querySelector('input[name="energy"]:checked')?.value,
+      season: document.querySelector('input[name="season"]:checked')?.value
+    };
+
+    const eligibleEntries = Object.entries(products).filter(([, product]) => {
+      if (answers.direction === 'feminine') return product.direction === 'feminine';
+      if (answers.direction === 'masculine') return product.direction === 'masculine';
+      return true;
+    });
+
+    const results = eligibleEntries
+      .map(([id, product]) => ({
         id,
         ...product,
         score:
@@ -416,241 +338,64 @@
           product.scores.setting[answers.setting] +
           product.scores.energy[answers.energy] +
           product.scores.season[answers.season]
-      }));
+      }))
+      .sort((a, b) => b.score - a.score);
 
-      results.sort((a, b) => b.score - a.score);
+    const winner = results[0];
+    const runner = results[1] || results[0];
+    const lead = Math.max(0, winner.score - runner.score);
 
-      const winner = results[0];
-      const runner = results[1] || results[0];
+    let matchPercentage = null;
+    let tailoringSuggestion = '';
+    let displayText = winner.match;
 
-      let displayText = winner.match;
-      let matchPercentage = null;
-      let tailoringSuggestion = '';
+    if (answers.direction === 'masculine') {
+      matchPercentage = masculineMatchPercentage(winner, runner);
+      tailoringSuggestion = masculineTailoringSuggestion(winner.id, answers);
 
-      if (answers.direction === 'masculine') {
-        matchPercentage = masculineMatchPercentage(winner, runner);
-        tailoringSuggestion = masculineTailoringSuggestion(winner.id, answers);
-
-        displayText =
-          `${winner.match} This is the closest ready-to-wear match to your answers, not a claim that it is perfect. ` +
-          `To bring it closer to your profile, we’d explore ${tailoringSuggestion}. ` +
-          `You can still try it exactly as it is first and decide for yourself.`;
-      }
-
-      latestQuizResult = {
-        winner,
-        answers,
-        matchPercentage,
-        tailoringSuggestion,
-        completedAt: new Date().toISOString()
-      };
-
-      document.getElementById('resultTitle').textContent = winner.name;
-
-      const resultText = document.getElementById('resultText');
-      if (winner.match) {
-        resultText.textContent = displayText;
-        resultText.classList.remove('hidden');
-      } else {
-        resultText.textContent = '';
-        resultText.classList.add('hidden');
-      }
-
-      const resultMatch = document.getElementById('resultMatch');
-      if (matchPercentage !== null) {
-        resultMatch.textContent = `Closest match · ${matchPercentage}%`;
-        resultMatch.classList.remove('hidden');
-      } else {
-        resultMatch.textContent = '';
-        resultMatch.classList.add('hidden');
-      }
-
-      const resultLink = document.getElementById('resultLink');
-      if (winner.comingSoon) {
-        resultLink.textContent = 'Coming Soon!';
-        resultLink.removeAttribute('href');
-        resultLink.classList.add('pointer-events-none', 'opacity-60');
-      } else {
-        resultLink.href = winner.link;
-        resultLink.textContent = `View ${winner.name}`;
-        resultLink.classList.remove('pointer-events-none', 'opacity-60');
-      }
-
-      const image = document.getElementById('resultImage');
-      const comingSoonVisual = document.getElementById('comingSoonVisual');
-      const comingSoonName = document.getElementById('comingSoonName');
-
-      if (winner.comingSoon) {
-        image.classList.add('hidden');
-        image.removeAttribute('src');
-        image.alt = '';
-        comingSoonName.textContent = winner.name.replace(' (Coming Soon!)', '');
-        comingSoonVisual.classList.remove('hidden');
-      } else {
-        comingSoonVisual.classList.add('hidden');
-        image.classList.remove('hidden');
-        image.src = winner.image;
-        image.alt = `${winner.name} fragrance`;
-      }
-
-      const trialButton = document.getElementById('trialButton');
-      const fullBottleButton = document.getElementById('fullBottleButton');
-
-      const fullBottlePrice =
-        document.getElementById('fullBottlePrice');
-
-      const fullBottleVolume =
-        document.getElementById('fullBottleVolume');
-
-      if (winner.comingSoon) {
-        const cleanName =
-          winner.name.replace(' (Coming Soon!)', '');
-
-        document.getElementById('trialName').textContent =
-          `${cleanName} · Coming Soon`;
-
-        document.getElementById('fullBottleName').textContent =
-          `${cleanName} · Coming Soon`;
-
-        fullBottlePrice.textContent =
-          'Coming Soon';
-
-        fullBottleVolume.textContent =
-          '';
-
-        trialButton.disabled = true;
-        fullBottleButton.disabled = true;
-        trialButton.textContent = 'Coming Soon';
-        fullBottleButton.textContent = 'Coming Soon';
-        trialButton.classList.add('opacity-50', 'cursor-not-allowed');
-        fullBottleButton.classList.add('opacity-50', 'cursor-not-allowed');
-      } else {
-        document.getElementById('trialName').textContent =
-          `${winner.name} · ${TRIAL_OFFER.volume}`;
-
-        document.getElementById('fullBottleName').textContent =
-          `${winner.name} · ${winner.volume}`;
-
-        fullBottlePrice.textContent =
-          window.TWB_catalogFormatEUR(winner.price);
-
-        fullBottleVolume.textContent =
-          ` · ${winner.volume}`;
-
-        trialButton.disabled = false;
-        fullBottleButton.disabled = false;
-        trialButton.textContent = 'Try My Match';
-        fullBottleButton.textContent = 'Get My Match';
-        trialButton.classList.remove('opacity-50', 'cursor-not-allowed');
-        fullBottleButton.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-
-      document.getElementById('quizResult').classList.remove('hidden');
-      document.getElementById('emailStatus').textContent = '';
-
-      document.getElementById('quizResult').scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    });
-
-    // Save quiz lead + ask Google Apps Script to email the result.
-    document.getElementById('quizEmailForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!latestQuizResult) return;
-
-      const email = document.getElementById('quizEmail').value.trim();
-      const marketingConsent = document.getElementById('marketingConsent').checked;
-
-      const payload = {
-        type: 'quiz_lead',
-        email,
-        marketingConsent,
-        result: latestQuizResult.winner.name,
-        resultId: latestQuizResult.winner.id,
-        resultLink: latestQuizResult.winner.link,
-        direction: latestQuizResult.answers.direction,
-        matchPercentage: latestQuizResult.matchPercentage,
-        tailoringSuggestion: latestQuizResult.tailoringSuggestion,
-        comingSoon: !!latestQuizResult.winner.comingSoon,
-        feeling: latestQuizResult.answers.feeling,
-        setting: latestQuizResult.answers.setting,
-        energy: latestQuizResult.answers.energy,
-        season: latestQuizResult.answers.season,
-        completedAt: latestQuizResult.completedAt,
-        submittedAt: new Date().toISOString()
-      };
-
-      document.getElementById('quizLeadPayload').value = JSON.stringify(payload);
-      document.getElementById('quizLeadFallback').submit();
-
-      document.getElementById('emailStatus').textContent =
-        marketingConsent
-          ? 'Saved. Your result is on its way — and you’re on the list.'
-          : 'Saved. Your result is on its way.';
-
-      e.target.reset();
-    });
-
-    function addQuizItem(item, limitOne = false) {
-      if (!window.cart) return;
-
-      const existing = window.cart.items.find(product => product.id === item.id);
-      if (limitOne && existing) {
-        window.openCartDrawer?.();
-        return;
-      }
-
-      window.cart.add(item);
-      window.openCartDrawer?.();
+      displayText =
+        `${winner.match} This is the closest ready-to-wear match to your answers. ` +
+        `To bring it closer to your profile, we’d explore ${tailoringSuggestion}.`;
     }
 
-    document.getElementById('trialButton').addEventListener('click', () => {
-      if (!latestQuizResult) return;
-      const winner = latestQuizResult.winner;
-      if (winner.comingSoon) return;
+    // Small lead = the quiz is telling us "compare on skin", not "pretend certainty".
+    const mode =
+      winner.comingSoon
+        ? 'discovery'
+        : lead <= 2
+          ? 'discovery'
+          : 'trial';
 
-      addQuizItem({
-        id: `trial-${winner.id}-10`,
-        name: `${winner.name} — 10 ml Trial`,
-        price: TRIAL_OFFER.price,
-        size: TRIAL_OFFER.volume
-      }, true);
+    const result = {
+      winner,
+      runner,
+      answers,
+      lead,
+      mode,
+      matchPercentage,
+      tailoringSuggestion,
+      displayText,
+      completedAt: new Date().toISOString()
+    };
+
+    sessionStorage.setItem(
+      'twb_quiz_result',
+      JSON.stringify(result)
+    );
+
+    const params = new URLSearchParams({
+      match: winner.id,
+      mode
     });
 
-    document.getElementById('discoveryButton').addEventListener('click', () => {
-      if (!latestQuizResult) return;
-      const winner = latestQuizResult.winner;
-      const a = latestQuizResult.answers;
+    if (runner && runner.id !== winner.id) {
+      params.set('runner', runner.id);
+    }
 
-      addQuizItem({
-        id: 'personal-discovery-3x5',
-        name: `Personal Discovery Set — 3 × 5 ml (Quiz match: ${winner.name}; ${a.direction}, ${a.feeling}, ${a.setting}, ${a.energy}, ${a.season})`,
-        price: DISCOVERY_OFFER.price,
-        size: DISCOVERY_OFFER.volume
-      }, true);
-    });
+    window.location.href =
+      `quiz-result.html?${params.toString()}`;
+  });
+</script>
 
-    document.getElementById('fullBottleButton').addEventListener('click', () => {
-      if (!latestQuizResult) return;
-      const winner = latestQuizResult.winner;
-      if (winner.comingSoon) return;
-
-      addQuizItem({
-        id: winner.fullId,
-        name: winner.fullName,
-        price: winner.price,
-        size: winner.volume
-      });
-    });
-  </script>
-
-  <!-- CORS-proof submission to the Google Apps Script already used by your contact form -->
-  <form id="quizLeadFallback" method="POST"
-        action="https://script.google.com/macros/s/AKfycbzrex3yYFGmlYlrOYksXnzKUMh_3X4aAAYHWjx62MKqAoXUjsp6kxBMiNMErxKliFN6Gw/exec"
-        target="quizLeadFrame" class="hidden">
-    <input type="hidden" name="payload" id="quizLeadPayload">
-  </form>
-  <iframe name="quizLeadFrame" style="display:none"></iframe>
-  </body>
+</body>
 </html>
