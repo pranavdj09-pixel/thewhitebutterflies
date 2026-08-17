@@ -52,7 +52,7 @@
       <p class="text-sm uppercase tracking-[0.2em] text-cream-700 mb-2">Your order</p>
       <h1 class="font-serif text-5xl mb-3">Checkout</h1>
       <p class="text-butterfly-600">
-        Once your final total is known, payment takes place securely on Mollie. Mollie will show the payment methods available for your checkout.
+        Once your final total is known, choose a payment method here and complete the actual payment securely on Mollie.
       </p>
     </div>
 
@@ -129,12 +129,28 @@
 
             <div id="molliePaymentPanel"
               class="rounded-2xl border border-butterfly-900/20 bg-cream-50 p-4 mt-4">
-              <p class="font-medium">Secure payment with Mollie</p>
-              <p class="text-sm text-butterfly-500 mt-1 leading-6">
-                We do not collect card numbers or online-banking credentials on this website.
-                You will continue to Mollie's hosted checkout, where Mollie shows the payment methods
-                enabled for your checkout and relevant to you.
+
+              <p class="font-medium">
+                Choose how you would like to pay
               </p>
+
+              <p class="text-sm text-butterfly-500 mt-1 leading-6">
+                You only choose the payment method here. Card numbers, bank credentials,
+                PayPal logins and all other sensitive payment information are entered on
+                Mollie's secure payment page — never on The White Butterflies.
+              </p>
+
+              <div id="paymentMethods"
+                class="grid gap-3 mt-5">
+                <p class="text-sm text-butterfly-500">
+                  Loading available payment methods…
+                </p>
+              </div>
+
+              <button id="refreshPaymentMethods" type="button"
+                class="hidden mt-4 text-sm underline underline-offset-4 text-butterfly-500 hover:text-butterfly-900">
+                Refresh payment methods
+              </button>
             </div>
 
             <div id="shippingQuotePanel"
@@ -210,14 +226,20 @@
 <script>
   // Replace this ONE value with your current Apps Script /exec URL.
   const APPS_SCRIPT_URL =
-    'https://script.google.com/macros/s/AKfycbwiNI4sVCokxOIsQptKXeMGrR2BMkBEPLvO7wQ-Yrut7sPm9I8Xs6OWNm55ORTjzXm8JA/exec';
+    'https://script.google.com/macros/s/AKfycbzgnmZdxQSCU9Fo_OZYiDp8dOQ1DcwWYHsIQrX_c4-9Z7XwqGm-6vxXS-xaHiSkH17vEA/exec';
 
   let appliedDiscountCode = '';
   let pendingBridge = null;
+  let pendingMethodsBridge = null;
+  let selectedPaymentMethod = '';
+  let paymentMethodsCacheKey = '';
 
   const countrySelect = document.getElementById('countryCode');
   const molliePaymentPanel = document.getElementById('molliePaymentPanel');
   const shippingQuotePanel = document.getElementById('shippingQuotePanel');
+  const paymentMethodsBox = document.getElementById('paymentMethods');
+  const refreshPaymentMethodsButton =
+    document.getElementById('refreshPaymentMethods');
   const placeOrderButton = document.getElementById('placeOrderButton');
   const orderStatus = document.getElementById('orderStatus');
 
@@ -393,6 +415,212 @@
   }
 
 
+  const paymentMethodLabels = {
+    ideal: 'iDEAL',
+    bancontact: 'Bancontact',
+    creditcard: 'Credit / debit card',
+    paybybank: 'Pay by Bank',
+    paypal: 'PayPal',
+    banktransfer: 'Bank transfer via Mollie'
+  };
+
+
+  function friendlyPaymentMethodName(method) {
+    return (
+      paymentMethodLabels[method.id] ||
+      method.description ||
+      method.id
+    );
+  }
+
+
+  function renderPaymentMethods(methods) {
+    const usable =
+      Array.isArray(methods)
+        ? methods
+        : [];
+
+    if (!usable.length) {
+      selectedPaymentMethod = '';
+
+      paymentMethodsBox.innerHTML = `
+        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          No enabled Mollie payment methods are available for this amount and destination.
+          Check the payment methods enabled in your Mollie profile.
+        </div>
+      `;
+
+      refreshPaymentMethodsButton.classList.remove('hidden');
+      return;
+    }
+
+
+    if (
+      !usable.some(
+        method =>
+          method.id ===
+          selectedPaymentMethod
+      )
+    ) {
+      selectedPaymentMethod = '';
+    }
+
+
+    paymentMethodsBox.innerHTML =
+      usable
+        .map(method => {
+          const id =
+            String(method.id || '');
+
+          const checked =
+            id === selectedPaymentMethod
+              ? 'checked'
+              : '';
+
+          return `
+            <label
+              class="flex items-center gap-3 rounded-xl border border-cream-200 bg-white px-4 py-3 cursor-pointer hover:border-cream-400"
+            >
+              <input
+                type="radio"
+                name="paymentMethodChoice"
+                value="${id}"
+                ${checked}
+                class="accent-butterfly-900"
+              >
+
+              <span class="font-medium">
+                ${friendlyPaymentMethodName(method)}
+              </span>
+            </label>
+          `;
+        })
+        .join('');
+
+    refreshPaymentMethodsButton.classList.add('hidden');
+  }
+
+
+  function paymentMethodsRequestKey() {
+    const totals = getCheckoutTotals();
+
+    if (
+      totals.shippingMode !== 'fixed' ||
+      totals.total === null
+    ) {
+      return '';
+    }
+
+    return [
+      selectedCountryCode(),
+      Number(totals.total).toFixed(2),
+      appliedDiscountCode
+    ].join('|');
+  }
+
+
+  function loadPaymentMethods(force = false) {
+    const key =
+      paymentMethodsRequestKey();
+
+    if (!key) {
+      selectedPaymentMethod = '';
+      paymentMethodsCacheKey = '';
+      return;
+    }
+
+
+    if (
+      !force &&
+      paymentMethodsCacheKey === key
+    ) {
+      return;
+    }
+
+
+    if (pendingMethodsBridge) {
+      clearTimeout(
+        pendingMethodsBridge.timeoutId
+      );
+      pendingMethodsBridge = null;
+    }
+
+
+    selectedPaymentMethod = '';
+    paymentMethodsCacheKey = '';
+
+    paymentMethodsBox.innerHTML = `
+      <p class="text-sm text-butterfly-500">
+        Loading available payment methods…
+      </p>
+    `;
+
+    refreshPaymentMethodsButton.classList.add('hidden');
+
+
+    const bridgeToken =
+      makeBridgeToken();
+
+
+    const timeoutId =
+      setTimeout(
+        () => {
+
+          if (
+            !pendingMethodsBridge ||
+            pendingMethodsBridge.token !==
+              bridgeToken
+          ) {
+            return;
+          }
+
+
+          pendingMethodsBridge = null;
+
+          paymentMethodsBox.innerHTML = `
+            <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              We could not load the payment methods from Mollie.
+            </div>
+          `;
+
+          refreshPaymentMethodsButton.classList.remove('hidden');
+
+        },
+        20000
+      );
+
+
+    pendingMethodsBridge = {
+      token:
+        bridgeToken,
+
+      key:
+        key,
+
+      timeoutId:
+        timeoutId
+    };
+
+
+    submitToAppsScript({
+      type:
+        'list_payment_methods',
+
+      bridgeToken:
+        bridgeToken,
+
+      items:
+        window.cart.items,
+
+      discountCode:
+        appliedDiscountCode,
+
+      countryCode:
+        selectedCountryCode()
+    });
+  }
+
+
   function updateModeUi() {
     const totals = getCheckoutTotals();
 
@@ -401,10 +629,19 @@
       shippingQuotePanel.classList.add('hidden');
 
       placeOrderButton.textContent =
-        `Proceed to secure payment · ${money(totals.total)}`;
+        `Continue securely · ${money(totals.total)}`;
+
+      setTimeout(
+        () => loadPaymentMethods(),
+        0
+      );
+
     } else {
       molliePaymentPanel.classList.add('hidden');
       shippingQuotePanel.classList.remove('hidden');
+
+      selectedPaymentMethod = '';
+      paymentMethodsCacheKey = '';
 
       placeOrderButton.textContent =
         'Request shipping quote';
@@ -476,6 +713,34 @@
           : `${appliedDiscountCode} saved — it will be applied after your shipping charge is confirmed.`;
     }
   });
+
+
+  paymentMethodsBox.addEventListener(
+    'change',
+    event => {
+
+      const input =
+        event.target.closest(
+          'input[name="paymentMethodChoice"]'
+        );
+
+
+      if (!input) {
+        return;
+      }
+
+
+      selectedPaymentMethod =
+        input.value;
+
+    }
+  );
+
+
+  refreshPaymentMethodsButton.addEventListener(
+    'click',
+    () => loadPaymentMethods(true)
+  );
 
 
   // Cancel checkout
@@ -562,9 +827,64 @@
 
 
   window.addEventListener('message', event => {
-    if (!pendingBridge) return;
-
     const message = event.data || {};
+
+
+    // Separate bridge for listing enabled Mollie methods.
+    if (
+      pendingMethodsBridge &&
+      message.bridgeToken ===
+        pendingMethodsBridge.token
+    ) {
+
+      if (
+        message.type ===
+          'twb-payment-methods'
+      ) {
+
+        clearTimeout(
+          pendingMethodsBridge.timeoutId
+        );
+
+        paymentMethodsCacheKey =
+          pendingMethodsBridge.key;
+
+        pendingMethodsBridge = null;
+
+        renderPaymentMethods(
+          message.methods || []
+        );
+
+        return;
+      }
+
+
+      if (
+        message.type ===
+          'twb-payment-error'
+      ) {
+
+        clearTimeout(
+          pendingMethodsBridge.timeoutId
+        );
+
+        pendingMethodsBridge = null;
+
+        paymentMethodsBox.innerHTML = `
+          <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            ${message.error || 'Could not load payment methods.'}
+          </div>
+        `;
+
+        refreshPaymentMethodsButton.classList.remove('hidden');
+
+        return;
+      }
+
+    }
+
+
+    if (!pendingBridge) return;
 
     if (message.bridgeToken !== pendingBridge.token) return;
 
@@ -677,8 +997,22 @@
       const totals = getCheckoutTotals();
 
       if (totals.shippingMode === 'fixed') {
+
+        if (!selectedPaymentMethod) {
+          clearTimeout(timeoutId);
+          pendingBridge = null;
+          placeOrderButton.disabled = false;
+
+          orderStatus.textContent =
+            'Choose a payment method first.';
+
+          return;
+        }
+
+
         placeOrderButton.textContent = 'Opening Mollie…';
-        orderStatus.textContent = 'Creating your secure Mollie checkout…';
+        orderStatus.textContent =
+          'Opening the secure payment page on Mollie…';
 
         submitToAppsScript({
           type: 'create_payment',
@@ -686,6 +1020,7 @@
           items: window.cart.items,
           discountCode: appliedDiscountCode,
           clientTotals: totals,
+          paymentMethod: selectedPaymentMethod,
           customer
         });
 

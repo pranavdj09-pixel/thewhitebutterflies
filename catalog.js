@@ -27,9 +27,18 @@ window.TWB_CATALOG = {
   },
   "payments": {
     "checkoutMode": "mollie_hosted",
-    "methodSelection": "mollie",
+    "methodSelection": "website_method_only",
+    "sensitiveDataHandler": "mollie",
     "knownShipping": "create_payment",
-    "unknownShipping": "quote_then_payment_link"
+    "unknownShipping": "quote_then_payment_link",
+    "allowedMethods": [
+      "ideal",
+      "bancontact",
+      "creditcard",
+      "paybybank",
+      "paypal",
+      "banktransfer"
+    ]
   },
   "discounts": {
     "CHASKA": {

@@ -1,32 +1,96 @@
-# The White Butterflies — Mollie Hosted Checkout + Catalog Upgrade
+# The White Butterflies — Mollie Payment Choice + Return-to-Site Upgrade
 
-**This ZIP supersedes the previous `twb-catalog-eu-payment-upgrade.zip`.**
-The previous ZIP was not implemented, so this bundle already includes those changes plus the new Mollie-hosted payment architecture.
+This ZIP supersedes both earlier catalog/payment ZIPs.
 
-## New payment flow
+## Why this version exists
 
-### When shipping is already known
-The website shows one button:
+Mollie's documented Hosted Checkout behaviour is:
 
-`Proceed to secure payment`
+- if you create a payment without choosing one specific method,
+  Mollie shows its payment-method chooser;
+- if a payment attempt fails or is cancelled while multiple methods are
+  available, Mollie sends the customer back to that chooser;
+- Mollie documents that this retry behaviour cannot be disabled.
 
-Apps Script creates a Mollie Payment **without a `method` parameter**.
-The customer is then redirected to Mollie's hosted checkout, where Mollie shows the payment methods enabled in your Mollie account and relevant to the checkout.
+You asked for the opposite behaviour:
+after an attempt, successful or not, leave Mollie and come back to
+The White Butterflies.
 
-Our website does not collect:
-- card numbers;
-- online-banking credentials;
-- PayPal credentials;
-- direct-bank-transfer credentials.
+Therefore this version puts ONLY THE PAYMENT-METHOD CHOICE on our checkout.
 
-### When shipping is not known
-No payment is created.
-The customer submits a shipping quote request.
-You calculate the real shipping charge and then send a secure Mollie Payment Link.
+Example:
 
-## Shipping configuration
+- iDEAL
+- Credit / debit card
+- PayPal
+- Bancontact
+- Pay by Bank
+- Bank transfer via Mollie
 
-`catalog.js` currently contains:
+The customer does NOT enter:
+- card number;
+- CVV;
+- bank username/password;
+- PayPal login;
+- bank-transfer credentials
+
+on our website.
+
+After they choose a method, Apps Script creates the Mollie payment with one
+specific `method`. Mollie then hosts the actual payment screen.
+
+## Redirect behaviour
+
+PAID:
+Mollie -> order-confirmed.html -> paid confirmation/invoice.
+
+FAILED:
+Mollie -> order-confirmed.html -> Payment failed -> Retry payment.
+
+CANCELLED:
+Mollie -> order-confirmed.html -> Payment cancelled -> Retry payment.
+
+EXPIRED:
+The webhook/status check records expired. If the customer returns to the order
+status page, it shows Payment expired.
+
+OPEN/PENDING/AUTHORIZED:
+The order-confirmed page shows that Mollie is still confirming/waiting.
+It does not start fulfilment.
+
+## Dynamic payment methods
+
+The checkout does not blindly hard-code enabled methods.
+
+Apps Script calls Mollie's:
+GET /v2/methods
+
+using:
+- the secure server-side order total;
+- EUR;
+- the customer's billing country.
+
+Mollie returns the methods currently available for the profile/amount/country.
+
+We then filter that list to the methods you currently want to permit in
+catalog.js:
+
+```js
+"allowedMethods": [
+  "ideal",
+  "bancontact",
+  "creditcard",
+  "paybybank",
+  "paypal",
+  "banktransfer"
+]
+```
+
+If you decide you do not want one of those, remove it from this array.
+
+## Shipping
+
+Shipping behaviour is unchanged:
 
 ```js
 "countryRates": {
@@ -34,141 +98,71 @@ You calculate the real shipping charge and then send a secure Mollie Payment Lin
 }
 ```
 
-So today:
-- Netherlands -> exact shipping -> Mollie Hosted Checkout.
-- Other EU countries -> shipping quote first.
+Known rate:
+checkout can calculate final total and offer payment methods.
 
-When you know a reliable rate for another country, add it:
+Unknown rate:
+no Mollie payment is created.
+The customer submits a shipping quote request and pays later through a secure
+Mollie Payment Link after you calculate shipping.
 
-```js
-"countryRates": {
-  "NL": 6.96,
-  "BE": 10.50,
-  "DE": 11.25
-}
-```
+## catalog.js must be published
 
-Then Belgium and Germany can also proceed directly to Mollie with the correct final total.
+Apps Script reads the published catalog for secure prices and shipping.
 
-## Payment methods
+It must be available at:
 
-The code intentionally does **not** hard-code a payment method.
+https://pranavdj09-pixel.github.io/thewhitebutterflies/catalog.js
 
-In Mollie, enable the methods you actually want to offer, for example:
-- iDEAL;
-- Bancontact;
-- credit/debit cards;
-- Pay by Bank;
-- PayPal;
-- bank transfer.
+before payment creation works.
 
-Mollie's hosted checkout handles the selection and sensitive payment UI.
+## Files
 
-## catalog.js
+ADD:
+- catalog.js
+- order-requested.html
 
-It is now the public catalog source of truth for:
-- product prices;
-- product names;
-- volume/concentration;
-- quiz data;
-- sample/discovery pricing;
-- CHASKA;
-- shipping rates.
+REPLACE:
+- index.html
+- cart.js
+- checkout.html
+- order-confirmed.html
+- quiz.html
+- six product pages
+- Apps Script Code.gs
 
-Apps Script fetches the **published** `catalog.js` before creating a payment, so it does not trust a browser-edited price.
+## Apps Script URL placeholders
 
-## Owner email status replies
+Search for:
 
-Your original order email thread can receive one reply per status:
-- PAYMENT OPEN · AWAITING CUSTOMER
-- PAYMENT PENDING · WAIT
-- PAYMENT AUTHORIZED · WAIT FOR PAID
-- PAYMENT CREATION FAILED · CHECK ORDER
-- PAYMENT FAILED · DO NOT PREPARE
-- PAYMENT CANCELLED · DO NOT PREPARE
-- PAYMENT EXPIRED · DO NOT PREPARE
-- PAYMENT CONFIRMED · START PREPARING
+PASTE_YOUR_CURRENT_APPS_SCRIPT_EXEC_URL_HERE
 
-Duplicate notifications for the same status are suppressed.
+and replace it with your real `/exec` URL in:
+- checkout.html
+- order-confirmed.html
+- quiz.html
 
-## Paid customer email
+Verify index.html also uses the correct Apps Script URL for its contact form.
 
-When Mollie reports `paid`:
-- your original order email gets the `START PREPARING` reply;
-- the customer gets the branded order-confirmation email;
-- the invoice PDF is attached;
-- `order-confirmed.html` shows the Download Invoice button.
+## Deployment order
 
----
-
-# Files to add / replace
-
-Add:
-- `catalog.js`
-- `order-requested.html`
-
-Replace:
-- Apps Script `Code.gs`
-- `index.html`
-- `cart.js`
-- `checkout.html`
-- `order-confirmed.html`
-- `quiz.html`
-- all six HTML files inside `products/`
-
-# Before pushing
-
-Search these files for:
-
-`PASTE_YOUR_CURRENT_APPS_SCRIPT_EXEC_URL_HERE`
-
-Replace that with your current Apps Script `/exec` URL in:
-- `checkout.html`
-- `order-confirmed.html`
-- `quiz.html`
-
-Also verify the Apps Script URL inside the contact form in `index.html`.
-
-Keep `MOLLIE_API_KEY` only in:
-Apps Script -> Project Settings -> Script Properties
-
-Never put it into GitHub.
-
-# Deployment order
-
-1. Put your current Apps Script `/exec` URL into the website files.
-2. Push the website files to GitHub.
-3. Confirm this loads publicly:
-   `https://pranavdj09-pixel.github.io/thewhitebutterflies/catalog.js`
-4. Replace Apps Script `Code.gs`.
+1. Put current /exec URL into website files.
+2. Push website files, INCLUDING catalog.js, to GitHub.
+3. Confirm catalog.js opens publicly.
+4. Replace Apps Script Code.gs.
 5. Save.
-6. If Gmail thread permission has not yet been granted, manually run:
-   `authorizeOrderThreadReplies`
+6. Run authorizeOrderThreadReplies once if Gmail permission has not yet been granted.
 7. Deploy -> Manage deployments -> Edit -> New version -> Deploy.
-8. If the `/exec` URL changed, update the website files and push again.
+8. Test with Mollie test mode.
 
-# Mollie setup
+## Expected test
 
-Enable the payment methods you actually want in your Mollie dashboard.
-The website will not show its own card/bank form.
-
-# Tests
-
-## Netherlands
-- shipping = €6.96;
-- button = Proceed to secure payment;
-- Mollie hosted payment-selection page opens;
-- choose any enabled test payment method;
-- verify status emails, webhook updates, customer confirmation and invoice.
-
-## Failed/cancelled/open
-Use fresh test orders and verify the same internal email thread receives the appropriate status reply.
-
-## EU without configured rate
-Choose a country not present in `countryRates`.
-No Mollie payment should be created.
-The customer should get a shipping-quote acknowledgement instead.
-
-## Future EU fixed rate
-Add a temporary fixed shipping rate for an EU country in `catalog.js`.
-That country should then go directly to Mollie's hosted payment-selection checkout.
+Netherlands:
+- shipping €6.96;
+- payment methods load from Mollie;
+- choose ONE method on The White Butterflies;
+- click Continue securely;
+- actual payment happens at Mollie;
+- cancel/fail -> back to The White Butterflies;
+- paid -> back to The White Butterflies;
+- only paid triggers fulfilment/customer paid confirmation/invoice.
