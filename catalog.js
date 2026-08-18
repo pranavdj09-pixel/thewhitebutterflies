@@ -305,7 +305,7 @@ window.TWB_CATALOG = {
       "concentration": "EDT",
       "concentrationLong": "Eau de Toilette",
       "volume": "100 ml",
-      "price": 64.99,
+      "price": 75,
       "collection": "numbered",
       "page": "products/the-godfather-no-1.html",
       "image": "The Godfather.png",
@@ -345,7 +345,7 @@ window.TWB_CATALOG = {
       "concentration": "EDP",
       "concentrationLong": "Eau de Parfum",
       "volume": "100 ml",
-      "price": 74.99,
+      "price": 75,
       "collection": "numbered",
       "page": "products/the-man.html",
       "image": "The Man.png",
@@ -385,7 +385,7 @@ window.TWB_CATALOG = {
       "concentration": "Extrait",
       "concentrationLong": "Extrait",
       "volume": "100 ml",
-      "price": 74.99,
+      "price": 75,
       "collection": "numbered",
       "page": "products/the-woman-no-2309.html",
       "image": "The Woman 100 ml.png",
@@ -514,9 +514,24 @@ window.TWB_CATALOG = {
   }
 
   function formatEUR(value) {
-    if (value === null || value === undefined || value === '') return '';
-    return '€' + Number(value).toFixed(2);
+  if (
+    value === null ||
+    value === undefined ||
+    value === ''
+  ) {
+    return '';
   }
+
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) {
+    return '';
+  }
+
+  return Number.isInteger(amount)
+    ? '€' + amount
+    : '€' + amount.toFixed(2);
+}
 
   function getCountry(code) {
     return STORE.euCountries.find(country => country.code === code) || null;
