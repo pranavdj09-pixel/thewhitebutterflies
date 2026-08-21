@@ -110,21 +110,651 @@ html { scroll-behavior: smooth; }
 }
 
     
-  </style>
+  
+  /* =========================================================
+     INTERACTIVE GARDEN
+     ========================================================= */
+
+  .garden-section {
+    position: relative;
+    width: 100%;
+    background: #fff9ed;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(198,156,52,.12);
+  }
+
+  /*
+    IMPORTANT:
+    The garden asset itself is 1536 × 1024 (3:2).
+    We preserve that exact aspect ratio.
+    No object-fit: cover. No cropping. No stretching.
+  */
+  .garden-artboard {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: #fbf7ef;
+  }
+
+  .garden-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: fill;
+    user-select: none;
+    pointer-events: none;
+    z-index: 0;
+
+    /* Slightly quieten the illustration so typography stays dominant. */
+    opacity: .78;
+  }
+
+  .garden-artboard::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+
+    /*
+      Very light ivory veil.
+      This preserves the drawing while taking a touch of contrast
+      out of the busy foliage behind the text.
+    */
+    background: rgba(255, 249, 237, .12);
+  }
+
+  .garden-butterfly-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+
+  /* =========================================================
+     CENTERED GARDEN INTRO
+     ========================================================= */
+
+  .garden-intro {
+    position: absolute;
+    z-index: 25;
+    left: 50%;
+    top: 39%;
+    width: min(690px, 58%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+
+    /*
+      A very soft local clearing around the words. It is intentionally
+      not a box/card; just enough to stop fine botanical lines from
+      competing with the text.
+    */
+    padding: 22px 26px;
+    border-radius: 40px;
+    background:
+      radial-gradient(
+        ellipse at center,
+        rgba(255,249,237,.52) 0%,
+        rgba(255,249,237,.34) 52%,
+        rgba(255,249,237,0) 78%
+      );
+  }
+
+  .garden-intro h1 {
+    margin: 0;
+    color: #101827;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(52px, 5.3vw, 88px);
+    font-weight: 400;
+    line-height: .91;
+    letter-spacing: -.025em;
+    text-wrap: balance;
+  }
+
+  .garden-intro p {
+    max-width: 560px;
+    margin: 28px auto 0;
+    color: #596677;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(14px, 1.15vw, 18px);
+    line-height: 1.6;
+  }
+
+  .garden-intro-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    min-height: 58px;
+    padding: 0 31px;
+    border-radius: 999px;
+    background: #0f172a;
+    color: white;
+    font-size: clamp(14px, 1.15vw, 18px);
+    font-weight: 500;
+    text-decoration: none;
+    pointer-events: auto;
+    box-shadow: 0 8px 24px rgba(15,23,42,.10);
+    transition:
+      transform .25s cubic-bezier(.22,.78,.22,1),
+      opacity .2s ease;
+  }
+
+  .garden-intro-action:hover {
+    transform: translateY(-2px);
+    opacity: .93;
+  }
+
+  .garden-mobile-intro {
+    display: none;
+  }
+
+
+  .garden-butterfly {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    aspect-ratio: 1 / 1;
+    transform:
+      translate(-50%, -50%)
+      translate(var(--avoid-x, 0px), var(--avoid-y, 0px));
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .garden-butterfly-label {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 2%);
+    transform: translateX(-50%);
+    color: #b58635;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(17px, 1.7vw, 29px);
+    line-height: 1;
+    white-space: nowrap;
+    text-shadow: 0 1px 10px rgba(255,249,237,.95);
+    transition: transform .42s cubic-bezier(.22,.78,.22,1);
+    pointer-events: none;
+  }
+
+  .garden-butterfly-float {
+    width: 100%;
+    height: 100%;
+    animation: gardenFloatA 6.4s ease-in-out infinite alternate;
+  }
+
+  .garden-butterfly[data-motion="b"] .garden-butterfly-float {
+    animation-name: gardenFloatB;
+    animation-duration: 7.2s;
+  }
+
+  .garden-butterfly[data-motion="c"] .garden-butterfly-float {
+    animation-name: gardenFloatC;
+    animation-duration: 5.9s;
+  }
+
+  @keyframes gardenFloatA {
+    from { transform: translate3d(-2px, 2px, 0) rotate(-.7deg); }
+    to   { transform: translate3d(5px, -6px, 0) rotate(1deg); }
+  }
+
+  @keyframes gardenFloatB {
+    from { transform: translate3d(4px, -2px, 0) rotate(.8deg); }
+    to   { transform: translate3d(-5px, 6px, 0) rotate(-1deg); }
+  }
+
+  @keyframes gardenFloatC {
+    from { transform: translate3d(-3px, 0, 0) rotate(-.5deg); }
+    to   { transform: translate3d(6px, 4px, 0) rotate(.9deg); }
+  }
+
+  .garden-butterfly-zoom {
+    width: 100%;
+    height: 100%;
+    transition:
+      transform .48s cubic-bezier(.22,.78,.22,1),
+      filter .48s ease;
+    transform-origin: center;
+  }
+
+  .garden-butterfly img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 11px rgba(94,65,25,.13));
+  }
+
+  .garden-butterfly:hover,
+  .garden-butterfly.is-active {
+    z-index: 20;
+  }
+
+  .garden-butterfly:hover .garden-butterfly-float,
+  .garden-butterfly.is-active .garden-butterfly-float {
+    animation-play-state: paused;
+  }
+
+  .garden-butterfly:hover .garden-butterfly-zoom,
+  .garden-butterfly.is-active .garden-butterfly-zoom {
+    transform: translateY(-5px) scale(1.22);
+    filter: drop-shadow(0 14px 16px rgba(94,65,25,.18));
+  }
+
+  .garden-butterfly:hover .garden-butterfly-label,
+  .garden-butterfly.is-active .garden-butterfly-label {
+    transform: translateX(-50%) translateY(-6px) scale(1.04);
+  }
+
+  .garden-preview {
+    position: absolute;
+    z-index: 40;
+    left: 0;
+    top: 0;
+    width: clamp(330px, 25vw, 390px);
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 43% 57%;
+    overflow: hidden;
+
+    border: 1px solid rgba(173,144,96,.22);
+    border-radius: 7px;
+    background: rgba(252,248,241,.965);
+    box-shadow:
+      0 22px 55px rgba(45,36,25,.15),
+      0 4px 12px rgba(45,36,25,.08);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(15px) scale(.982);
+
+    transition:
+      opacity .30s ease,
+      transform .44s cubic-bezier(.22,.78,.22,1),
+      visibility 0s linear .44s;
+  }
+
+  .garden-preview.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transition-delay: .08s, .08s, 0s;
+  }
+
+  .garden-preview-product {
+    min-height: 238px;
+    padding: 18px 10px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 50% 42%,
+      rgba(255,255,255,.95),
+      rgba(239,230,215,.36) 55%,
+      rgba(235,225,208,.50));
+  }
+
+  .garden-preview-product img {
+    display: block;
+    width: 82%;
+    height: 202px;
+    object-fit: contain;
+    transition: transform .55s cubic-bezier(.22,.78,.22,1);
+  }
+
+  .garden-preview.is-visible .garden-preview-product img {
+    transform: translateY(-2px) scale(1.025);
+  }
+
+  .garden-preview-copy {
+    padding: 31px 27px 26px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .garden-preview-name {
+    margin: 0;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(27px, 2.3vw, 39px);
+    font-weight: 500;
+    line-height: .98;
+  }
+
+  .garden-preview-rule {
+    width: 31px;
+    height: 1px;
+    margin: 18px 0 15px;
+    background: #b58635;
+    opacity: .75;
+  }
+
+  .garden-preview-accords {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+    color: #665544;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(14px, 1.2vw, 17px);
+  }
+
+  .garden-preview-link {
+    margin-top: 22px;
+    align-self: flex-start;
+    color: #55493d;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .garden-preview-link::after {
+    content: '  →';
+    font-size: 18px;
+  }
+
+  .garden-preview-close {
+    display: none;
+  }
+
+  .garden-scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 2.2%;
+    transform: translateX(-50%);
+    z-index: 9;
+    color: #514a41;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .garden-scroll-mouse {
+    width: 27px;
+    height: 42px;
+    margin: 0 auto 8px;
+    border: 1px solid rgba(48,43,37,.58);
+    border-radius: 16px;
+  }
+
+  .garden-scroll-cue span {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 10px;
+    letter-spacing: .27em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 800px) {
+    /*
+      PHONE COMPOSITION:
+      Keep the same layered idea as desktop.
+
+      The original garden remains 3:2. Instead of squashing it into
+      a short phone-width rectangle, make the artboard 150vw wide
+      and centre it. The phone sees a deliberate crop of the LEFT
+      and RIGHT edges while the artwork itself keeps its ratio.
+    */
+    .garden-section {
+      position: relative;
+      width: 100%;
+      height: 100vw;
+      min-height: 390px;
+      max-height: 560px;
+      padding: 0;
+      overflow: hidden;
+      background: #fff9ed;
+    }
+
+    .garden-artboard {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 150vw;
+      max-width: none;
+      aspect-ratio: 3 / 2;
+      transform: translateX(-50%);
+      overflow: hidden;
+      border: 0;
+    }
+
+    .garden-background {
+      opacity: .72;
+    }
+
+    .garden-artboard::after {
+      background: rgba(255,249,237,.16);
+    }
+
+    /*
+      Bring back the SAME intro, now sized for phones.
+      Because the artboard is wider than the viewport, its percentage
+      width still produces a sensible readable block on screen.
+    */
+    .garden-intro {
+      display: block;
+      top: 46%;
+      width: 59%;
+      padding: 12px 10px;
+      border-radius: 30px;
+      background:
+        radial-gradient(
+          ellipse at center,
+          rgba(255,249,237,.64) 0%,
+          rgba(255,249,237,.43) 55%,
+          rgba(255,249,237,0) 80%
+        );
+    }
+
+    .garden-intro h1 {
+      font-size: clamp(39px, 8.6vw, 58px);
+      line-height: .92;
+      letter-spacing: -.025em;
+    }
+
+    .garden-intro p {
+      max-width: 510px;
+      margin-top: 18px;
+      font-size: clamp(12px, 2.45vw, 15px);
+      line-height: 1.5;
+    }
+
+    .garden-intro-action {
+      min-height: 48px;
+      margin-top: 20px;
+      padding: 0 23px;
+      font-size: clamp(13px, 2.5vw, 15px);
+      white-space: nowrap;
+    }
+
+    /*
+      Phone-specific butterfly starting positions.
+      These are intentionally around the OUTER garden so the title
+      gets the middle of the scene. Collision JS is still the final
+      safety net if a particular viewport creates an overlap.
+    */
+    .garden-butterfly[data-key="nostalgia"] {
+      --mobile-x: 29%;
+      --mobile-y: 24%;
+    }
+
+    .garden-butterfly[data-key="k"] {
+      --mobile-x: 67%;
+      --mobile-y: 15%;
+    }
+
+    .garden-butterfly[data-key="rose"] {
+      --mobile-x: 72%;
+      --mobile-y: 34%;
+    }
+
+    .garden-butterfly[data-key="111"] {
+      --mobile-x: 28%;
+      --mobile-y: 76%;
+    }
+
+    .garden-butterfly[data-key="godfather"] {
+      --mobile-x: 37%;
+      --mobile-y: 86%;
+    }
+
+    .garden-butterfly[data-key="2309"] {
+      --mobile-x: 70%;
+      --mobile-y: 82%;
+    }
+
+    .garden-butterfly {
+      left: var(--mobile-x, var(--x));
+      top: var(--mobile-y, var(--y));
+      width: calc(var(--w) * .78);
+    }
+
+    .garden-butterfly-label {
+      font-size: clamp(13px, 2.8vw, 17px);
+      bottom: calc(100% - 1px);
+    }
+
+    /*
+      IMPORTANT FIX FOR PRODUCT CARDS:
+      JS moves this element into <body> on phones, so it is no longer
+      trapped inside the garden's overflow:hidden artboard.
+    */
+    .garden-preview {
+      position: fixed !important;
+      left: 12px !important;
+      right: 12px !important;
+      top: auto !important;
+      bottom: max(12px, env(safe-area-inset-bottom)) !important;
+      width: auto !important;
+      min-width: 0;
+      max-height: min(72vh, 520px);
+      grid-template-columns: 38% 62%;
+      z-index: 9999;
+      overflow: auto;
+      border-radius: 10px;
+    }
+
+    .garden-preview-product {
+      min-height: 205px;
+    }
+
+    .garden-preview-product img {
+      height: 172px;
+    }
+
+    .garden-preview-copy {
+      padding: 24px 40px 22px 19px;
+    }
+
+    .garden-preview-name {
+      font-size: 29px;
+    }
+
+    .garden-preview-accords {
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .garden-preview-rule {
+      margin: 13px 0 11px;
+    }
+
+    .garden-preview-link {
+      margin-top: 17px;
+      font-size: 11px;
+    }
+
+    .garden-preview-close {
+      display: grid;
+      place-items: center;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 8;
+      width: 31px;
+      height: 31px;
+      padding: 0;
+      border: 1px solid rgba(67,57,45,.13);
+      border-radius: 50%;
+      background: rgba(255,251,244,.91);
+      color: #2b261f;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 460px) {
+    .garden-section {
+      height: 108vw;
+      min-height: 410px;
+      max-height: 500px;
+    }
+
+    .garden-artboard {
+      width: 162vw;
+    }
+
+    .garden-intro {
+      top: 47%;
+      width: 56%;
+      padding: 9px 5px;
+    }
+
+    .garden-intro h1 {
+      font-size: clamp(37px, 9.5vw, 47px);
+      line-height: .93;
+    }
+
+    .garden-intro p {
+      margin-top: 15px;
+      font-size: 12px;
+    }
+
+    .garden-intro-action {
+      min-height: 45px;
+      margin-top: 17px;
+      padding: 0 19px;
+      font-size: 13px;
+    }
+
+    .garden-preview {
+      left: 9px !important;
+      right: 9px !important;
+      bottom: max(9px, env(safe-area-inset-bottom)) !important;
+      grid-template-columns: 36% 64%;
+    }
+
+    .garden-preview-product {
+      min-height: 190px;
+    }
+
+    .garden-preview-product img {
+      height: 156px;
+    }
+
+    .garden-preview-copy {
+      padding: 21px 37px 19px 16px;
+    }
+  }
+
+</style>
 </head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-62LMQ9D8T1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-62LMQ9D8T1');
-</script>
-
-<script src="./catalog.js"></script>
-<script src="./cart.js"></script>
 
 <body class="bg-cream-50 text-butterfly-900 font-sans">
 
@@ -147,6 +777,68 @@ html { scroll-behavior: smooth; }
     </div>
   </header>
 
+
+  <!-- =======================================================
+       INTERACTIVE GARDEN
+       This whole scene begins AFTER the normal site header.
+       ======================================================= -->
+  <section id="garden" class="garden-section">
+
+    <div class="garden-artboard">
+
+      <img
+        class="garden-background"
+        src="./assets/garden.png"
+        alt=""
+        aria-hidden="true"
+      >
+
+      <div id="gardenButterflyLayer" class="garden-butterfly-layer"></div>
+
+      <div class="garden-intro">
+        <h1>A world of people with a scent of their own</h1>
+
+        <p>
+          Explore the garden of butterflies that came before you,
+          or discover the scent that might become yours.
+        </p>
+
+        <a class="garden-intro-action" href="quiz.html">
+          Find Your Signature Scent
+        </a>
+      </div>
+
+      <article id="gardenPreview" class="garden-preview">
+        <button
+          id="gardenPreviewClose"
+          class="garden-preview-close"
+          type="button"
+          aria-label="Close fragrance preview"
+        >
+          ×
+        </button>
+
+        <div class="garden-preview-product">
+          <img id="gardenPreviewImage" src="" alt="">
+        </div>
+
+        <div class="garden-preview-copy">
+          <h2 id="gardenPreviewName" class="garden-preview-name"></h2>
+          <div class="garden-preview-rule"></div>
+          <ul id="gardenPreviewAccords" class="garden-preview-accords"></ul>
+          <a id="gardenPreviewLink" class="garden-preview-link" href="#">
+            View fragrance
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+
+
+
+<div style="display:none">
 <!-- Hero -->
 <section class="relative overflow-hidden">
   <div class="max-w-6xl mx-auto px-4 py-20 grid grid-cols-12 items-center gap-6">
@@ -160,12 +852,12 @@ html { scroll-behavior: smooth; }
         Compositions built to unfold, with you.
       </p>
       <div class="flex gap-4 fade-in delay-3 flex-wrap">
-        <a href="quiz.html" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+        <a href="#collection" class="px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+          Shop the Collection
+        </a>
+        <a href="quiz.html" class="px-6 py-3 rounded-full border border-butterfly-900/20 hover:bg-white">
           Find Your Signature Scent
         </a>
-        <!-- <a href="#collection"class="px-6 py-3 rounded-full border border-butterfly-900/20 hover:bg-white" >
-          Shop the Collection
-        </a> -->
       </div>
     </div>
 
@@ -190,11 +882,14 @@ html { scroll-behavior: smooth; }
 
 
 
-  <!-- Story -->
+  
+</div>
+
+<!-- Story -->
   <section id="story" class="py-20 fade-in">
     <div class="max-w-5xl mx-auto px-4 text-center">
       <h2 class="font-serif text-3xl mb-4">The heart remembers in scent before it remembers in words.</h2>
-      <p class="text-butterfly-600 max-w-3xl mx-auto">We compose with intention. Notes that hum with intimacy and then lift. Each note is a chapter, made to tell a story. Wear it for yourself, and let the world overhear.</p>
+      <p class="text-butterfly-600 max-w-3xl mx-auto">We compose with intention. Notes that hum with intimacy and then lift. Each note is a chapter, made to unfold like a story. Wear it for yourself, and let the world overhear.</p>
     </div>
   </section>
 
@@ -224,7 +919,7 @@ html { scroll-behavior: smooth; }
       </p>
 
       <div class="flex items-center justify-between">
-        <span class="text-lg font-medium text-butterfly-900 ml-1">€89.99</span>
+        <span class="text-lg font-medium text-butterfly-900 ml-1">€74.99</span>
         <a href="#contact"
           class="px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90">
         Contact now
@@ -249,7 +944,7 @@ html { scroll-behavior: smooth; }
       </p>
 
       <div class="flex items-center justify-between">
-        <span class="text-lg font-medium text-butterfly-900 ml-1">From €70</span>
+        <span class="text-lg font-medium text-butterfly-900 ml-1">+€9.99</span>
         <a href="#contact"
           class="px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90">
           Contact now
@@ -267,7 +962,7 @@ html { scroll-behavior: smooth; }
     <div class="p-5">
       <div class="flex items-center justify-between mb-2">
         <h3 class="font-serif text-2xl">From the Collection</h3>
-        <span class="text-sm text-butterfly-500">Ready to wear · From €59.99</span>
+        <span class="text-sm text-butterfly-500">Ready to wear · From €39.99</span>
       </div>
 
       <p class="text-butterfly-600 mb-4">
@@ -275,7 +970,7 @@ html { scroll-behavior: smooth; }
       </p>
 
       <div class="flex items-center justify-between">
-        <span class="text-lg font-medium text-butterfly-900 ml-1">From €59.99</span>
+        <span class="text-lg font-medium text-butterfly-900 ml-1">From €39.99</span>
         <a href="#shelf"
           class="px-4 py-2 rounded-full border border-butterfly-900/30 hover:bg-white text-butterfly-900">
           Explore the range
@@ -322,7 +1017,7 @@ html { scroll-behavior: smooth; }
           </p>
 
           <div class="flex items-center justify-between gap-4 mb-4">
-            <span class="text-lg font-medium text-butterfly-900">€59.99</span>
+            <span class="text-lg font-medium text-butterfly-900">€39.99</span>
             <a href="products/nostalgia-no-7.html"
               class="text-sm underline underline-offset-4 hover:opacity-60">
               View details
@@ -333,7 +1028,7 @@ html { scroll-behavior: smooth; }
             class="add-to-cart w-full px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
             data-id="nostalgia-100"
             data-name="Nostalgia No. 7 — Extrait 100 ml"
-            data-price="54.99"
+            data-price="39.99"
             data-size="100 ml">
             Add to Cart
           </button>
@@ -358,7 +1053,7 @@ html { scroll-behavior: smooth; }
     </p>
 
     <div class="flex items-center justify-between gap-4 mb-4">
-      <span class="text-lg font-medium text-butterfly-900">€59.99</span>
+      <span class="text-lg font-medium text-butterfly-900">€39.99</span>
 
       <a href="products/K.html"
         class="text-sm underline underline-offset-4 hover:opacity-60">
@@ -370,7 +1065,7 @@ html { scroll-behavior: smooth; }
       class="add-to-cart w-full px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
       data-id="k-100"
       data-name="K. — Eau de Parfum 100 ml"
-      data-price="54.99"
+      data-price="39.99"
       data-size="100 ml">
       Add to Cart
     </button>
@@ -395,7 +1090,7 @@ html { scroll-behavior: smooth; }
           </p>
 
           <div class="flex items-center justify-between gap-4 mb-4">
-            <span class="text-lg font-medium text-butterfly-900">€59.99</span>
+            <span class="text-lg font-medium text-butterfly-900">€39.99</span>
             <a href="products/tears-of-a-rose.html"
               class="text-sm underline underline-offset-4 hover:opacity-60">
               View details
@@ -406,7 +1101,7 @@ html { scroll-behavior: smooth; }
             class="add-to-cart w-full px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
             data-id="tears-of-a-rose-100"
             data-name="Tears of A Rose — Extrait 100 ml"
-            data-price="54.99"
+            data-price="39.99"
             data-size="100 ml">
             Add to Cart
           </button>
@@ -448,7 +1143,7 @@ html { scroll-behavior: smooth; }
           </p>
 
           <div class="flex items-center justify-between gap-4 mb-4">
-            <span class="text-lg font-medium text-butterfly-900">€75</span>
+            <span class="text-lg font-medium text-butterfly-900">€39.99</span>
             <a href="products/the-godfather-no-1.html"
               class="text-sm underline underline-offset-4 hover:opacity-60">
               View details
@@ -459,7 +1154,7 @@ html { scroll-behavior: smooth; }
             class="add-to-cart w-full px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
             data-id="godfather-100"
             data-name="The Godfather (No. 1) — Eau De Toilette 100 ml"
-            data-price="75"
+            data-price="39.99"
             data-size="100 ml">
             Add to Cart
           </button>
@@ -485,7 +1180,7 @@ html { scroll-behavior: smooth; }
           </p>
 
           <div class="flex items-center justify-between gap-4 mb-4">
-            <span class="text-lg font-medium text-butterfly-900">€75</span>
+            <span class="text-lg font-medium text-butterfly-900">€49.99</span>
             <a href="products/the-man.html"
               class="text-sm underline underline-offset-4 hover:opacity-60">
               View details
@@ -496,7 +1191,7 @@ html { scroll-behavior: smooth; }
             class="add-to-cart w-full px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
             data-id="the-man-100"
             data-name="The Man — Eau De Parfum 100 ml"
-            data-price="75"
+            data-price="49.99"
             data-size="100 ml">
             Add to Cart
           </button>
@@ -522,7 +1217,7 @@ html { scroll-behavior: smooth; }
           </p>
 
           <div class="flex items-center justify-between gap-4 mb-4">
-            <span class="text-lg font-medium text-butterfly-900">€75</span>
+            <span class="text-lg font-medium text-butterfly-900">€49.99</span>
             <a href="products/the-woman-no-2309.html"
               class="text-sm underline underline-offset-4 hover:opacity-60">
               View details
@@ -533,7 +1228,7 @@ html { scroll-behavior: smooth; }
             class="add-to-cart w-full px-4 py-2 rounded-full bg-butterfly-900 text-white hover:opacity-90"
             data-id="the-woman-100"
             data-name="The Woman (No. 2309) — Extrait 100 ml"
-            data-price="75"
+            data-price="49.99"
             data-size="100 ml">
             Add to Cart
           </button>
@@ -548,7 +1243,7 @@ html { scroll-behavior: smooth; }
       <!-- Trust row -->
       <div class="mt-10 grid md:grid-cols-3 gap-6 text-sm text-butterfly-600">
         <div class="p-4 rounded-xl bg-cream-100">Orders captured instantly to our system.</div>
-        <div class="p-4 rounded-xl bg-cream-100">Payments are completed securely on Mollie's hosted checkout. We do not collect card or online-banking credentials.</div>
+        <div class="p-4 rounded-xl bg-cream-100">We never store card data. No external processors.</div>
         <div class="p-4 rounded-xl bg-cream-100">Dispatch window: 3–5 business days</div>
       </div>
     </div>
@@ -565,9 +1260,85 @@ html { scroll-behavior: smooth; }
       <div class="flex items-center justify-between"><span>Subtotal</span><span id="cartSubtotal">€0.00</span></div>
       <div class="flex items-center justify-between text-sm text-butterfly-500"><span>Shipping</span><span id="cartShipping">6.96 Euros (excl. VAT)</span></div>
       <div class="flex items-center justify-between font-medium text-lg"><span>Total</span><span id="cartTotal">€0.00</span></div>
-      <a href="checkout.html" class="block text-center px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">Proceed to Checkout</a>
+      <a href="#checkout" id="toCheckout" class="block text-center px-4 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">Proceed to Checkout</a>
     </div>
   </aside>
+
+  <!-- CHECKOUT SECTION -->
+  <section id="checkout" class="py-20 hidden">
+    <div class="max-w-3xl mx-auto px-4">
+      <h2 class="font-serif text-3xl mb-6">Checkout</h2>
+      <p class="text-butterfly-600 mb-6">Place your order below. You’ll see an on‑page confirmation when it’s captured.</p>
+
+      <!-- Order Summary -->
+      <div id="summary" class="mb-8 p-4 bg-cream-50 rounded-xl border"></div>
+
+      <!-- Customer Form -->
+      <form id="orderForm" class="grid md:grid-cols-2 gap-4">
+        <input required name="fullName" placeholder="Full name" class="px-4 py-3 border rounded">
+        <input required type="email" name="email" placeholder="Email" class="px-4 py-3 border rounded">
+        <input required name="address" placeholder="Street Name + House Number (+ Addition/Suffix if any)" class="px-4 py-3 border rounded md:col-span-2">
+        <input required name="city" placeholder="City" class="px-4 py-3 border rounded">
+        <input required name="postcode" placeholder="Postcode" class="px-4 py-3 border rounded">
+        <input required name="country" placeholder="Country" class="px-4 py-3 border rounded">
+        <textarea name="notes" placeholder="Notes (optional)" class="px-4 py-3 border rounded md:col-span-2"></textarea>
+        <button class="mt-2 md:col-span-2 px-6 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90" type="submit">Place Order</button>
+        <button
+  id="cancelCheckout"
+  type="button"
+  class="mt-2 md:col-span-2 px-6 py-3 rounded-full bg-white text-butterfly-900 border border-butterfly-900/20 hover:bg-cream-50">
+  Cancel Checkout
+</button>
+        <p class="text-sm text-butterfly-500 md:col-span-2">By placing an order you agree to our Terms and Privacy Policy.</p>
+      </form>
+
+      <!-- Post-submit instructions -->
+      <div id="postSubmit" class="hidden mt-8 p-4 rounded-xl bg-cream-100"></div>
+    </div>
+  </section>
+
+<!-- CANCEL CHECKOUT MODAL -->
+<div
+  id="cancelCheckoutModal"
+  class="fixed inset-0 z-[100] hidden items-center justify-center bg-butterfly-900/40 backdrop-blur-sm px-4">
+
+  <div class="w-full max-w-md rounded-2xl bg-cream-50 shadow-2xl p-7">
+
+    <h3 class="font-serif text-3xl mb-3">
+      Cancel checkout?
+    </h3>
+
+    <p class="text-butterfly-600 mb-7">
+      Would you like to keep the items in your bag, or remove them as well?
+    </p>
+
+    <div class="grid gap-3">
+
+      <button
+        id="cancelKeepCart"
+        type="button"
+        class="w-full px-5 py-3 rounded-full bg-white text-butterfly-900 border border-butterfly-900/20 hover:bg-cream-100">
+        Cancel & Keep Items
+      </button>
+
+      <button
+        id="cancelDeleteCart"
+        type="button"
+        class="w-full px-5 py-3 rounded-full bg-butterfly-900 text-white hover:opacity-90">
+        Cancel & Delete Cart
+      </button>
+
+    </div>
+
+    <button
+      id="continueCheckout"
+      type="button"
+      class="block mx-auto mt-5 text-sm text-butterfly-500 underline underline-offset-4 hover:text-butterfly-900">
+      Continue Checkout
+    </button>
+
+  </div>
+</div>
 
   <!-- FAQ -->
   <section id="faq" class="py-20 fade-in">
@@ -576,7 +1347,7 @@ html { scroll-behavior: smooth; }
       <div class="divide-y divide-cream-200">
         <details class="py-4" open>
           <summary class="cursor-pointer font-medium">Where do you ship?</summary>
-          <p class="mt-2 text-butterfly-600">We ship all accross the EU.</p>
+          <p class="mt-2 text-butterfly-600">We ship all accross the Netherlands.</p>
         </details>
         <details class="py-4">
           <summary class="cursor-pointer font-medium">What strength are your perfumes?</summary>
@@ -590,17 +1361,7 @@ html { scroll-behavior: smooth; }
     </div>
   </section>
 
-  
-  <section class="py-10">
-    <div class="max-w-6xl mx-auto px-4">
-      <div class="rounded-2xl bg-cream-100 border border-cream-200 p-5 text-sm text-butterfly-600">
-        <strong class="text-butterfly-900">Shipping:</strong>
-        €6.96 within the Netherlands. Shipping elsewhere in the EU varies by destination and is confirmed before payment.
-      </div>
-    </div>
-  </section>
-
-<!-- CONTACT FORM -->
+  <!-- CONTACT FORM -->
 <section id="contact" class="py-20 bg-cream-100 fade-in">
   <div class="max-w-3xl mx-auto px-4 text-center">
     <h2 class="font-serif text-3xl mb-6">Get in Touch</h2>
@@ -627,57 +1388,1465 @@ html { scroll-behavior: smooth; }
 
 
 
+<script src="./cart.js"></script>
 <script>
-  const collectionToggle = document.getElementById('collection-toggle');
-  const collectionDetails = document.getElementById('collection-details');
 
-  if (collectionToggle && collectionDetails) {
-    collectionToggle.addEventListener('click', () => {
-      const isOpen = collectionDetails.classList.toggle('open');
-      collectionToggle.textContent = isOpen ? 'Read less' : 'Read more';
-    });
+  // ============================================================
+  // INTERACTIVE GARDEN
+  // ============================================================
+
+  const gardenPerfumes = [
+    {
+      key: 'nostalgia',
+      label: '07',
+      name: 'Nostalgia',
+      butterfly: './assets/butterflies/07.png',
+      x: '14.4%',
+      y: '25.4%',
+      w: '6.8%',
+      motion: 'a',
+      image: './Nostalgia.png',
+      link: './products/nostalgia-no-7.html',
+      accords: ['Jasmine Air', 'Cashmere Woods', 'Vanilla']
+    },
+    {
+      key: 'k',
+      label: 'K.',
+      name: 'K.',
+      butterfly: './assets/butterflies/K.png',
+      x: '46.5%',
+      y: '22.5%',
+      w: '7.6%',
+      motion: 'b',
+      image: './K.png',
+      link: './products/K.html',
+      accords: ['Dark Chocolate', 'White Musk', 'Indonesian Patchouli']
+    },
+    {
+      key: 'rose',
+      label: '09',
+      name: 'Tears of A Rose',
+      butterfly: './assets/butterflies/09.png',
+      x: '82.8%',
+      y: '37.3%',
+      w: '6.3%',
+      motion: 'c',
+      image: './Tears of A Rose.png',
+      link: './products/tears-of-a-rose.html',
+      accords: ['Watery Rose', 'White Musk', 'Skin Warmth']
+    },
+    {
+      key: '111',
+      label: '111',
+      name: 'No. 111',
+      butterfly: './assets/butterflies/111.png',
+      x: '11.3%',
+      y: '69.3%',
+      w: '6.0%',
+      motion: 'c',
+      image: './The Man.png',
+      link: './products/the-man.html',
+      accords: ['Refreshing Citrus', 'Vetiver & Sage', 'Skin-like Amber']
+    },
+    {
+      key: 'godfather',
+      label: '01',
+      name: 'The Godfather',
+      butterfly: './assets/butterflies/01.png',
+      x: '37.1%',
+      y: '62.6%',
+      w: '6.0%',
+      motion: 'a',
+      image: './The Godfather.png',
+      link: './products/the-godfather-no-1.html',
+      accords: ['Bergamot', 'Leather & Spice', 'Amber Woods']
+    },
+    {
+      key: '2309',
+      label: '2309',
+      name: 'No. 2309',
+      butterfly: './assets/butterflies/2309.png',
+      x: '73.5%',
+      y: '73.6%',
+      w: '6.2%',
+      motion: 'b',
+      image: './The Woman 100 ml.png',
+      link: './products/the-woman-no-2309.html',
+      accords: ['Refreshing Citrus', 'Honeyed Rose', 'White Musk']
+    }
+  ];
+
+  const gardenLayer = document.getElementById('gardenButterflyLayer');
+  const gardenPreview = document.getElementById('gardenPreview');
+  const gardenPreviewImage = document.getElementById('gardenPreviewImage');
+  const gardenPreviewName = document.getElementById('gardenPreviewName');
+  const gardenPreviewAccords = document.getElementById('gardenPreviewAccords');
+  const gardenPreviewLink = document.getElementById('gardenPreviewLink');
+  const gardenPreviewClose = document.getElementById('gardenPreviewClose');
+  const gardenArtboard = document.querySelector('.garden-artboard');
+
+  let gardenActive = null;
+
+
+  function syncGardenPreviewHost() {
+    const mobile = window.matchMedia('(max-width: 800px)').matches;
+
+    if (mobile) {
+      /*
+        Take the card OUT of the clipped 3:2 artboard.
+        This is what makes it reliably visible on phones.
+      */
+      if (gardenPreview.parentElement !== document.body) {
+        document.body.appendChild(gardenPreview);
+      }
+    } else {
+      if (gardenPreview.parentElement !== gardenArtboard) {
+        gardenArtboard.appendChild(gardenPreview);
+      }
+    }
   }
 
-  const contactForm = document.getElementById('contactForm');
+  function positionGardenPreview(button) {
+    syncGardenPreviewHost();
 
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+    // Mobile uses a fixed bottom card managed entirely by CSS.
+    if (window.matchMedia('(max-width: 800px)').matches) {
+      gardenPreview.style.left = '';
+      gardenPreview.style.right = '';
+      gardenPreview.style.top = '';
+      gardenPreview.style.bottom = '';
+      return;
+    }
 
-      const data = Object.fromEntries(new FormData(e.target).entries());
-      const contactPayload = {
-        type: 'contact',
-        name: data.fullName,
-        email: data.email,
-        phone: data.phone,
-        message: data.message,
-        timestamp: new Date().toISOString()
-      };
+    const artboard = document.querySelector('.garden-artboard');
+    const artRect = artboard.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
 
-      document.getElementById('contactPayload').value = JSON.stringify(contactPayload);
-      document.getElementById('contactFallback').submit();
-      document.getElementById('contactStatus').textContent = 'Message sent successfully!';
-      e.target.reset();
-    });
+    // Ensure the card has measurable dimensions even before its first reveal.
+    const previewWidth = gardenPreview.offsetWidth || 370;
+    const previewHeight = gardenPreview.offsetHeight || 238;
+
+    const gap = 22;
+    const edge = 16;
+
+    const butterflyCenterX =
+      buttonRect.left - artRect.left + (buttonRect.width / 2);
+
+    const butterflyCenterY =
+      buttonRect.top - artRect.top + (buttonRect.height / 2);
+
+    /*
+      Prefer opening to the side facing more empty space.
+      For butterflies near the top/bottom, keep the card vertically
+      centred on the butterfly but clamp it inside the garden.
+    */
+    const roomRight =
+      artRect.width - butterflyCenterX - buttonRect.width / 2;
+
+    const roomLeft =
+      butterflyCenterX - buttonRect.width / 2;
+
+    let left;
+
+    if (roomRight >= previewWidth + gap || roomRight >= roomLeft) {
+      left =
+        butterflyCenterX +
+        buttonRect.width / 2 +
+        gap;
+    } else {
+      left =
+        butterflyCenterX -
+        buttonRect.width / 2 -
+        gap -
+        previewWidth;
+    }
+
+    let top =
+      butterflyCenterY -
+      previewHeight / 2;
+
+    left = Math.max(
+      edge,
+      Math.min(
+        artRect.width - previewWidth - edge,
+        left
+      )
+    );
+
+    top = Math.max(
+      edge,
+      Math.min(
+        artRect.height - previewHeight - edge,
+        top
+      )
+    );
+
+    gardenPreview.style.left = `${left}px`;
+    gardenPreview.style.top = `${top}px`;
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+
+
+  /*
+    ============================================================
+    KEEP BUTTERFLIES AWAY FROM THE HERO COPY
+    ============================================================
+
+    The original artwork positions remain the starting point.
+    On each viewport size we calculate whether a butterfly overlaps
+    the text/button block. If it does, we nudge it outward just enough
+    to clear a protected margin around the copy.
+
+    This means we don't need a pile of brittle phone/tablet breakpoints.
+  */
+
+  function keepButterfliesClearOfText() {
+    const artboard = document.querySelector('.garden-artboard');
+    const intro = document.querySelector('.garden-intro');
+
+    if (!artboard || !intro) return;
+
+    const artRect = artboard.getBoundingClientRect();
+    const introRect = intro.getBoundingClientRect();
+
+    // Bigger clearance on desktop, tighter on small phones.
+    const clearance =
+      window.innerWidth <= 480 ? 26 :
+      window.innerWidth <= 800 ? 32 :
+      window.innerWidth <= 1100 ? 24 : 18;
+
+    const protectedRect = {
+      left: introRect.left - clearance,
+      right: introRect.right + clearance,
+      top: introRect.top - clearance,
+      bottom: introRect.bottom + clearance
+    };
+
+    const introCenterX =
+      (protectedRect.left + protectedRect.right) / 2;
+
+    const introCenterY =
+      (protectedRect.top + protectedRect.bottom) / 2;
+
+    document.querySelectorAll('.garden-butterfly').forEach(button => {
+      // Start every layout pass from its authored position.
+      button.style.setProperty('--avoid-x', '0px');
+      button.style.setProperty('--avoid-y', '0px');
+
+      let rect = button.getBoundingClientRect();
+
+      const overlaps =
+        rect.right > protectedRect.left &&
+        rect.left < protectedRect.right &&
+        rect.bottom > protectedRect.top &&
+        rect.top < protectedRect.bottom;
+
+      if (!overlaps) return;
+
+      const butterflyCenterX =
+        (rect.left + rect.right) / 2;
+
+      const butterflyCenterY =
+        (rect.top + rect.bottom) / 2;
+
+      let dx =
+        butterflyCenterX - introCenterX;
+
+      let dy =
+        butterflyCenterY - introCenterY;
+
+      /*
+        If a butterfly is almost exactly centred, choose the nearest
+        edge rather than letting a zero-vector confuse the direction.
+      */
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+        dx = butterflyCenterX < window.innerWidth / 2 ? -1 : 1;
+      }
+
+      const length =
+        Math.hypot(dx, dy) || 1;
+
+      const ux = dx / length;
+      const uy = dy / length;
+
+      /*
+        Move in small increments until its actual DOM box clears the
+        protected text block. Cap the travel so the butterfly remains
+        recognisably near its original flower/garden area.
+      */
+      let moveX = 0;
+      let moveY = 0;
+      const step = 8;
+      const maxTravel =
+        window.innerWidth <= 480 ? 95 :
+        window.innerWidth <= 800 ? 115 : 170;
+
+      for (let travelled = step; travelled <= maxTravel; travelled += step) {
+        moveX = ux * travelled;
+        moveY = uy * travelled;
+
+        button.style.setProperty('--avoid-x', `${moveX}px`);
+        button.style.setProperty('--avoid-y', `${moveY}px`);
+
+        rect = button.getBoundingClientRect();
+
+        const stillOverlaps =
+          rect.right > protectedRect.left &&
+          rect.left < protectedRect.right &&
+          rect.bottom > protectedRect.top &&
+          rect.top < protectedRect.bottom;
+
+        if (!stillOverlaps) break;
+      }
+
+      /*
+        Clamp the shifted butterfly to the visible artboard.
+      */
+      rect = button.getBoundingClientRect();
+
+      let clampX = 0;
+      let clampY = 0;
+      const edge = 8;
+
+      if (rect.left < artRect.left + edge) {
+        clampX += (artRect.left + edge) - rect.left;
+      }
+
+      if (rect.right > artRect.right - edge) {
+        clampX -= rect.right - (artRect.right - edge);
+      }
+
+      if (rect.top < artRect.top + edge) {
+        clampY += (artRect.top + edge) - rect.top;
+      }
+
+      if (rect.bottom > artRect.bottom - edge) {
+        clampY -= rect.bottom - (artRect.bottom - edge);
+      }
+
+      if (clampX || clampY) {
+        button.style.setProperty(
+          '--avoid-x',
+          `${moveX + clampX}px`
+        );
+
+        button.style.setProperty(
+          '--avoid-y',
+          `${moveY + clampY}px`
+        );
+      }
+
+      /*
+        MOBILE VISIBLE-VIEWPORT CLAMP
+
+        The artboard itself is intentionally wider than the phone.
+        Therefore "inside artboard" is not the same as "visible".
+
+        Keep the final butterfly box at least 8px inside the actual
+        browser viewport, so none of the six can disappear off the
+        cropped left/right edges.
+      */
+      if (window.innerWidth <= 800) {
+        rect = button.getBoundingClientRect();
+
+        let visibleClampX = 0;
+        const viewportEdge = 8;
+
+        if (rect.left < viewportEdge) {
+          visibleClampX += viewportEdge - rect.left;
+        }
+
+        if (rect.right > window.innerWidth - viewportEdge) {
+          visibleClampX -= rect.right - (window.innerWidth - viewportEdge);
+        }
+
+        if (visibleClampX) {
+          const currentAvoidX =
+            parseFloat(
+              getComputedStyle(button)
+                .getPropertyValue('--avoid-x')
+            ) || 0;
+
+          button.style.setProperty(
+            '--avoid-x',
+            `${currentAvoidX + visibleClampX}px`
+          );
+        }
       }
     });
-  }, { threshold: 0.01, rootMargin: '0px 0px -5% 0px' });
+  }
 
-  document.querySelectorAll('.fade-in').forEach(element => observer.observe(element));
 
-  const year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
+  function showGardenPreview(perfume, button) {
+    if (gardenActive && gardenActive !== button) {
+      gardenActive.classList.remove('is-active');
+    }
+
+    gardenActive = button;
+    button.classList.add('is-active');
+
+    gardenPreviewImage.src = perfume.image;
+    gardenPreviewImage.alt = perfume.name;
+    gardenPreviewName.textContent = perfume.name;
+    gardenPreviewAccords.innerHTML =
+      perfume.accords.map(accord => `<li>${accord}</li>`).join('');
+    gardenPreviewLink.href = perfume.link;
+
+    positionGardenPreview(button);
+    gardenPreview.classList.add('is-visible');
+  }
+
+  function hideGardenPreview() {
+    gardenPreview.classList.remove('is-visible');
+
+    if (gardenActive) {
+      gardenActive.classList.remove('is-active');
+      gardenActive = null;
+    }
+  }
+
+  gardenPerfumes.forEach(perfume => {
+    const button = document.createElement('button');
+
+    button.type = 'button';
+    button.className = 'garden-butterfly';
+    button.dataset.motion = perfume.motion;
+    button.dataset.key = perfume.key;
+
+    button.style.setProperty('--x', perfume.x);
+    button.style.setProperty('--y', perfume.y);
+    button.style.setProperty('--w', perfume.w);
+
+    button.setAttribute('aria-label', `Discover ${perfume.name}`);
+
+    button.innerHTML = `
+      <span class="garden-butterfly-label">${perfume.label}</span>
+
+      <span class="garden-butterfly-float">
+        <span class="garden-butterfly-zoom">
+          <img
+            src="${perfume.butterfly}"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          >
+        </span>
+      </span>
+    `;
+
+    button.addEventListener('mouseenter', () => {
+      if (!window.matchMedia('(hover: none)').matches) {
+        showGardenPreview(perfume, button);
+      }
+    });
+
+    button.addEventListener('focus', () => {
+      showGardenPreview(perfume, button);
+    });
+
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      /*
+        Especially on touchscreens: tapping a butterfly should ALWAYS
+        reveal the card. Navigation is handled by "View fragrance".
+      */
+      showGardenPreview(perfume, button);
+    });
+
+    gardenLayer.appendChild(button);
+  });
+
+  // Wait until DOM layout is settled before calculating collisions.
+  requestAnimationFrame(() => {
+    keepButterfliesClearOfText();
+  });
+
+  gardenLayer.addEventListener('mouseleave', () => {
+    if (!window.matchMedia('(hover: none)').matches) {
+      window.setTimeout(() => {
+        if (!gardenPreview.matches(':hover')) {
+          hideGardenPreview();
+        }
+      }, 100);
+    }
+  });
+
+  gardenPreview.addEventListener('mouseleave', () => {
+    if (!window.matchMedia('(hover: none)').matches) {
+      hideGardenPreview();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      hideGardenPreview();
+    }
+  });
+
+
+  gardenPreviewClose?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    hideGardenPreview();
+  });
+
+  document.addEventListener('click', event => {
+    if (
+      window.matchMedia('(hover: none)').matches &&
+      !event.target.closest('.garden-butterfly') &&
+      !event.target.closest('.garden-preview')
+    ) {
+      hideGardenPreview();
+    }
+  });
+
+
+  window.addEventListener('resize', () => {
+    syncGardenPreviewHost();
+
+    requestAnimationFrame(() => {
+      keepButterfliesClearOfText();
+
+      if (gardenActive && gardenPreview.classList.contains('is-visible')) {
+        positionGardenPreview(gardenActive);
+      }
+    });
+  });
+
+  window.addEventListener('load', () => {
+    syncGardenPreviewHost();
+
+    requestAnimationFrame(() => {
+      keepButterfliesClearOfText();
+    });
+  });
+
+  // Also handle the initial render before the load event if assets are cached.
+  syncGardenPreviewHost();
+
+
+  // ============================================================
+  // JSPDF LOADER
+  // ============================================================
+
+  let jsPdfPromise = null;
+
+  function loadJsPdf() {
+    if (window.jspdf) {
+      return Promise.resolve(window.jspdf);
+    }
+
+    if (jsPdfPromise) {
+      return jsPdfPromise;
+    }
+
+    jsPdfPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+
+      s.src =
+        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+
+      s.onload = () => resolve(window.jspdf);
+      s.onerror = reject;
+
+      document.body.appendChild(s);
+    });
+
+    return jsPdfPromise;
+  }
+
+
+  // ============================================================
+  // READ MORE TOGGLE
+  // ============================================================
+
+  const collectionToggle =
+    document.getElementById('collection-toggle');
+
+  const collectionDetails =
+    document.getElementById('collection-details');
+
+  if (collectionToggle && collectionDetails) {
+
+    collectionToggle.addEventListener('click', () => {
+
+      const isOpen =
+        collectionDetails.classList.toggle('open');
+
+      collectionToggle.textContent =
+        isOpen
+          ? 'Read less'
+          : 'Read more';
+    });
+  }
+
+
+  // ============================================================
+  // ORDER FORM
+  //
+  // IMPORTANT:
+  // The cart itself is NOT created here anymore.
+  // It comes entirely from cart.js.
+  // ============================================================
+
+  const orderForm =
+    document.getElementById('orderForm');
+
+  if (orderForm) {
+
+    orderForm.addEventListener('submit', (e) => {
+
+      e.preventDefault();
+
+
+      // --------------------------------------------
+      // Do not allow empty orders
+      // --------------------------------------------
+
+      if (!window.cart.items.length) {
+
+        alert(
+          'Your cart is empty. Please add an item before placing an order.'
+        );
+
+        return;
+      }
+
+
+      // --------------------------------------------
+      // Customer + order data
+      // --------------------------------------------
+
+      const data =
+        Object.fromEntries(
+          new FormData(e.target).entries()
+        );
+
+      const t =
+        window.cart.totals();
+
+      const orderId =
+        'TWB-' +
+        new Date()
+          .toISOString()
+          .replace(/[-:.TZ]/g, '')
+          .slice(0, 14);
+
+
+      // IMPORTANT:
+      // Save the items before clearing the cart.
+      // Invoice + webhook will use this snapshot.
+      const savedItems =
+        window.cart.items.map(item => ({
+          ...item
+        }));
+
+        
+      // --------------------------------------------
+      // Confirmation message
+      // --------------------------------------------
+
+      const postSubmit =
+        document.getElementById('postSubmit');
+
+      postSubmit.innerHTML = `
+        <h3 class="font-serif text-2xl mb-2">
+          Thanks, ${data.fullName}.
+        </h3>
+
+        <p class="text-butterfly-700">
+          Your order
+          <strong>${orderId}</strong>
+          was received.
+        </p>
+
+        <p class="text-butterfly-600">
+          You can download a copy of your order details below.
+        </p>
+
+        <div class="mt-4 flex gap-3 flex-wrap">
+
+          <button
+            class="px-4 py-2 rounded-full border"
+            id="downloadInvoice"
+            type="button"
+          >
+            Download Order PDF
+          </button>
+
+        </div>
+      `;
+
+      postSubmit.classList.remove('hidden');
+
+
+      // ========================================================
+      // PDF INVOICE
+      // ========================================================
+
+      loadJsPdf()
+
+        .then(() => {
+
+          const downloadButton =
+            document.getElementById(
+              'downloadInvoice'
+            );
+
+          downloadButton.addEventListener(
+            'click',
+            () => {
+
+              const { jsPDF } =
+                window.jspdf;
+
+
+              if (!jsPDF) {
+
+                alert(
+                  'Invoice generator not loaded yet. Please try again.'
+                );
+
+                return;
+              }
+
+
+              const doc =
+                new jsPDF({
+                  unit: 'pt',
+                  format: 'a4'
+                });
+
+
+              // --------------------------------------------
+              // Colours
+              // --------------------------------------------
+
+              const cream =
+                '#fff9ed';
+
+              const textColor =
+                '#1e293b';
+
+              const gold =
+                '#c69c34';
+
+
+              // --------------------------------------------
+              // Background
+              // --------------------------------------------
+
+              doc.setFillColor(cream);
+
+              doc.rect(
+                0,
+                0,
+                595,
+                842,
+                'F'
+              );
+
+
+              // --------------------------------------------
+              // Brand heading
+              // --------------------------------------------
+
+              doc.setFont(
+                'Times',
+                'normal'
+              );
+
+              doc.setFontSize(20);
+
+              doc.setTextColor(
+                textColor
+              );
+
+              doc.text(
+                'T  H  E     W  H  I  T  E     B  U  T  T  E  R  F  L  I  E  S',
+                65,
+                70
+              );
+
+
+              // --------------------------------------------
+              // Gold separator
+              // --------------------------------------------
+
+              doc.setDrawColor(gold);
+
+              doc.setLineWidth(0.5);
+
+              doc.line(
+                60,
+                85,
+                535,
+                85
+              );
+
+
+              // --------------------------------------------
+              // Invoice title
+              // --------------------------------------------
+
+              doc.setFontSize(14);
+
+              doc.text(
+                'Order Confirmation',
+                65,
+                115
+              );
+
+
+              // --------------------------------------------
+              // Order information
+              // --------------------------------------------
+
+              doc.setFontSize(11);
+
+              let y = 140;
+
+              doc.text(
+                `Order ID: ${orderId}`,
+                65,
+                y
+              );
+
+              y += 16;
+
+
+              doc.text(
+                `Date: ${new Date().toLocaleDateString()}`,
+                65,
+                y
+              );
+
+              y += 30;
+
+
+              // --------------------------------------------
+              // Customer information
+              // --------------------------------------------
+
+              doc.setFontSize(12);
+
+              doc.text(
+                'Billing Information',
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.line(
+                65,
+                y,
+                250,
+                y
+              );
+
+              y += 14;
+
+
+              doc.setFontSize(11);
+
+
+              doc.text(
+                `${data.fullName}`,
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.text(
+                `${data.address}`,
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.text(
+                `${data.city}, ${data.postcode}`,
+                65,
+                y
+              );
+
+              y += 14;
+
+
+              doc.text(
+                `${data.country}`,
+                65,
+                y
+              );
+
+              y += 30;
+
+
+              // --------------------------------------------
+              // Items
+              // --------------------------------------------
+
+              doc.setFontSize(12);
+
+              doc.text(
+                'Items',
+                65,
+                y
+              );
+
+
+              doc.line(
+                65,
+                y + 2,
+                250,
+                y + 2
+              );
+
+              y += 20;
+
+
+              savedItems.forEach(item => {
+
+                doc.setFontSize(11);
+
+
+                doc.text(
+                  `${item.qty} × ${item.name}`,
+                  65,
+                  y
+                );
+
+
+                doc.text(
+                  `€${(
+                    item.price *
+                    item.qty
+                  ).toFixed(2)}`,
+                  500,
+                  y,
+                  {
+                    align: 'right'
+                  }
+                );
+
+
+                y += 16;
+              });
+
+
+              // --------------------------------------------
+              // Totals
+              // --------------------------------------------
+
+              y += 10;
+
+
+              doc.line(
+                65,
+                y,
+                535,
+                y
+              );
+
+
+              y += 20;
+
+
+              doc.setFontSize(12);
+
+
+              doc.text(
+                `Subtotal: €${t.subtotal.toFixed(2)}`,
+                500,
+                y,
+                {
+                  align: 'right'
+                }
+              );
+
+
+              y += 16;
+
+
+              doc.text(
+                `Shipping: €${t.shipping.toFixed(2)}`,
+                500,
+                y,
+                {
+                  align: 'right'
+                }
+              );
+
+
+              y += 16;
+
+
+              doc.text(
+                `Total: €${t.total.toFixed(2)}`,
+                500,
+                y,
+                {
+                  align: 'right'
+                }
+              );
+
+
+              // --------------------------------------------
+              // Thank-you message
+              // --------------------------------------------
+
+              y += 50;
+
+
+              doc.line(
+                60,
+                y - 10,
+                535,
+                y - 10
+              );
+
+
+              doc.setFontSize(12);
+
+
+              doc.text(
+                'Thank you for your purchase.',
+                65,
+                y
+              );
+
+
+              y += 20;
+
+
+              doc.setFontSize(11);
+
+
+              doc.text(
+                'We hope this fragrance brings you quiet joy and warmth.',
+                65,
+                y
+              );
+
+
+              // --------------------------------------------
+              // Footer
+              // --------------------------------------------
+
+              y += 60;
+
+
+              doc.setFontSize(10);
+
+              doc.setTextColor(
+                '#475569'
+              );
+
+
+              doc.text(
+                'www.thewhitebutterflies.com',
+                65,
+                y
+              );
+
+
+              doc.text(
+                'Email: pranavdj09@gmail.com | Phone: +31 6 84542568',
+                65,
+                y + 14
+              );
+
+
+              // --------------------------------------------
+              // Save PDF
+              // --------------------------------------------
+
+              doc.save(
+                `Invoice_${orderId}.pdf`
+              );
+
+            },
+            {
+              once: true
+            }
+          );
+
+        })
+
+        .catch(error => {
+
+          console.error(
+            'Could not load jsPDF:',
+            error
+          );
+
+        });
+
+
+      // ========================================================
+      // GOOGLE APPS SCRIPT ORDER LOG
+      // ========================================================
+
+      const WEBHOOK_URL =
+        'https://script.google.com/macros/s/AKfycbzwagV6mIA8dRJ1L1HJEhFRrVKg0UQ-I3tfSq2XpbYyM3Owk9i1h-NhfYZU_g60N1wy7w/exec';
+
+
+      const payload = {
+
+        orderId,
+
+        items:
+          savedItems,
+
+        totals:
+          t,
+
+        customer:
+          data,
+
+        timestamp:
+          new Date().toISOString()
+
+      };
+
+
+      fetch(
+        WEBHOOK_URL,
+        {
+
+          method:
+            'POST',
+
+          headers: {
+
+            'Content-Type':
+              'text/plain;charset=utf-8'
+
+          },
+
+          body:
+            JSON.stringify(payload)
+
+        }
+      )
+
+      .then(() => {})
+
+      .catch(error => {
+
+        console.error(
+          'Order webhook error:',
+          error
+        );
+
+      });
+
+
+      // ========================================================
+      // CLEAR CART
+      //
+      // This is the ONLY place in index.html where the cart
+      // should be cleared.
+      //
+      // It happens AFTER somebody actually places an order.
+      // ========================================================
+
+      window.cart.items = [];
+
+      window.cart.save();
+
+    });
+  }
+
+ // ============================================================
+// CANCEL CHECKOUT
+// ============================================================
+
+const cancelCheckoutButton =
+  document.getElementById('cancelCheckout');
+
+const cancelCheckoutModal =
+  document.getElementById('cancelCheckoutModal');
+
+const cancelKeepCart =
+  document.getElementById('cancelKeepCart');
+
+const cancelDeleteCart =
+  document.getElementById('cancelDeleteCart');
+
+const continueCheckout =
+  document.getElementById('continueCheckout');
+
+
+// ------------------------------------------------------------
+// OPEN CANCEL WARNING
+// ------------------------------------------------------------
+
+if (cancelCheckoutButton && cancelCheckoutModal) {
+
+  cancelCheckoutButton.addEventListener('click', () => {
+
+    cancelCheckoutModal.classList.remove('hidden');
+    cancelCheckoutModal.classList.add('flex');
+
+  });
+
+}
+
+
+// ------------------------------------------------------------
+// CLOSE WARNING AND CONTINUE CHECKOUT
+// ------------------------------------------------------------
+
+if (continueCheckout && cancelCheckoutModal) {
+
+  continueCheckout.addEventListener('click', () => {
+
+    cancelCheckoutModal.classList.add('hidden');
+    cancelCheckoutModal.classList.remove('flex');
+
+  });
+
+}
+
+
+// ------------------------------------------------------------
+// CANCEL CHECKOUT — KEEP CART
+// ------------------------------------------------------------
+
+if (cancelKeepCart && cancelCheckoutModal) {
+
+  cancelKeepCart.addEventListener('click', () => {
+
+    // Close warning
+    cancelCheckoutModal.classList.add('hidden');
+    cancelCheckoutModal.classList.remove('flex');
+
+    // Hide checkout
+    const checkout =
+      document.getElementById('checkout');
+
+    if (checkout) {
+      checkout.classList.add('hidden');
+    }
+
+    // Remove #checkout from URL
+    history.replaceState(
+      null,
+      '',
+      window.location.pathname
+    );
+
+    // Return to collection
+    document
+      .getElementById('collection')
+      ?.scrollIntoView({
+        behavior: 'smooth'
+      });
+
+  });
+
+}
+
+
+// ------------------------------------------------------------
+// CANCEL CHECKOUT — DELETE CART
+// ------------------------------------------------------------
+
+if (cancelDeleteCart && cancelCheckoutModal) {
+
+  cancelDeleteCart.addEventListener('click', () => {
+
+    // Clear the SHARED cart
+    window.cart.items = [];
+    window.cart.save();
+
+    // Close warning
+    cancelCheckoutModal.classList.add('hidden');
+    cancelCheckoutModal.classList.remove('flex');
+
+    // Hide checkout
+    const checkout =
+      document.getElementById('checkout');
+
+    if (checkout) {
+      checkout.classList.add('hidden');
+    }
+
+    // Clear checkout summary
+    const summary =
+      document.getElementById('summary');
+
+    if (summary) {
+      summary.innerHTML = '';
+    }
+
+    // Remove #checkout from URL
+    history.replaceState(
+      null,
+      '',
+      window.location.pathname
+    );
+
+    // Return to collection
+    document
+      .getElementById('collection')
+      ?.scrollIntoView({
+        behavior: 'smooth'
+      });
+
+  });
+
+}
+
+  // ============================================================
+  // CONTACT FORM
+  // ============================================================
+
+  const contactForm =
+    document.getElementById(
+      'contactForm'
+    );
+
+  if (contactForm) {
+
+    contactForm.addEventListener(
+      'submit',
+      (e) => {
+
+        e.preventDefault();
+
+
+        const data =
+          Object.fromEntries(
+            new FormData(
+              e.target
+            ).entries()
+          );
+
+
+        const contactPayload = {
+
+          type:
+            'contact',
+
+          name:
+            data.fullName,
+
+          email:
+            data.email,
+
+          phone:
+            data.phone,
+
+          message:
+            data.message,
+
+          timestamp:
+            new Date().toISOString()
+
+        };
+
+
+        document
+          .getElementById(
+            'contactPayload'
+          )
+          .value =
+          JSON.stringify(
+            contactPayload
+          );
+
+
+        document
+          .getElementById(
+            'contactFallback'
+          )
+          .submit();
+
+
+        const contactStatus =
+          document.getElementById(
+            'contactStatus'
+          );
+
+
+        contactStatus.textContent =
+          'Message sent successfully!';
+
+
+        e.target.reset();
+
+      }
+    );
+  }
+
+
+  // ============================================================
+  // SCROLL FADE-IN ANIMATION
+  // ============================================================
+
+  const observer =
+    new IntersectionObserver(
+      (entries) => {
+
+        entries.forEach(
+          entry => {
+
+            if (
+              entry.isIntersecting
+            ) {
+
+              entry.target
+                .classList
+                .add(
+                  'visible'
+                );
+
+
+              observer.unobserve(
+                entry.target
+              );
+
+            }
+
+          }
+        );
+
+      },
+
+      {
+        threshold: 0.15
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      '.fade-in'
+    )
+    .forEach(
+      element => {
+
+        observer.observe(
+          element
+        );
+
+      }
+    );
+
 </script>
 <!-- Hidden fallback POST for contact (CORS-proof) -->
 <form id="contactFallback" method="POST"
-      action="https://script.google.com/macros/s/AKfycbw4hpvrU2tqHB_yFsSxLL1Dd3zD3QL0EWvJKK8lpen2sOO2xJPmpqjNAuWNrvW3LQsqXg/exec"
+      action="https://script.google.com/macros/s/AKfycbw7nUb9MbmkKWj0i49SYxYDdDlFHONT8_4h3bN1BXsA5INJiR8jGZ0lJObjMVFevzybJw/exec"
       target="contactFrame" class="hidden">
   <input type="hidden" name="payload" id="contactPayload">
 </form>

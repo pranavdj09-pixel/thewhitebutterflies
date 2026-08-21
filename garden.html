@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Garden — The White Butterflies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            butterfly: {
+              50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',
+              400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',
+              800:'#1e293b',900:'#0f172a'
+            },
+            cream: {
+              50:'#fff9ed',100:'#fef3d9',200:'#fce7b3',300:'#fbdb8d',
+              400:'#f9cf67',500:'#f8c341',600:'#c69c34',700:'#947527',
+              800:'#634e1a',900:'#31270d'
+            }
+          },
+          fontFamily: {
+            serif:['Cormorant Garamond','ui-serif','Georgia','serif'],
+            sans:['Inter','ui-sans-serif','system-ui','sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+  
+  /* =========================================================
+     INTERACTIVE GARDEN
+     ========================================================= */
+
+  .garden-section {
+    position: relative;
+    width: 100%;
+    background: #fff9ed;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(198,156,52,.12);
+  }
+
+  /*
+    IMPORTANT:
+    The garden asset itself is 1536 × 1024 (3:2).
+    We preserve that exact aspect ratio.
+    No object-fit: cover. No cropping. No stretching.
+  */
+  .garden-artboard {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: #fbf7ef;
+  }
+
+  .garden-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: fill;
+    user-select: none;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .garden-butterfly-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .garden-butterfly {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    aspect-ratio: 1 / 1;
+    transform: translate(-50%, -50%);
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .garden-butterfly-label {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 2%);
+    transform: translateX(-50%);
+    color: #b58635;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(17px, 1.7vw, 29px);
+    line-height: 1;
+    white-space: nowrap;
+    text-shadow: 0 1px 10px rgba(255,249,237,.95);
+    transition: transform .42s cubic-bezier(.22,.78,.22,1);
+    pointer-events: none;
+  }
+
+  .garden-butterfly-float {
+    width: 100%;
+    height: 100%;
+    animation: gardenFloatA 6.4s ease-in-out infinite alternate;
+  }
+
+  .garden-butterfly[data-motion="b"] .garden-butterfly-float {
+    animation-name: gardenFloatB;
+    animation-duration: 7.2s;
+  }
+
+  .garden-butterfly[data-motion="c"] .garden-butterfly-float {
+    animation-name: gardenFloatC;
+    animation-duration: 5.9s;
+  }
+
+  @keyframes gardenFloatA {
+    from { transform: translate3d(-2px, 2px, 0) rotate(-.7deg); }
+    to   { transform: translate3d(5px, -6px, 0) rotate(1deg); }
+  }
+
+  @keyframes gardenFloatB {
+    from { transform: translate3d(4px, -2px, 0) rotate(.8deg); }
+    to   { transform: translate3d(-5px, 6px, 0) rotate(-1deg); }
+  }
+
+  @keyframes gardenFloatC {
+    from { transform: translate3d(-3px, 0, 0) rotate(-.5deg); }
+    to   { transform: translate3d(6px, 4px, 0) rotate(.9deg); }
+  }
+
+  .garden-butterfly-zoom {
+    width: 100%;
+    height: 100%;
+    transition:
+      transform .48s cubic-bezier(.22,.78,.22,1),
+      filter .48s ease;
+    transform-origin: center;
+  }
+
+  .garden-butterfly img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 11px rgba(94,65,25,.13));
+  }
+
+  .garden-butterfly:hover,
+  .garden-butterfly.is-active {
+    z-index: 20;
+  }
+
+  .garden-butterfly:hover .garden-butterfly-float,
+  .garden-butterfly.is-active .garden-butterfly-float {
+    animation-play-state: paused;
+  }
+
+  .garden-butterfly:hover .garden-butterfly-zoom,
+  .garden-butterfly.is-active .garden-butterfly-zoom {
+    transform: translateY(-5px) scale(1.22);
+    filter: drop-shadow(0 14px 16px rgba(94,65,25,.18));
+  }
+
+  .garden-butterfly:hover .garden-butterfly-label,
+  .garden-butterfly.is-active .garden-butterfly-label {
+    transform: translateX(-50%) translateY(-6px) scale(1.04);
+  }
+
+  .garden-preview {
+    position: absolute;
+    z-index: 40;
+    left: 50.2%;
+    top: 27.5%;
+    width: 27%;
+    min-width: 330px;
+    display: grid;
+    grid-template-columns: 43% 57%;
+    overflow: hidden;
+
+    border: 1px solid rgba(173,144,96,.22);
+    border-radius: 7px;
+    background: rgba(252,248,241,.965);
+    box-shadow:
+      0 22px 55px rgba(45,36,25,.15),
+      0 4px 12px rgba(45,36,25,.08);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(15px) scale(.982);
+
+    transition:
+      opacity .30s ease,
+      transform .44s cubic-bezier(.22,.78,.22,1),
+      visibility 0s linear .44s;
+  }
+
+  .garden-preview.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transition-delay: .08s, .08s, 0s;
+  }
+
+  .garden-preview-product {
+    min-height: 260px;
+    padding: 18px 10px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 50% 42%,
+      rgba(255,255,255,.95),
+      rgba(239,230,215,.36) 55%,
+      rgba(235,225,208,.50));
+  }
+
+  .garden-preview-product img {
+    display: block;
+    width: 82%;
+    height: 220px;
+    object-fit: contain;
+    transition: transform .55s cubic-bezier(.22,.78,.22,1);
+  }
+
+  .garden-preview.is-visible .garden-preview-product img {
+    transform: translateY(-2px) scale(1.025);
+  }
+
+  .garden-preview-copy {
+    padding: 31px 27px 26px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .garden-preview-name {
+    margin: 0;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(27px, 2.3vw, 39px);
+    font-weight: 500;
+    line-height: .98;
+  }
+
+  .garden-preview-rule {
+    width: 31px;
+    height: 1px;
+    margin: 18px 0 15px;
+    background: #b58635;
+    opacity: .75;
+  }
+
+  .garden-preview-accords {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+    color: #665544;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(14px, 1.2vw, 17px);
+  }
+
+  .garden-preview-link {
+    margin-top: 22px;
+    align-self: flex-start;
+    color: #55493d;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 12px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .garden-preview-link::after {
+    content: '  →';
+    font-size: 18px;
+  }
+
+  .garden-scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 2.2%;
+    transform: translateX(-50%);
+    z-index: 9;
+    color: #514a41;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .garden-scroll-mouse {
+    width: 27px;
+    height: 42px;
+    margin: 0 auto 8px;
+    border: 1px solid rgba(48,43,37,.58);
+    border-radius: 16px;
+  }
+
+  .garden-scroll-cue span {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 10px;
+    letter-spacing: .27em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 800px) {
+    .garden-preview {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      top: auto;
+      bottom: 12px;
+      width: auto;
+      min-width: 0;
+      grid-template-columns: 38% 62%;
+      z-index: 200;
+    }
+
+    .garden-preview-product {
+      min-height: 205px;
+    }
+
+    .garden-preview-product img {
+      height: 172px;
+    }
+
+    .garden-preview-copy {
+      padding: 23px 19px;
+    }
+
+    .garden-butterfly-label {
+      font-size: 17px;
+    }
+  }
+
+  </style>
+</head>
+
+<body class="bg-cream-50 text-butterfly-900 font-sans">
+
+  <header class="sticky top-0 z-50 backdrop-blur bg-cream-50/80 border-b border-cream-200">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="index.html" class="font-serif tracking-[0.25em] text-xl">
+        THE WHITE BUTTERFLIES
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="index.html#story" class="hover:opacity-70">Story</a>
+        <a href="index.html#collection" class="hover:opacity-70">Collection</a>
+        <a href="quiz.html" class="hover:opacity-70">Signature Scent Quiz</a>
+        <a href="index.html#faq" class="hover:opacity-70">FAQ</a>
+        <a href="index.html#contact" class="hover:opacity-70">Contact</a>
+      </nav>
+
+      <button id="openCart" class="relative px-4 py-2 border border-butterfly-900/20 rounded-full hover:bg-white">
+        Cart
+        <span id="cartCount" class="ml-1 inline-block min-w-[1.5rem] text-center text-xs rounded-full bg-butterfly-900 text-white px-2">
+          0
+        </span>
+      </button>
+    </div>
+  </header>
+
+  
+  <!-- =======================================================
+       INTERACTIVE GARDEN
+       This whole scene begins AFTER the normal site header.
+       ======================================================= -->
+  <section id="garden" class="garden-section">
+    <div class="garden-artboard">
+
+      <img
+        class="garden-background"
+        src="./assets/garden.png"
+        alt=""
+        aria-hidden="true"
+      >
+
+      <div id="gardenButterflyLayer" class="garden-butterfly-layer"></div>
+
+      <article id="gardenPreview" class="garden-preview">
+        <div class="garden-preview-product">
+          <img id="gardenPreviewImage" src="" alt="">
+        </div>
+
+        <div class="garden-preview-copy">
+          <h2 id="gardenPreviewName" class="garden-preview-name"></h2>
+          <div class="garden-preview-rule"></div>
+          <ul id="gardenPreviewAccords" class="garden-preview-accords"></ul>
+          <a id="gardenPreviewLink" class="garden-preview-link" href="#">
+            View fragrance
+          </a>
+        </div>
+      </article>
+
+      <div class="garden-scroll-cue">
+        <div class="garden-scroll-mouse"></div>
+        <span>Scroll to discover</span>
+      </div>
+
+    </div>
+  </section>
+
+
+  <script src="./cart.js"></script>
+  <script>
+  
+  // ============================================================
+  // INTERACTIVE GARDEN
+  // ============================================================
+
+  const gardenPerfumes = [
+    {
+      key: 'nostalgia',
+      label: '07',
+      name: 'Nostalgia',
+      butterfly: './assets/butterflies/07.png',
+      x: '14.4%',
+      y: '25.4%',
+      w: '6.8%',
+      motion: 'a',
+      image: './Nostalgia.png',
+      link: './products/nostalgia-no-7.html',
+      accords: ['Jasmine Air', 'Cashmere Woods', 'Vanilla']
+    },
+    {
+      key: 'k',
+      label: 'K.',
+      name: 'K.',
+      butterfly: './assets/butterflies/K.png',
+      x: '45.8%',
+      y: '19.9%',
+      w: '7.6%',
+      motion: 'b',
+      image: './K.png',
+      link: './products/K.html',
+      accords: ['Dark Chocolate', 'White Musk', 'Indonesian Patchouli']
+    },
+    {
+      key: 'rose',
+      label: '09',
+      name: 'Tears of A Rose',
+      butterfly: './assets/butterflies/09.png',
+      x: '82.8%',
+      y: '37.3%',
+      w: '6.3%',
+      motion: 'c',
+      image: './Tears of A Rose.png',
+      link: './products/tears-of-a-rose.html',
+      accords: ['Watery Rose', 'White Musk', 'Skin Warmth']
+    },
+    {
+      key: '111',
+      label: '111',
+      name: 'No. 111',
+      butterfly: './assets/butterflies/111.png',
+      x: '11.3%',
+      y: '69.3%',
+      w: '6.0%',
+      motion: 'c',
+      image: './The Man.png',
+      link: './products/the-man.html',
+      accords: ['Refreshing Citrus', 'Vetiver & Sage', 'Skin-like Amber']
+    },
+    {
+      key: 'godfather',
+      label: '01',
+      name: 'The Godfather',
+      butterfly: './assets/butterflies/01.png',
+      x: '37.1%',
+      y: '62.6%',
+      w: '6.0%',
+      motion: 'a',
+      image: './The Godfather.png',
+      link: './products/the-godfather-no-1.html',
+      accords: ['Bergamot', 'Leather & Spice', 'Amber Woods']
+    },
+    {
+      key: '2309',
+      label: '2309',
+      name: 'No. 2309',
+      butterfly: './assets/butterflies/2309.png',
+      x: '73.5%',
+      y: '73.6%',
+      w: '6.2%',
+      motion: 'b',
+      image: './The Woman 100 ml.png',
+      link: './products/the-woman-no-2309.html',
+      accords: ['Refreshing Citrus', 'Honeyed Rose', 'White Musk']
+    }
+  ];
+
+  const gardenLayer = document.getElementById('gardenButterflyLayer');
+  const gardenPreview = document.getElementById('gardenPreview');
+  const gardenPreviewImage = document.getElementById('gardenPreviewImage');
+  const gardenPreviewName = document.getElementById('gardenPreviewName');
+  const gardenPreviewAccords = document.getElementById('gardenPreviewAccords');
+  const gardenPreviewLink = document.getElementById('gardenPreviewLink');
+
+  let gardenActive = null;
+
+  function showGardenPreview(perfume, button) {
+    if (gardenActive && gardenActive !== button) {
+      gardenActive.classList.remove('is-active');
+    }
+
+    gardenActive = button;
+    button.classList.add('is-active');
+
+    gardenPreviewImage.src = perfume.image;
+    gardenPreviewImage.alt = perfume.name;
+    gardenPreviewName.textContent = perfume.name;
+    gardenPreviewAccords.innerHTML =
+      perfume.accords.map(accord => `<li>${accord}</li>`).join('');
+    gardenPreviewLink.href = perfume.link;
+
+    gardenPreview.classList.add('is-visible');
+  }
+
+  function hideGardenPreview() {
+    gardenPreview.classList.remove('is-visible');
+
+    if (gardenActive) {
+      gardenActive.classList.remove('is-active');
+      gardenActive = null;
+    }
+  }
+
+  gardenPerfumes.forEach(perfume => {
+    const button = document.createElement('button');
+
+    button.type = 'button';
+    button.className = 'garden-butterfly';
+    button.dataset.motion = perfume.motion;
+
+    button.style.setProperty('--x', perfume.x);
+    button.style.setProperty('--y', perfume.y);
+    button.style.setProperty('--w', perfume.w);
+
+    button.setAttribute('aria-label', `Discover ${perfume.name}`);
+
+    button.innerHTML = `
+      <span class="garden-butterfly-label">${perfume.label}</span>
+
+      <span class="garden-butterfly-float">
+        <span class="garden-butterfly-zoom">
+          <img
+            src="${perfume.butterfly}"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          >
+        </span>
+      </span>
+    `;
+
+    button.addEventListener('mouseenter', () => {
+      if (!window.matchMedia('(hover: none)').matches) {
+        showGardenPreview(perfume, button);
+      }
+    });
+
+    button.addEventListener('focus', () => {
+      showGardenPreview(perfume, button);
+    });
+
+    button.addEventListener('click', event => {
+      event.preventDefault();
+
+      const touch = window.matchMedia('(hover: none)').matches;
+
+      if (
+        touch &&
+        gardenActive === button &&
+        gardenPreview.classList.contains('is-visible')
+      ) {
+        window.location.href = perfume.link;
+        return;
+      }
+
+      showGardenPreview(perfume, button);
+    });
+
+    gardenLayer.appendChild(button);
+  });
+
+  gardenLayer.addEventListener('mouseleave', () => {
+    if (!window.matchMedia('(hover: none)').matches) {
+      window.setTimeout(() => {
+        if (!gardenPreview.matches(':hover')) {
+          hideGardenPreview();
+        }
+      }, 100);
+    }
+  });
+
+  gardenPreview.addEventListener('mouseleave', () => {
+    if (!window.matchMedia('(hover: none)').matches) {
+      hideGardenPreview();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      hideGardenPreview();
+    }
+  });
+
+  document.addEventListener('click', event => {
+    if (
+      window.matchMedia('(hover: none)').matches &&
+      !event.target.closest('.garden-butterfly') &&
+      !event.target.closest('.garden-preview')
+    ) {
+      hideGardenPreview();
+    }
+  });
+
+  </script>
+
+</body>
+</html>
