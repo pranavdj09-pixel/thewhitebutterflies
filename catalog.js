@@ -385,7 +385,7 @@ window.TWB_CATALOG = {
       "concentration": "Extrait",
       "concentrationLong": "Extrait",
       "volume": "100 ml",
-      "price": 75,
+      "price": 49.99,
       "collection": "numbered",
       "page": "products/the-woman-no-2309.html",
       "image": "The Woman 100 ml.png",
