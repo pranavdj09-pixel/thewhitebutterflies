@@ -44,6 +44,10 @@ window.TWB_CATALOG = {
     "CHASKA": {
       "rate": 0.05,
       "firstOrderOnly": true
+    },
+    "KARINA": {
+      "rate": 0.05,
+      "firstOrderOnly": true
     }
   },
   "offers": {
